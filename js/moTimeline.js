@@ -1,4 +1,10 @@
-
+/*
+ * moTimeline v 0.9.1
+ * One or two column timeline layout library
+ * http://www.mattopen.com
+ * MIT License
+ * by MattOpen
+ */
 
 
 //  HELPER
@@ -286,13 +292,7 @@
 
         initmoT(mo_posts,idx);
 
-
-
-
-
-
         //return this;
 
-//  INNERHALB DER FUNKTION
     };
 }( jQuery ));
