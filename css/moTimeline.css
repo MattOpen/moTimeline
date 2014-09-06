@@ -1,0 +1,285 @@
+/*  ONLY FOR TEST THEME    */
+/*@import url(bootstrap.css);*/
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,700italic);
+
+body, th, td, table, h1, h2, h3, h4, h5, h6, .Head, .SubHead, .SubSubHead, .Normal, .NormalBold, .NormalRed, .NormalTextBox, .NormalDisabled, a:link, a:visited, a:hover, input, .CommandButton, p, label {
+    font-family: 'Open Sans',sans-serif;
+}
+p .Normal, .NormalDisabled, .NormalDeleted {
+     font-size: 1.1em;
+     font-weight: normal;
+     line-height: 18px;
+ }
+
+/*
+.input-group[class*="col-"] {
+    padding-left: 15px !Important;
+    padding-right: 15px !Important;
+}*/
+.page-header.container {
+    margin-top: 60px;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Open Sans',sans-serif;
+    font-weight: 300;
+}
+p {
+    font-family: 'Open Sans',sans-serif;
+}
+
+.panel-body.fullwidth {
+    padding: 0;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+    padding: 60px 15px 0;
+}
+.container .text-muted {
+    margin: 20px 0;
+}
+
+.footer > .container {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+code {
+    font-size: 80%;
+}
+/*  ONLY FOR TEST THEME    */
+
+
+
+/*      mo-timeline STYLE       */
+.mo-timeline {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    top:0;
+}
+.mo-timeline.twocol:before {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #eeeeee;
+    left: 50%;
+    margin-left: -1.5px;
+}
+
+.mo-timeline > li {
+    position: relative;
+    border: 1px solid transparent;
+    padding-right:22px;
+    padding-left:0;
+    display: block;
+    /*margin-bottom: 10px;*/
+}
+
+.mo-timeline > li {
+    float: left;
+}
+
+.mo-timeline > li.mo-inverted {
+    float: right;
+    padding-right:0;
+    padding-left:22px;
+}
+
+.mo-timeline > li > .panel {
+    padding:0;
+    /*margin-bottom: 10px;*/
+    border: 1px solid #d4d4d4;
+    position: relative;
+    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    background: #ffffff;
+    min-height: 160px;
+    width: 98%;
+}
+.mo-timeline > li > .panel:hover {
+    background-color: #f5f8fa;
+    cursor: pointer;
+}
+
+.mo-timeline > li > .panel:before {
+    position: absolute;
+    top: 26px;
+    right: -15px;
+    display: inline-block;
+    border-top: 15px solid transparent;
+    border-left: 15px solid #ccc;
+    border-right: 0 solid #ccc;
+    border-bottom: 15px solid transparent;
+    content: " ";
+}
+
+.mo-timeline > li > .panel:after {
+    position: absolute;
+    top: 27px;
+    right: -13px;
+    display: inline-block;
+    border-top: 14px solid transparent;
+    border-left: 14px solid #fff;
+    border-right: 0 solid #fff;
+    border-bottom: 14px solid transparent;
+    content: " ";
+}
+
+.mo-timeline > li.mo-inverted > .panel {
+    /*margin-left: 10%;*/
+    float: right;
+}
+
+.mo-timeline > li.mo-inverted > .panel:before {
+    border-left-width: 0;
+    border-right-width: 15px;
+    left: -15px;
+    right: auto;
+}
+
+.mo-timeline > li.mo-inverted > .panel:after {
+    border-left-width: 0;
+    border-right-width: 14px;
+    left: -14px;
+    right: auto;
+}
+
+.mo-timeline > li.mo-inverted:before {
+    border-left-width: 0;
+    border-right-width: 15px;
+    left: -15px;
+    right: auto;
+}
+
+.mo-timeline > li > .badge {
+    border-radius: 20px;
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 1;
+    min-width: 10px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: baseline;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 1;
+}
+.mo-timeline > li > .badge.ver_b {
+    right: 0;
+    top: 26px;
+    margin-right: -17px;
+}
+
+.mo-timeline > li.mo-inverted > .badge.ver_b {
+    left: 0;
+    margin-left: -17px;
+    right: auto;
+}
+.mo-timeline > li > .badge.primary {
+    background-color: #428bca !important;
+}
+.mo-timeline > li > .badge.default {
+    background-color: #f5f5f5 !important;
+}
+.mo-timeline > li.offset > .panel:before {
+    top:102px;
+}
+
+.mo-timeline > li.offset > .panel:after {
+    top:103px;
+}
+.mo-timeline > li.offset > .badge {
+    top: 100px;
+}
+.hidden{visibility:hidden;overflow:hidden;position:relative;height:0;z-index:-1;}
+
+
+@media (min-width: 768px) and (max-width: 1000px) {
+    .mo-timeline > li > .panel {
+        /*width: calc(100% - 60px);
+        width: -moz-calc(100% - 60px);
+        width: -webkit-calc(100% - 60px);*/
+        /*width:100%;*/
+    }
+    .mo-timeline > li.mo-inverted > .panel {
+        /*margin-left: 0;*/
+    }
+}
+
+@media (max-width: 768px) {
+/*@media (max-width: 767px) {*/
+    .mo-timeline:before {
+        background-color: transparent;
+        bottom: 0;
+        content: " ";
+        position: absolute;
+        top: 0;
+        width: 0;
+    }
+    .mo-timeline > li.mo-inverted > .panel {
+        margin-left: 0;
+    }
+
+    ul.mo-timeline > li > .panel {
+        /*width: calc(100% - 60px);
+        width: -moz-calc(100% - 60px);
+        width: -webkit-calc(100% - 60px);*/
+        width: 100%;
+    }
+}
+
+
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default in Bootstrap */
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: @screen-sm-min) { }
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: @screen-md-min) { }
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: @screen-lg-min) { }
+
+@media (max-width: @screen-xs-max) {  }
+@media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {  }
+@media (min-width: @screen-md-min) and (max-width: @screen-md-max) {  }
+@media (min-width: @screen-lg-min) {  }
+
