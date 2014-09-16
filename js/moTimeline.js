@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.1
+ * moTimeline v 0.9.2
  * One or two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -77,7 +77,6 @@
 
                 var the_post = $(elem),
                     the_post_OK = the_post.offset().top,
-                    //the_post_H = the_post.outerHeight( true ),
                     the_post_H = the_post.outerHeight( ),
                     the_post_UK = the_post_H + the_post_OK;
 
@@ -90,8 +89,6 @@
 
     moTleftORright = (function (elem){
 
-        //var lr, moToffset;
-
         if (elem == 0 || !elem || elem.length == 0 ) return console.log('no element');
             var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, moToffset,
                 the_post = $(elem);
@@ -99,7 +96,6 @@
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
                 pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
-                //console.log('NEUES ELEMENT:   eID: '+eid+ '   pLid: '+pLid+ '     pRid: '+pRid);
 
                 e = moTpostPosition($('#'+eid));
                 l = moTpostPosition($('#'+pLid));
@@ -108,46 +104,24 @@
                 UG = l.u - e.o;
                 AA = l.u - r.u;
                 BB = r.u - l.u;
-/*
-                console.log(the_post);
-                console.log(OG+'  '+UG+'   '+AA+'   '+BB)
-                console.log('E: '+e.o, e.h, e.u);
-                console.log('L: '+l.o, l.h, l.u);
-                console.log('R: '+r.o, r.h, r.u);
-*/
-        //var columns =  moTcolumnCount().col;
+
 
         if(moTcolumns > 1){
             if (l.u > e.o ) {
                 lr = 1;
-                //console.log('Regel 1 RECHTS: if (l.u > e.o && columns > 1)')
-            }
-            if (l.u == e.o ) {
-               // lr = 2;
-                //console.log('Regel 2 RECHTS: if (l.u == e.o && columns > 1)')
             }
             if (r.u >= l.u ) {
                 lr = 0;
-                //console.log('Regel 3 LINKS: if (r.u > l.u && columns > 1)')
             }
 
 
             //  adjust badge
-            //if (the_post.hasClass('mo-inverted')) {
             if( lr > 0 ){
-                //console.log('TTT: '+ lr + ' OG: '+OG);
                 if (  OG < 40 && OG >= 0 ) {
                     moToffset = 1;
-                    //console.log('Regel 1: if (  OG < 40 && OG > 0 )')
                 }
-               /* if ( UG < 39 && UG > 0 ) {
-                    ////the_post.addClass('offset');
-                    moToffset = 'addOffset';
-                    console.log('Regel 2:  if ( UG < 39 && UG > 0 )')
-                }*/
                 if ( AA < 40 && BB < 40 )  {
                     moToffset = 1;
-                    //console.log('Regel 3: if ( AA < 40 && BB < 40 )')
                 }
             }
         }
@@ -166,8 +140,6 @@
     initmoT = function(elem,i) {
             var the_post, moTlor;
 
-
-
             the_post = $(elem[i]);
             moTlor = moTleftORright(the_post);
 
@@ -182,14 +154,16 @@
                 the_post.removeClass('offset');
             }
 
+        /*
             //  recalculate position in error
             var position = the_post.position(),
                 pl = Math.round(position.left);
-           // console.log(pl + '    I:'+i+'   ID: '+the_post.attr('id')+'  moTlor: '+moTlor.lr);
+
             if(( pl < 50 && moTlor.lr > 0) || ( pl > 0 && moTlor.lr == 0)){
-                console.log('recalc ID: '+i);
-                initmoT(elem,i);
-                return false;
+                waitForFinalEvent(function(){
+                    initmoT(elem,i);
+                }, 500, fullDateString.getTime());
+                return;
             }else{
                 the_post.animate({opacity:1}, moTdefaults.calcSpeed,function (){
                     if (i < (moTdefaults.total - 1)) {
@@ -200,6 +174,17 @@
 
                 })
             }
+            */
+        the_post.animate({opacity:1}, moTdefaults.calcSpeed,function (){
+            if (i < (moTdefaults.total - 1)) {
+                waitForFinalEvent(function(){
+                    initmoT(elem,i + 1);
+                }, 500, fullDateString.getTime());
+            } else {
+                $(window).data('ajaxready', true);
+            }
+
+        })
 
 
         };
@@ -210,9 +195,8 @@
     jQuery.fn.moTimeline = function (opt) {
 
         //  do not load more data till all posts arranged
-        //$(window).data('ajaxready', false);
+        $(window).data('ajaxready', false);
 
-        //var mo_posts = $('li',this);
         var  mo_posts = $(this);
         if(!mo_posts) return console.log('sorry, no data...');
 
@@ -231,7 +215,7 @@
 
 
             moTdefaults = {
-                calcSpeed: 100,
+                calcSpeed: 200,
                 total : mo_posts.length,
                 gridValues : 'col-xs-12 col-sm-12 col-md-6',
                 QueueInUse : 0
@@ -258,34 +242,18 @@
         if (moToption.startID > 0){
             $(mo_posts).addClass( moTcolumnCount().gridValues );
         }
-/*
-        //only debug info
-        $('.libox').hover(function() {
-            var offset = $(this).offset();
-            //$(this).offset().left;
-            console.log( 'Left: ' + offset.left + '\nTop: ' + offset.top );
-        });
-*/
-
-        //START
-/*
-        for(var i = idx; i < (moTdefaults.total); i++) {
-            var the_post = $(mo_posts[i]),moTlor;
-            $(the_post).animate({opacity:1}, moToption.animationSpeed,function (e){
-                moTlor = moTleftORright(the_post);
-                //console.log('LOR: '+moTlor.lr + '    OFFSET: '+moTlor.addOffset);
-                //console.log(moTlor);
-                if(moTlor.lr > 0)  the_post.addClass('mo-inverted');
-                if(moTlor.moToffset > 0)the_post.addClass('offset');
-            }(i));
-        }
-*/
 
 
         //  set id to every li -
-        //  to do: check id exist before change id
+        //  check id exist before change id
         mo_posts.attr('id', function (index) {
-            return 'moT' + index;
+            //var theid = $(this).attr('id');
+            var theid = this.id;
+            if(theid.length  > 0) {
+                return theid;
+            }else{
+                return 'moT' + index;
+            }
         });
 
 
