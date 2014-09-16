@@ -10,33 +10,32 @@ last build: v 0.9.35
 ##your html markup
 <pre>
 <code>
- <!--<div class="row">
-	<div class="timeline-wrapper container">
-		<ul class="mo-timeline">
-			<li>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">a headline</h3>
-					</div>
-					<div class="panel-body">
-						<p>some text</p>
-					</div>
-				</div>
-			</li>
-			<li id="test">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">next headline</h3>
-					</div>
-					<div class="panel-body">
-						<p>some text.</p>
-					</div>
-				</div>
-			</li>
-		</ul>
-	</div>
-</div>-->
-
+&#x3C;div class="row"&#x3E;
+	&#x3C;div class="timeline-wrapper container"&#x3E;
+		&#x3C;ul class="mo-timeline"&#x3E;
+			&#x3C;li&#x3E;
+				&#x3C;div class="panel panel-default"&#x3E;
+					&#x3C;div class="panel-heading"&#x3E;
+						&#x3C;h3 class="panel-title"&#x3E;a headline&#x3C;/h3&#x3E;
+					&#x3C;/div&#x3E;
+					&#x3C;div class="panel-body"&#x3E;
+						&#x3C;p&#x3E;some text&#x3C;/p&#x3E;
+					&#x3C;/div&#x3E;
+				&#x3C;/div&#x3E;
+			&#x3C;/li&#x3E;
+			&#x3C;li id="test"&#x3E;
+				&#x3C;div class="panel panel-default"&#x3E;
+					&#x3C;div class="panel-heading"&#x3E;
+						&#x3C;h3 class="panel-title"&#x3E;next headline&#x3C;/h3&#x3E;
+					&#x3C;/div&#x3E;
+					&#x3C;div class="panel-body"&#x3E;
+						&#x3C;p&#x3E;some text.&#x3C;/p&#x3E;
+					&#x3C;/div&#x3E;
+				&#x3C;/div&#x3E;
+			&#x3C;/li&#x3E;
+		&#x3C;/ul&#x3E;
+	&#x3C;/div&#x3E;
+&#x3C;/div&#x3E;
 </code>
 </pre>
 
