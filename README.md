@@ -7,7 +7,10 @@ last build: v 0.9.35
 * auto arrange post left or right
 * bootstrap 3.x compatible
 
-##your html markup
+<a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/LinkClick.aspx?fileticket=aUReS-mAUQY%3d&amp;tabid=307&amp;portalid=7" class="img-responsive"></a>
+
+##html markup
+<p>actually supported is only an unordered list. Add class "mo-timeline" to the "ul"</p>
 <pre>
 <code>
 &#x3C;div class="row"&#x3E;
