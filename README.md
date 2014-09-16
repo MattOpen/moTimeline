@@ -95,6 +95,9 @@ take a look at index.html in this repo, how to use css and js.
 * http://www.mattopen.com
 * http://www.mattopen.com/Projekte/moTimeline
 
+##special thanks to...
+* Livestamp.js A simple, unobtrusive jQuery plugin that provides auto-updating timeago text to your timestamped HTML elements using Moment.js.http://mattbradley.github.com/livestampjs
+
 #License
 This plugin and all code contained is Copyright 2014 <a href="http://www.exponde.com" >exponde</a>, Germany. You are granted a license to use this code / software as you wish, free of charge and free of restrictions under the MIT license
 
