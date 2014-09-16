@@ -12,8 +12,8 @@ last build: v 0.9.35
 <p>add the bootstrap.css and the moTimeline.css files to the head of your site</p>
 <pre>
 <code>
-	&#x3;Clink rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css"&#x3E;
-    &#x3;Clink rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css"&#x3E;
+	&#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css"&#x3E;
+    &#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css"&#x3E;
 </code>
 </pre>
 
