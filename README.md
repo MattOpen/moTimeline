@@ -7,6 +7,38 @@ last build: v 0.9.35
 * auto arrange post left or right
 * bootstrap 3.x compatible
 
+##your html markup
+<pre>
+<code>
+ <!--<div class="row">
+	<div class="timeline-wrapper container">
+		<ul class="mo-timeline">
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">a headline</h3>
+					</div>
+					<div class="panel-body">
+						<p>some text</p>
+					</div>
+				</div>
+			</li>
+			<li id="test">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">next headline</h3>
+					</div>
+					<div class="panel-body">
+						<p>some text.</p>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>-->
+
+</code>
+</pre>
 
 ##Installation
 <p>add the bootstrap.css and the moTimeline.css files to the head of your site</p>
