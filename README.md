@@ -12,28 +12,28 @@ last build: v 0.9.35
 <p>add the bootstrap.css and the moTimeline.css files to the head of your site</p>
 <pre>
 <code>
-	&#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css"&#x3E;
-    &#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css"&#x3E;
+ &#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css"&#x3E;
+ &#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css"&#x3E;
 </code>
 </pre>
 
 <p>add the moTimeline.js file to the bottom of your site</p>
 <pre>
 <code>
-	<script type="text/javascript" src="js/moTimeline.js"></script>
+ &#x3C;script type="text/javascript" src="js/moTimeline.js"></script&#x3E;
 </code>
 </pre>
 
 <p>initialize the script after page load</p>
 <pre>
 <code>
-	<script type="text/javascript">
+ &#x3C;script type="text/javascript"&#x3E;
 
-		$(document).ready(function () {
-			$('ul.mo-timeline > li').moTimeline();
-		});
+	$(document).ready(function () {
+		$('ul.mo-timeline > li').moTimeline();
+	});
 
-	</script>
+ &#x3C;/script&#x3E;
 </code>
 </pre>
 
