@@ -1,6 +1,18 @@
 /*  ONLY FOR TEST THEME    */
 /*@import url(bootstrap.css);*/
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,700italic);
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,700italic);*/
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), local('OpenSans'), url(../fonts/opensans/opensans400normal.woff) format('woff');
+}
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/opensans/v7/k3k702ZOKiLJc3WVjuplzHhCUOGz7vYGh680lGh-uXM.woff) format('woff');
+}
 
 body, th, td, table, h1, h2, h3, h4, h5, h6, .Head, .SubHead, .SubSubHead, .Normal, .NormalBold, .NormalRed, .NormalTextBox, .NormalDisabled, a:link, a:visited, a:hover, input, .CommandButton, p, label {
     font-family: 'Open Sans',sans-serif;
@@ -34,6 +46,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 p {
     font-family: 'Open Sans',sans-serif;
+    overflow: hidden;
 }
 
 .panel-body.fullwidth {
@@ -85,11 +98,14 @@ code {
 
 /*      mo-timeline STYLE       */
 .mo-timeline {
-    list-style: none;
+    list-style: none outside none;
+    margin-top: 20px;
+    overflow: hidden;
     padding: 0;
     position: relative;
-    overflow: hidden;
-    top:0;
+    top: 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 .mo-timeline.twocol:before {
     top: 0;
@@ -103,38 +119,45 @@ code {
 }
 
 .mo-timeline > li {
+    float: left;
     position: relative;
-    border: 1px solid transparent;
-    padding-right:22px;
-    padding-left:0;
-    display: block;
-    /*margin-bottom: 10px;*/
+    display: block;      /** IMPORTANT FOR THE POSITIONING**/
+    top:0;
 }
 
-.mo-timeline > li {
-    float: left;
+.mo-timeline > li.mo-inverted > .panel {
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 0 ;
+    margin-left: 20px;
 }
 
 .mo-timeline > li.mo-inverted {
     float: right;
-    padding-right:0;
-    padding-left:22px;
+    position: relative;
+    display: block;      /** IMPORTANT FOR THE POSITIONING**/
 }
 
 .mo-timeline > li > .panel {
     padding:0;
-    /*margin-bottom: 10px;*/
+    margin-right: 20px;
     border: 1px solid #d4d4d4;
     position: relative;
     -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
     background: #ffffff;
-    min-height: 160px;
-    width: 98%;
+    min-height: 90px;
 }
 .mo-timeline > li > .panel:hover {
     background-color: #f5f8fa;
-    cursor: pointer;
+}
+.mo-timeline > li > .panel > .panel-body {
+    width: 100%;
+    overflow: hidden;
+}
+.mo-timeline > li > .panel > .panel-body img {
+    min-width: 100%;    /* WICHTIG*/
+    display: block;
 }
 
 .mo-timeline > li > .panel:before {
@@ -159,11 +182,6 @@ code {
     border-right: 0 solid #fff;
     border-bottom: 14px solid transparent;
     content: " ";
-}
-
-.mo-timeline > li.mo-inverted > .panel {
-    /*margin-left: 10%;*/
-    float: right;
 }
 
 .mo-timeline > li.mo-inverted > .panel:before {
@@ -200,6 +218,7 @@ code {
     white-space: nowrap;
     position: absolute;
     z-index: 1;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.176);
 }
 .mo-timeline > li > .badge.ver_b {
     right: 0;
@@ -233,13 +252,6 @@ code {
 
 @media (min-width: 768px) and (max-width: 1000px) {
     .mo-timeline > li > .panel {
-        /*width: calc(100% - 60px);
-        width: -moz-calc(100% - 60px);
-        width: -webkit-calc(100% - 60px);*/
-        /*width:100%;*/
-    }
-    .mo-timeline > li.mo-inverted > .panel {
-        /*margin-left: 0;*/
     }
 }
 
@@ -268,18 +280,4 @@ code {
 
 /* Extra small devices (phones, less than 768px) */
 /* No media query since this is the default in Bootstrap */
-
-/* Small devices (tablets, 768px and up) */
-@media (min-width: @screen-sm-min) { }
-
-/* Medium devices (desktops, 992px and up) */
-@media (min-width: @screen-md-min) { }
-
-/* Large devices (large desktops, 1200px and up) */
-@media (min-width: @screen-lg-min) { }
-
-@media (max-width: @screen-xs-max) {  }
-@media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {  }
-@media (min-width: @screen-md-min) and (max-width: @screen-md-max) {  }
-@media (min-width: @screen-lg-min) {  }
 

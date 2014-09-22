@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.2
+ * moTimeline v 0.9.35
  * One or two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -7,228 +7,233 @@
  */
 
 
-//  HELPER
+//  HELPER credits goes to http://stackoverflow.com/questions/18575582/how-to-detect-responsive-breakpoints-of-twitter-bootstrap-3-using-javascript
     var breakpointHelper = '<div class="device-xs visible-xs hidden"></div>';
         breakpointHelper += '<div class="device-sm visible-sm hidden"></div>';
         breakpointHelper += '<div class="device-md visible-md hidden"></div>';
         breakpointHelper += '<div class="device-lg visible-lg hidden"></div>';
+
     $('body').prepend(breakpointHelper);
+
+if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )) {
+    //nothing to do
+}else{
     var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="some string!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
     var fullDateString = new Date();
+}
+
+
     function getBreakpoint( alias ) {
         return $('.device-' + alias).is(':visible');
     }
+//  HELPER end
+
+        //  private functions
+    var moT_GetColumnCount = (function(){
+            var col = 0,
+                gridValues,
+                Breakpoint,
+                getBreakpointInt = 0,
+                startBreakpointInt = 0;
+
+            //  get actual size width
+            if( getBreakpoint('xs')){
+                getBreakpointInt = 1;
+                Breakpoint = 'xs';
+            }else if( getBreakpoint('sm')){
+                getBreakpointInt = 2;
+                Breakpoint = 'sm';
+            }else if( getBreakpoint('md')){
+                getBreakpointInt = 3;
+                Breakpoint = 'md';
+            }else if( getBreakpoint('lg')){
+                getBreakpointInt = 4;
+                Breakpoint = 'lg';
+            }
+
+            if( moToption.startBreakpoint == 'xs'){
+                startBreakpointInt = 1;
+                gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
+            }else if( moToption.startBreakpoint == 'sm'){
+                startBreakpointInt = 2;
+                gridValues = ['col-xs-12 col-sm-6 col-md-6  col-lg-6 sm'];
+            }else if( moToption.startBreakpoint == 'md'){
+                startBreakpointInt = 3;
+                gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
+            }else if( moToption.startBreakpoint == 'lg'){
+                startBreakpointInt = 4;
+                gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
+            }
 
 
-    var moTcolumnCount = (function(){
-                var col = 0,
-                    gridValues,
-                    Breakpoint,
-                    getBreakpointInt = 0,
-                    startBreakpointInt = 0;
+            if( getBreakpointInt >= startBreakpointInt  ) {
+                col = 2;
+            }else{
+                col = 1;
+            }
 
-                //  get actual size width
-                if( getBreakpoint('xs')){
-                    getBreakpointInt = 1;
-                    Breakpoint = 'xs';
-                }else if( getBreakpoint('sm')){
-                    getBreakpointInt = 2;
-                    Breakpoint = 'sm';
-                }else if( getBreakpoint('md')){
-                    getBreakpointInt = 3;
-                    Breakpoint = 'md';
-                }else if( getBreakpoint('lg')){
-                    getBreakpointInt = 4;
-                    Breakpoint = 'lg';
-                }
+            return {
+                col:col,
+                gridValues : gridValues,
+                Breakpoint : Breakpoint
+            }
+        });
 
-                if( moToption.startBreakpoint == 'xs'){
-                    startBreakpointInt = 1;
-                    gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
-                }else if( moToption.startBreakpoint == 'sm'){
-                    startBreakpointInt = 2;
-                    gridValues = ['col-xs-12 col-sm-6 col-md-6  col-lg-6 sm'];
-                }else if( moToption.startBreakpoint == 'md'){
-                    startBreakpointInt = 3;
-                    gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
-                }else if( moToption.startBreakpoint == 'lg'){
-                    startBreakpointInt = 4;
-                    gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
-                }
+    var moT_GetPostPosition = (function(elem){
+            var o,h, u;
+
+            if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,u:0};
+
+            var the_post = $(elem),
+                the_post_OK = the_post.offset().top,
+                the_post_H = the_post.outerHeight( ),
+                the_post_UK = the_post_H + the_post_OK;
 
 
-                if( getBreakpointInt >= startBreakpointInt  ) {
-                    col = 2;
-                }else{
-                    col = 1;
-                }
+            return {
+                o : Math.round(the_post_OK),
+                h : Math.round(the_post_H),
+                u : Math.round(the_post_UK)
+            }
+        });
 
-                return {
-                    col:col,
-                    gridValues : gridValues,
-                    Breakpoint : Breakpoint
-                }
-            }),
+    var moT_GetLeftOrRight = (function (elem){
 
-    moTpostPosition = (function(elem){
-                var o,h,u;
-
-                if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,u:0};
-
-                var the_post = $(elem),
-                    the_post_OK = the_post.offset().top,
-                    the_post_H = the_post.outerHeight( ),
-                    the_post_UK = the_post_H + the_post_OK;
-
-                return {
-                    o : Math.round(the_post_OK),
-                    h : Math.round(the_post_H),
-                    u : Math.round(the_post_UK)
-                }
-            }),
-
-    moTleftORright = (function (elem){
-
-        if (elem == 0 || !elem || elem.length == 0 ) return console.log('no element');
-            var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, moToffset,
+            if (elem == 0 || !elem || elem.length == 0 ) return console.log('no element');
+            var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, bo,
                 the_post = $(elem);
 
-                eid = the_post.attr('id');
-                pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
-                pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
+            eid = the_post.attr('id');
+            pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
+            pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
 
-                e = moTpostPosition($('#'+eid));
-                l = moTpostPosition($('#'+pLid));
-                r = moTpostPosition($('#'+pRid));
-                OG = e.o - l.o;
-                UG = l.u - e.o;
-                AA = l.u - r.u;
-                BB = r.u - l.u;
+            e = moT_GetPostPosition($('#'+eid));
+            l = moT_GetPostPosition($('#'+pLid));
+            r = moT_GetPostPosition($('#'+pRid));
+            OG = e.o - l.o;
+            UG = l.u - e.o;
+            AA = l.u - r.u;
+            BB = r.u - l.u;
 
+            if(moTcolumns > 1){
 
-        if(moTcolumns > 1){
-            if (l.u > e.o ) {
-                lr = 1;
-            }
-            if (r.u >= l.u ) {
-                lr = 0;
-            }
-
-
-            //  adjust badge
-            if( lr > 0 ){
-                if (  OG < 40 && OG >= 0 ) {
-                    moToffset = 1;
+                if (l.u >= e.o ) {
+                    lr = 1;
                 }
-                if ( AA < 40 && BB < 40 )  {
-                    moToffset = 1;
+                if (r.u >= l.u ) {
+                    lr = 0;
                 }
-            }
-        }
 
-
-        return {
-            lr : lr,
-            moToffset : moToffset,
-            e:e,
-            l:l,
-            r:r
-        }
-
-    }),
-
-    initmoT = function(elem,i) {
-            var the_post, moTlor;
-
-            the_post = $(elem[i]);
-            moTlor = moTleftORright(the_post);
-
-            if (moTlor.lr > 0){
-                the_post.addClass('mo-inverted');
-            }else{
-                the_post.removeClass('mo-inverted');
-            }
-            if (moTlor.moToffset > 0){
-                the_post.addClass('offset');
-            }else{
-                the_post.removeClass('offset');
-            }
-
-        /*
-            //  recalculate position in error
-            var position = the_post.position(),
-                pl = Math.round(position.left);
-
-            if(( pl < 50 && moTlor.lr > 0) || ( pl > 0 && moTlor.lr == 0)){
-                waitForFinalEvent(function(){
-                    initmoT(elem,i);
-                }, 500, fullDateString.getTime());
-                return;
-            }else{
-                the_post.animate({opacity:1}, moTdefaults.calcSpeed,function (){
-                    if (i < (moTdefaults.total - 1)) {
-                        initmoT(elem,i + 1);
-                    } else {
-                        $(window).data('ajaxready', true);
+                //  adjust badge
+                if( lr > 0 ){
+                    if (  OG < 40 && OG >= 0 ) {
+                        bo = 1;
                     }
-
-                })
+                    if ( AA < 40 && BB < 40 )  {
+                        bo = 1;
+                    }
+                }
             }
-            */
-        the_post.animate({opacity:1}, moTdefaults.calcSpeed,function (){
-            if (i < (moTdefaults.total - 1)) {
-                waitForFinalEvent(function(){
-                    initmoT(elem,i + 1);
-                }, 500, fullDateString.getTime());
+
+
+            return {
+                lr : lr,
+                badge_offset : bo,
+                e:e,
+                l:l,
+                r:r
+            }
+
+        });
+
+    var moT_setPostPosition = (function(elem) {
+
+            var pPos = moT_GetLeftOrRight(elem);
+
+            if (pPos.lr > 0) {
+                elem.addClass('mo-inverted');
             } else {
-                $(window).data('ajaxready', true);
+                elem.removeClass('mo-inverted');
+            }
+            if (pPos.badge_offset > 0) {
+                elem.addClass('offset');
+            } else {
+                elem.removeClass('offset');
             }
 
-        })
+        });
 
+    moT_init = (function(initarr,idx) {
 
-        };
+            var elem;
 
+            elem = $(initarr[idx]);
+            moT_setPostPosition(elem);
+
+            if (idx < (moTdefaults.total - 1)) {
+                moT_init(initarr,idx + 1);
+            } else {
+                if(window.location.href.indexOf("www.mattopen.com") > -1 && typeof injectPlacements2 !== 'undefined' && $.isFunction( injectPlacements2 )) {
+                    injectPlacements2(initarr); //placements only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                }
+                if(typeof moT_initEmbed !== 'undefined' && $.isFunction( moT_initEmbed )) {
+                    moT_initEmbed(initarr); //embed only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                }
+                moT_RefreshPostsAll();
+                //$(window).data('ajaxready', true);	//	do not need
+            }
+
+        });
+
+    moT_RefreshPostsAll = (function() {
+
+            moTcolumns =  moT_GetColumnCount().col;
+            arr = $('ul.mo-timeline');
+
+            $('li',arr).each(function(idx){
+                moT_setPostPosition($(this));
+            });
+
+            $('li',arr).css({"opacity":"1"});
+
+        });
 
 
 (function ( $ ) {
     jQuery.fn.moTimeline = function (opt) {
 
-        //  do not load more data till all posts arranged
-        $(window).data('ajaxready', false);
+        //  do not load more data until all posts arranged
+        //$(window).data('ajaxready', false);
+        //if ($(window).data('ajaxready') == false) return;
 
-        var  mo_posts = $(this);
+        //mo_posts = $('li',this);
+        mo_posts = this;
         if(!mo_posts) return console.log('sorry, no data...');
+        motrcount = 1;
 
-        // moToption global definiert, so stehen die Werte immer zur Verfügung
-            moToption = $.extend({
-                animationSpeed: 100,
-                shuffleSpeed: 200,
-                gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
-                badge: 'ver_b',
-                startBreakpoint: 'md',
-                startID: 0,
-                refresh: 'false'
-            }, opt);
+        moToption = $.extend({
+            animationSpeed: 100,
+            shuffleSpeed: 200,
+            gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
+            badge: 'ver_b',
+            startBreakpoint: 'md',
+            startID: 0
+        }, opt);
 
-            moTcolumns =  moTcolumnCount().col;
+        moTdefaults = {
+            calcSpeed: 100,
+            total : mo_posts.length,
+            gridValues : 'col-xs-12 col-sm-12 col-md-6  col-lg-6'
+        };
 
-
-            moTdefaults = {
-                calcSpeed: 200,
-                total : mo_posts.length,
-                gridValues : 'col-xs-12 col-sm-12 col-md-6',
-                QueueInUse : 0
-            };
 
 
         //  initialize
-
-        //moTcolumnCount();
-        $(mo_posts).addClass( moTcolumnCount().gridValues );
+        moTcolumns =  moT_GetColumnCount().col;
+        $(mo_posts).addClass( moT_GetColumnCount().gridValues );
         $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
 
-        if( moTcolumnCount().col == 1 ) {
+        if( moT_GetColumnCount().col == 1 ) {
             $('.mo-timeline').removeClass('twocol');
         }else{
             if ($('.timeline-wrapper').find('.twocol').length > 0){
@@ -240,27 +245,43 @@
 
         var idx = 0;
         if (moToption.startID > 0){
-            $(mo_posts).addClass( moTcolumnCount().gridValues );
+            $(mo_posts).addClass( moT_GetColumnCount().gridValues );
         }
 
 
         //  set id to every li -
         //  check id exist before change id
         mo_posts.attr('id', function (index) {
-            //var theid = $(this).attr('id');
+
             var theid = this.id;
             if(theid.length  > 0) {
                 return theid;
             }else{
                 return 'moT' + index;
             }
+
         });
 
 
 
-        initmoT(mo_posts,idx);
+        moT_init(mo_posts,idx);
 
-        //return this;
+
+		if (typeof imagesLoaded !== 'undefined' && $.isFunction( imagesLoaded )) {
+			$('.mo-timeline').imagesLoaded( function() {
+
+				moT_RefreshPostsAll();
+
+			});
+		}
+
+
+        $(window).on('resize', function() {
+            waitForFinalEvent(function(){
+                moT_RefreshPostsAll();
+            }, 500, fullDateString.getTime())
+        });
+
 
     };
 }( jQuery ));
