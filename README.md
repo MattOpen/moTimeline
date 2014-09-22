@@ -1,6 +1,7 @@
 #moTimeline
-moTimeline is a responsive two column timeline layout library - MIT licensed.
-last build: v 0.9.35
+<p>moTimeline is a responsive two column timeline layout library - MIT licensed.</p>
+<p>I like OpenSource, I like sharing. Do what ever you want with this little piece of code. (-:</p>
+<p>last build: v 0.9.36</p>
 
 ##Features
 * one or two column
