@@ -12,7 +12,8 @@
 
     <!-- Bootstrap core CSS -->
       <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
-      <link rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css"><!-- Custom styles for this template -->
+      <link rel="stylesheet" type="text/css" media="screen" href="css/moTimeline.css">
+      <link rel="stylesheet" type="text/css" media="screen" href="css/mystyle.css"><!-- Custom styles for this template -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -408,23 +409,13 @@
 
 
     <script type="text/javascript">
-
         $(document).ready(function () {
 
 			$('ul.mo-timeline > li').moTimeline(
                 {
-                    animationSpeed: 100,
-                    shuffleSpeed : 0
+                    startBreakpoint: 'sm'
                 }
 			);
-
-            $(window).on('resize', function() {
-                waitForFinalEvent(function(){
-
-                    $('ul.mo-timeline > li').moTimeline();
-
-                }, 500, fullDateString.getTime())
-            });
 
         });
     </script>
