@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.35
+ * moTimeline v 0.9.36
  * One or two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -8,7 +8,7 @@
 
 
 //  HELPER credits goes to http://stackoverflow.com/questions/18575582/how-to-detect-responsive-breakpoints-of-twitter-bootstrap-3-using-javascript
-    var breakpointHelper = '<div class="device-xs visible-xs hidden"></div>';
+    var breakpointHelper  = '<div class="device-xs visible-xs hidden"></div>';
         breakpointHelper += '<div class="device-sm visible-sm hidden"></div>';
         breakpointHelper += '<div class="device-md visible-md hidden"></div>';
         breakpointHelper += '<div class="device-lg visible-lg hidden"></div>';
@@ -56,7 +56,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
                 gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
             }else if( moToption.startBreakpoint == 'sm'){
                 startBreakpointInt = 2;
-                gridValues = ['col-xs-12 col-sm-6 col-md-6  col-lg-6 sm'];
+                gridValues = 'col-xs-12 col-sm-6 col-md-6  col-lg-6 sm';
             }else if( moToption.startBreakpoint == 'md'){
                 startBreakpointInt = 3;
                 gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
@@ -64,7 +64,6 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
                 startBreakpointInt = 4;
                 gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
             }
-
 
             if( getBreakpointInt >= startBreakpointInt  ) {
                 col = 2;
@@ -115,7 +114,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
             AA = l.u - r.u;
             BB = r.u - l.u;
 
-            if(moTcolumns > 1){
+            if(moTcolumns.col > 1){
 
                 if (l.u >= e.o ) {
                     lr = 1;
@@ -180,14 +179,14 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
                     moT_initEmbed(initarr); //embed only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
                 }
                 moT_RefreshPostsAll();
-                //$(window).data('ajaxready', true);	//	do not need
+                //$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
 
     moT_RefreshPostsAll = (function() {
 
-            moTcolumns =  moT_GetColumnCount().col;
+            moTcolumns =  moT_GetColumnCount();
             arr = $('ul.mo-timeline');
 
             $('li',arr).each(function(idx){
@@ -200,7 +199,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
 
 
 (function ( $ ) {
-    jQuery.fn.moTimeline = function (opt) {
+    jQuery.fn.moTimeline = function (option) {
 
         //  do not load more data until all posts arranged
         //$(window).data('ajaxready', false);
@@ -218,7 +217,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
             badge: 'ver_b',
             startBreakpoint: 'md',
             startID: 0
-        }, opt);
+        },option);
 
         moTdefaults = {
             calcSpeed: 100,
@@ -229,11 +228,11 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
 
 
         //  initialize
-        moTcolumns =  moT_GetColumnCount().col;
-        $(mo_posts).addClass( moT_GetColumnCount().gridValues );
+        moTcolumns =  moT_GetColumnCount();
+        $(mo_posts).addClass( moTcolumns.gridValues );
         $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
 
-        if( moT_GetColumnCount().col == 1 ) {
+        if( moTcolumns.col == 1 ) {
             $('.mo-timeline').removeClass('twocol');
         }else{
             if ($('.timeline-wrapper').find('.twocol').length > 0){
@@ -245,7 +244,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
 
         var idx = 0;
         if (moToption.startID > 0){
-            $(mo_posts).addClass( moT_GetColumnCount().gridValues );
+            $(mo_posts).addClass( moTcolumns.gridValues );
         }
 
 

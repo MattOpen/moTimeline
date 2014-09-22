@@ -1,37 +1,8 @@
-/*  ONLY FOR TEST THEME    */
-/*@import url(bootstrap.css);*/
-/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,700italic);*/
-@font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Open Sans'), local('OpenSans'), url(../fonts/opensans/opensans400normal.woff) format('woff');
-}
-@font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 700;
-    src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../fonts/opensans/v7/k3k702ZOKiLJc3WVjuplzHhCUOGz7vYGh680lGh-uXM.woff) format('woff');
-}
 
-body, th, td, table, h1, h2, h3, h4, h5, h6, .Head, .SubHead, .SubSubHead, .Normal, .NormalBold, .NormalRed, .NormalTextBox, .NormalDisabled, a:link, a:visited, a:hover, input, .CommandButton, p, label {
-    font-family: 'Open Sans',sans-serif;
+/*      mo-timeline STYLE       */
+.panel-body.fullwidth {
+    padding: 0;
 }
-p .Normal, .NormalDisabled, .NormalDeleted {
-     font-size: 1.1em;
-     font-weight: normal;
-     line-height: 18px;
- }
-
-/*
-.input-group[class*="col-"] {
-    padding-left: 15px !Important;
-    padding-right: 15px !Important;
-}*/
-.page-header.container {
-    margin-top: 60px;
-}
-
 .left {
     float: left;
 }
@@ -39,64 +10,6 @@ p .Normal, .NormalDisabled, .NormalDeleted {
 .right {
     float: right;
 }
-
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: 'Open Sans',sans-serif;
-    font-weight: 300;
-}
-p {
-    font-family: 'Open Sans',sans-serif;
-    overflow: hidden;
-}
-
-.panel-body.fullwidth {
-    padding: 0;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    position: relative;
-    min-height: 100%;
-}
-body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
-}
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 60px;
-    background-color: #f5f5f5;
-}
-
-
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
-
-body > .container {
-    padding: 60px 15px 0;
-}
-.container .text-muted {
-    margin: 20px 0;
-}
-
-.footer > .container {
-    padding-right: 15px;
-    padding-left: 15px;
-}
-
-code {
-    font-size: 80%;
-}
-/*  ONLY FOR TEST THEME    */
-
-
-
-/*      mo-timeline STYLE       */
 .mo-timeline {
     list-style: none outside none;
     margin-top: 20px;
@@ -247,12 +160,10 @@ code {
 .mo-timeline > li.offset > .badge {
     top: 100px;
 }
-.hidden{visibility:hidden;overflow:hidden;position:relative;height:0;z-index:-1;}
 
 
 @media (min-width: 768px) and (max-width: 1000px) {
-    .mo-timeline > li > .panel {
-    }
+
 }
 
 @media (max-width: 768px) {
@@ -270,14 +181,6 @@ code {
     }
 
     ul.mo-timeline > li > .panel {
-        /*width: calc(100% - 60px);
-        width: -moz-calc(100% - 60px);
-        width: -webkit-calc(100% - 60px);*/
         width: 100%;
     }
 }
-
-
-/* Extra small devices (phones, less than 768px) */
-/* No media query since this is the default in Bootstrap */
-
