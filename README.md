@@ -1,14 +1,14 @@
 #moTimeline
 <p>moTimeline is a responsive two column timeline layout library - MIT licensed.</p>
 <p>I like OpenSource, I like sharing. Do what ever you want with this little piece of code. (-:</p>
-<p>last build: v 0.9.36</p>
+<p>last build: v 0.9.38</p>
 
 ##Features
 * one or two column
 * auto arrange post left or right
 * bootstrap 3.x compatible
 
-<a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/LinkClick.aspx?fileticket=aUReS-mAUQY%3d&amp;tabid=307&amp;portalid=7" class="img-responsive"></a>
+<a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ##html markup
 <p>actually supported is only an unordered list. Add class "mo-timeline" to the "ul"</p>

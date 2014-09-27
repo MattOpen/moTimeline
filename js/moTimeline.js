@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.36
+ * moTimeline v 0.9.38
  * One or two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -79,74 +79,81 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
         });
 
     var moT_GetPostPosition = (function(elem){
-            var o,h, u;
+        var o,h, u, the_post, the_post_OK, the_post_H, the_post_UK;
 
-            if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,u:0};
+        if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,u:0};
 
-            var the_post = $(elem),
-                the_post_OK = the_post.offset().top,
-                the_post_H = the_post.outerHeight( ),
-                the_post_UK = the_post_H + the_post_OK;
+        the_post = $(elem);
+        the_post_OK = the_post.offset().top;
+        //the_post_H = the_post.outerHeight();
+        the_post_H = the_post.height();
+        the_post_UK = the_post_H + the_post_OK;
 
 
-            return {
-                o : Math.round(the_post_OK),
-                h : Math.round(the_post_H),
-                u : Math.round(the_post_UK)
-            }
-        });
+        return {
+            o : Math.round(the_post_OK),
+            h : Math.round(the_post_H),
+            u : Math.round(the_post_UK)
+        }
+    });
 
     var moT_GetLeftOrRight = (function (elem){
 
-            if (elem == 0 || !elem || elem.length == 0 ) return console.log('no element');
-            var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, bo,
-                the_post = $(elem);
+            if (elem == 0 || !elem || elem.length == 0 ) {
+                return console.log('no element');
+            }else{
+                var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, bo,
+                    the_post = $(elem);
 
-            eid = the_post.attr('id');
-            pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
-            pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
+                eid = the_post.attr('id');
+                pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
+                pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
 
-            e = moT_GetPostPosition($('#'+eid));
-            l = moT_GetPostPosition($('#'+pLid));
-            r = moT_GetPostPosition($('#'+pRid));
-            OG = e.o - l.o;
-            UG = l.u - e.o;
-            AA = l.u - r.u;
-            BB = r.u - l.u;
+                e = moT_GetPostPosition($('#'+eid));
+                l = moT_GetPostPosition($('#'+pLid));
+                r = moT_GetPostPosition($('#'+pRid));
+                OG = e.o - l.o;
+                UG = l.u - e.o;
+                AA = l.u - r.u;
+                BB = r.u - l.u;
 
-            if(moTcolumns.col > 1){
+                if(moTcolumns.col > 1){
 
-                if (l.u >= e.o ) {
-                    lr = 1;
-                }
-                if (r.u >= l.u ) {
-                    lr = 0;
-                }
-
-                //  adjust badge
-                if( lr > 0 ){
-                    if (  OG < 40 && OG >= 0 ) {
-                        bo = 1;
+                    if (l.u >= e.o ) {
+                        lr = 1;
                     }
-                    if ( AA < 40 && BB < 40 )  {
-                        bo = 1;
+                    if (r.u >= l.u ) {
+                        lr = 0;
                     }
+                    if (l.u = r.u ) {
+                      //  lr = 1;
+                    }
+
+                    //  adjust badge
+                    if( lr > 0 ){
+                        if (  OG < 40 && OG >= 0 ) {
+                            bo = 1;
+                        }
+                        if ( AA < 40 && BB < 40 )  {
+                            bo = 1;
+                        }
+                    }
+                }
+
+
+                return {
+                    lr : lr,
+                    badge_offset : bo,
+                    e:e,
+                    l:l,
+                    r:r
                 }
             }
-
-
-            return {
-                lr : lr,
-                badge_offset : bo,
-                e:e,
-                l:l,
-                r:r
-            }
-
         });
 
     var moT_setPostPosition = (function(elem) {
 
+       // if(elem == 'undefined') return;
             var pPos = moT_GetLeftOrRight(elem);
 
             if (pPos.lr > 0) {
@@ -179,7 +186,7 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
                     moT_initEmbed(initarr); //embed only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
                 }
                 moT_RefreshPostsAll();
-                //$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                $(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
@@ -206,80 +213,93 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
         //if ($(window).data('ajaxready') == false) return;
 
         //mo_posts = $('li',this);
+
+        //var checkSelector = $(this).first().attr('id');
+        //var checkSelector = $('ul.mo-timeline > li').length;
         mo_posts = this;
-        if(!mo_posts) return console.log('sorry, no data...');
-        motrcount = 1;
-
-        moToption = $.extend({
-            animationSpeed: 100,
-            shuffleSpeed: 200,
-            gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
-            badge: 'ver_b',
-            startBreakpoint: 'md',
-            startID: 0
-        },option);
-
-        moTdefaults = {
-            calcSpeed: 100,
-            total : mo_posts.length,
-            gridValues : 'col-xs-12 col-sm-12 col-md-6  col-lg-6'
-        };
+        var checkSelector = mo_posts.length;
 
 
-
-        //  initialize
-        moTcolumns =  moT_GetColumnCount();
-        $(mo_posts).addClass( moTcolumns.gridValues );
-        $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
-
-        if( moTcolumns.col == 1 ) {
-            $('.mo-timeline').removeClass('twocol');
+        //if (!mo_posts || typeof checkSelector === "undefined") {
+        if (!mo_posts || checkSelector == 0) {
+            //console.log('sorry, no data...');
+            return;
         }else{
-            if ($('.timeline-wrapper').find('.twocol').length > 0){
-                //    nothing
-            } else{
-                $('.mo-timeline').addClass('twocol');
-            }
-        }
+            motrcount = 1;
 
-        var idx = 0;
-        if (moToption.startID > 0){
+            moToption = $.extend({
+                animationSpeed: 100,
+                shuffleSpeed: 200,
+                gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
+                badge: 'ver_b',
+                startBreakpoint: 'md',
+                startID: 0
+            },option);
+
+            moTdefaults = {
+                calcSpeed: 100,
+                total : mo_posts.length,
+                gridValues : 'col-xs-12 col-sm-12 col-md-6  col-lg-6'
+            };
+
+
+
+            //  initialize
+            moTcolumns =  moT_GetColumnCount();
             $(mo_posts).addClass( moTcolumns.gridValues );
-        }
+            $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
 
-
-        //  set id to every li -
-        //  check id exist before change id
-        mo_posts.attr('id', function (index) {
-
-            var theid = this.id;
-            if(theid.length  > 0) {
-                return theid;
+            if( moTcolumns.col == 1 ) {
+                $('.mo-timeline').removeClass('twocol');
             }else{
-                return 'moT' + index;
+                if ($('.timeline-wrapper').find('.twocol').length > 0){
+                    //    nothing
+                } else{
+                    $('.mo-timeline').addClass('twocol');
+                }
             }
 
-        });
+            var idx = 0;
+            if (moToption.startID > 0){
+                $(mo_posts).addClass( moTcolumns.gridValues );
+            }
+
+
+            //  set id to every li -
+            //  check id exist before change id
+            mo_posts.attr('id', function (index) {
+
+                var theid = this.id;
+                if(theid.length  > 0) {
+                    return theid;
+                }else{
+                    return 'moT' + index;
+                }
+
+            });
 
 
 
-        moT_init(mo_posts,idx);
+            moT_init(mo_posts,idx);
 
 
-		if (typeof imagesLoaded !== 'undefined' && $.isFunction( imagesLoaded )) {
-			$('.mo-timeline').imagesLoaded( function() {
+            if (typeof imagesLoaded !== 'undefined' && $.isFunction( imagesLoaded )) {
 
-				moT_RefreshPostsAll();
+                $('.mo-timeline').imagesLoaded( function() {
 
-			});
-		}
+                    moT_RefreshPostsAll();
+
+                });
+            }
 
 
-        $(window).on('resize', function() {
-            waitForFinalEvent(function(){
-                moT_RefreshPostsAll();
-            }, 500, fullDateString.getTime())
-        });
+            $(window).on('resize', function() {
+                waitForFinalEvent(function(){
+                    moT_RefreshPostsAll();
+                }, 500, fullDateString.getTime())
+            });
+        }
+
 
 
     };
