@@ -1,6 +1,6 @@
 /*
- * moTimeline v 0.9.38
- * One or two column timeline layout library
+ * moTimeline v 0.9.39
+ * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
  * by MattOpen
@@ -15,12 +15,12 @@
 
     $('body').prepend(breakpointHelper);
 
-if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )) {
-    //nothing to do
-}else{
-    var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="some string!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
-    var fullDateString = new Date();
-}
+    if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )) {
+        //nothing to do
+    }else{
+        var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="some string!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
+        var fullDateString = new Date();
+    }
 
 
     function getBreakpoint( alias ) {
@@ -79,22 +79,23 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
         });
 
     var moT_GetPostPosition = (function(elem){
-        var o,h, u, the_post, the_post_OK, the_post_H, the_post_UK;
+        var o = 0,h = 0,gppu = 0, the_post, the_post_OK, the_post_H, the_post_UK,the_post_Houter, the_postID,eID;
 
-        if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,u:0};
+        if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,gppu:0};
 
         the_post = $(elem);
-        the_post_OK = the_post.offset().top;
-        //the_post_H = the_post.outerHeight();
-        the_post_H = the_post.height();
-        the_post_UK = the_post_H + the_post_OK;
-
+        the_postID = the_post.attr('id');
+        the_post_OK = Math.ceil(the_post.offset().top);
+        the_post_H = Math.ceil(the_post.outerHeight(true));
+        the_post_UK = (the_post_H + the_post_OK);
 
         return {
-            o : Math.round(the_post_OK),
-            h : Math.round(the_post_H),
-            u : Math.round(the_post_UK)
+            o : the_post_OK,
+            h : the_post_H,
+            gppu : the_post_UK,
+            eID : the_postID
         }
+
     });
 
     var moT_GetLeftOrRight = (function (elem){
@@ -102,35 +103,36 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
             if (elem == 0 || !elem || elem.length == 0 ) {
                 return console.log('no element');
             }else{
-                var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,lr, bo,
+                var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,pos, bo,
                     the_post = $(elem);
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
                 pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
 
-                e = moT_GetPostPosition($('#'+eid));
+
                 l = moT_GetPostPosition($('#'+pLid));
                 r = moT_GetPostPosition($('#'+pRid));
+                e = moT_GetPostPosition($('#'+eid));
                 OG = e.o - l.o;
-                UG = l.u - e.o;
-                AA = l.u - r.u;
-                BB = r.u - l.u;
+                UG = l.gppu - e.o;
+                AA = l.gppu - r.gppu;
+                BB = r.gppu - l.gppu;
 
                 if(moTcolumns.col > 1){
 
-                    if (l.u >= e.o ) {
-                        lr = 1;
+                    if (l.gppu >= e.o ) {
+                        pos = 1;
                     }
-                    if (r.u >= l.u ) {
-                        lr = 0;
+                    if (r.gppu > l.gppu  ) {
+                        pos = 0;
                     }
-                    if (l.u = r.u ) {
-                      //  lr = 1;
+                    if (l.gppu = r.gppu ) {
+                        //pos = 1;
                     }
 
                     //  adjust badge
-                    if( lr > 0 ){
+                    if( pos > 0 ){
                         if (  OG < 40 && OG >= 0 ) {
                             bo = 1;
                         }
@@ -142,11 +144,11 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
 
 
                 return {
-                    lr : lr,
-                    badge_offset : bo,
-                    e:e,
-                    l:l,
-                    r:r
+                    lr : pos
+                    ,badge_offset : bo
+                    ,e:e
+                    ,l:l
+                    ,r:r
                 }
             }
         });
@@ -179,14 +181,9 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
             if (idx < (moTdefaults.total - 1)) {
                 moT_init(initarr,idx + 1);
             } else {
-                if(window.location.href.indexOf("www.mattopen.com") > -1 && typeof injectPlacements2 !== 'undefined' && $.isFunction( injectPlacements2 )) {
-                    injectPlacements2(initarr); //placements only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-                }
-                if(typeof moT_initEmbed !== 'undefined' && $.isFunction( moT_initEmbed )) {
-                    moT_initEmbed(initarr); //embed only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-                }
+                
                 moT_RefreshPostsAll();
-                $(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                
             }
 
         });
@@ -208,21 +205,11 @@ if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )
 (function ( $ ) {
     jQuery.fn.moTimeline = function (option) {
 
-        //  do not load more data until all posts arranged
-        //$(window).data('ajaxready', false);
-        //if ($(window).data('ajaxready') == false) return;
 
-        //mo_posts = $('li',this);
-
-        //var checkSelector = $(this).first().attr('id');
-        //var checkSelector = $('ul.mo-timeline > li').length;
         mo_posts = this;
         var checkSelector = mo_posts.length;
 
-
-        //if (!mo_posts || typeof checkSelector === "undefined") {
         if (!mo_posts || checkSelector == 0) {
-            //console.log('sorry, no data...');
             return;
         }else{
             motrcount = 1;
