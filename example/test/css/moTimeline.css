@@ -1,0 +1,186 @@
+
+/*      mo-timeline STYLE       */
+.panel-body.fullwidth {
+    padding: 0;
+}
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+.mo-timeline {
+    list-style: none outside none;
+    margin-top: 20px;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+.mo-timeline.twocol:before {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #eeeeee;
+    left: 50%;
+    margin-left: -1.5px;
+}
+
+.mo-timeline > li {
+    float: left;
+    position: relative;
+    display: block;      /** IMPORTANT FOR THE POSITIONING**/
+    top:0;
+}
+
+.mo-timeline > li.mo-inverted > .panel {
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 0 ;
+    margin-left: 20px;
+}
+
+.mo-timeline > li.mo-inverted {
+    float: right;
+    position: relative;
+    display: block;      /** IMPORTANT FOR THE POSITIONING**/
+}
+
+.mo-timeline > li > .panel {
+    padding:0;
+    margin-right: 20px;
+    border: 1px solid #d4d4d4;
+    position: relative;
+    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+    background: #ffffff;
+    min-height: 90px;
+}
+.mo-timeline > li > .panel:hover {
+    background-color: #f5f8fa;
+}
+.mo-timeline > li > .panel > .panel-body {
+    width: 100%;
+    overflow: hidden;
+}
+.mo-timeline > li > .panel > .panel-body img {
+    min-width: 100%;    /* WICHTIG*/
+    display: block;
+}
+
+.mo-timeline > li > .panel:before {
+    position: absolute;
+    top: 26px;
+    right: -15px;
+    display: inline-block;
+    border-top: 15px solid transparent;
+    border-left: 15px solid #ccc;
+    border-right: 0 solid #ccc;
+    border-bottom: 15px solid transparent;
+    content: " ";
+}
+
+.mo-timeline > li > .panel:after {
+    position: absolute;
+    top: 27px;
+    right: -13px;
+    display: inline-block;
+    border-top: 14px solid transparent;
+    border-left: 14px solid #fff;
+    border-right: 0 solid #fff;
+    border-bottom: 14px solid transparent;
+    content: " ";
+}
+
+.mo-timeline > li.mo-inverted > .panel:before {
+    border-left-width: 0;
+    border-right-width: 15px;
+    left: -15px;
+    right: auto;
+}
+
+.mo-timeline > li.mo-inverted > .panel:after {
+    border-left-width: 0;
+    border-right-width: 14px;
+    left: -14px;
+    right: auto;
+}
+
+.mo-timeline > li.mo-inverted:before {
+    border-left-width: 0;
+    border-right-width: 15px;
+    left: -15px;
+    right: auto;
+}
+
+.mo-timeline > li > .badge {
+    border-radius: 20px;
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 1;
+    min-width: 10px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: baseline;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 1;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.176);
+}
+.mo-timeline > li > .badge.ver_b {
+    right: 0;
+    top: 26px;
+    margin-right: -17px;
+}
+
+.mo-timeline > li.mo-inverted > .badge.ver_b {
+    left: 0;
+    margin-left: -17px;
+    right: auto;
+}
+.mo-timeline > li > .badge.primary {
+    background-color: #428bca !important;
+}
+.mo-timeline > li > .badge.default {
+    background-color: #f5f5f5 !important;
+}
+.mo-timeline > li.offset > .panel:before {
+    top:102px;
+}
+
+.mo-timeline > li.offset > .panel:after {
+    top:103px;
+}
+.mo-timeline > li.offset > .badge {
+    top: 100px;
+}
+
+
+@media (min-width: 768px) and (max-width: 1000px) {
+
+}
+
+@media (max-width: 768px) {
+/*@media (max-width: 767px) {*/
+    .mo-timeline:before {
+        background-color: transparent;
+        bottom: 0;
+        content: " ";
+        position: absolute;
+        top: 0;
+        width: 0;
+    }
+    .mo-timeline > li.mo-inverted > .panel {
+        margin-left: 0;
+    }
+
+    ul.mo-timeline > li > .panel {
+        width: 100%;
+    }
+}

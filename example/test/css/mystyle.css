@@ -1,0 +1,70 @@
+/*  ONLY FOR TEST THEME    */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,700italic);
+
+body, th, td, table, h1, h2, h3, h4, h5, h6, .Head, .SubHead, .SubSubHead, .Normal, .NormalBold, .NormalRed, .NormalTextBox, .NormalDisabled, a:link, a:visited, a:hover, input, .CommandButton, p, label {
+    font-family: 'Open Sans',sans-serif;
+}
+p .Normal, .NormalDisabled, .NormalDeleted {
+     font-size: 1.1em;
+     font-weight: normal;
+     line-height: 18px;
+ }
+
+.page-header.container {
+    margin-top: 60px;
+}
+
+
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Open Sans',sans-serif;
+    font-weight: 300;
+}
+p {
+    font-family: 'Open Sans',sans-serif;
+    overflow: hidden;
+}
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: #f5f5f5;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+    padding: 60px 15px 0;
+}
+.container .text-muted {
+    margin: 20px 0;
+}
+
+.footer > .container {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+code {
+    font-size: 80%;
+}
+.hidden{visibility:hidden;overflow:hidden;position:relative;height:0;z-index:-1;}
+
+/*  ONLY FOR TEST THEME    */
