@@ -1,7 +1,6 @@
 #moTimeline
 <p>moTimeline is a responsive two column timeline layout library - MIT licensed.</p>
 <p>I like OpenSource, I like sharing. Do what ever you want with this little piece of code. (-:</p>
-<p>last build: v 0.9.38</p>
 
 ##Features
 * one or two column
@@ -11,7 +10,7 @@
 <a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ##html markup
-<p>actually supported is only an unordered list. Add class "mo-timeline" to the "ul"</p>
+<p>actually supported is only an unordered list. Add class "mo-timeline" to "ul"</p>
 <pre>
 <code>
 &#x3C;div class="row"&#x3E;
@@ -88,6 +87,10 @@
 
 take a look at index.html in this repo, how to use css and js.
 
+##updates and version
+###v 0.9.39
+* found a bug in position calculation
+
 ##Dependencies
 * Bootstrap 3.x http://getbootstrap.com/
 * require jQuery, 1.9 or higher
@@ -98,6 +101,7 @@ take a look at index.html in this repo, how to use css and js.
 
 ##special thanks to...
 * Livestamp.js A simple, unobtrusive jQuery plugin that provides auto-updating timeago text to your timestamped HTML elements using Moment.js.http://mattbradley.github.com/livestampjs
+* LoremPixel.com Placeholder Images for every case. http://lorempixel.com/
 
 #License
 This plugin and all code contained is Copyright 2014 <a href="http://www.exponde.com" >exponde</a>, Germany. You are granted a license to use this code / software as you wish, free of charge and free of restrictions under the MIT license
