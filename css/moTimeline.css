@@ -136,14 +136,17 @@
 .mo-timeline > li > .badge.ver_b {
     right: 0;
     top: 26px;
-    margin-right: -17px;
+    margin-right: -18px;
 }
 
 .mo-timeline > li.mo-inverted > .badge.ver_b {
     left: 0;
-    margin-left: -17px;
+    margin-left: -18px;
     right: auto;
 }
+
+
+
 .mo-timeline > li > .badge.primary {
     background-color: #428bca !important;
 }
@@ -183,4 +186,29 @@
     ul.mo-timeline > li > .panel {
         width: 100%;
     }
+	.col-md-9 .col-xs-12 ,.col-md-12 .col-xs-12 {
+	  padding-left: 0;
+	  padding-right: 0;
+	}
+	.mo-timeline > li > .panel:after {
+	  display: none;
+	}
+	.mo-timeline > li > .panel:before{
+	  display: none;
+	}
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+	.col-md-9 .col-xs-12 ,.col-md-12 .col-xs-12 {
+	  padding-left: 0;
+	  padding-right: 0;
+	}
+	.mo-timeline > li > .panel:after {
+	  display: none;
+	}
+	.mo-timeline > li > .panel:before{
+	  display: none;
+	}
+
 }
