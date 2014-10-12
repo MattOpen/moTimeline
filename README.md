@@ -91,6 +91,7 @@ take a look at index.html in this repo, how to use css and js.
 ###v 0.9.40
 * added class "twocol" to ul. Format a vertical ruler between articles.
 * edit css for a better look on small and medium size
+
 ###v 0.9.39
 * found a bug in position calculation
 
