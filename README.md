@@ -85,7 +85,8 @@
 </code>
 </pre>
 
-The "startBreakpoint" option will result in the following Bootstrap-Gridvalues:
+<p>The "startBreakpoint" option will result in the following Bootstrap-Gridvalues:</p>
+```html
 	startBreakpoint = 'xs'
 		gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
 	startBreakpoint = 'sm'
@@ -94,12 +95,15 @@ The "startBreakpoint" option will result in the following Bootstrap-Gridvalues:
 		gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
 	startBreakpoint = 'lg'
 		gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
+```
 
-The following options are currently disabled:
+<p>The following options are currently disabled:</p>
+```html
 //animationSpeed: 100,	//disabled
 //shuffleSpeed: 200,	//disabled
 //gutter: 0,			//disabled
-				
+```
+		
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
