@@ -77,14 +77,29 @@
 <code>
 	$('ul.mo-timeline > li').moTimeline(
 			{
-				animationSpeed: 100,
-				shuffleSpeed : 0
+			
+				startBreakpoint: 'md'	// possible 'xs','sm','md','lg'
+				
 			}
 	);
 </code>
 </pre>
 
+The "startBreakpoint" option will result in the following Bootstrap-Gridvalues:
+	startBreakpoint = 'xs'
+		gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
+	startBreakpoint = 'sm'
+		gridValues = 'col-xs-12 col-sm-6 col-md-6  col-lg-6 sm';
+	startBreakpoint = 'md'
+		gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
+	startBreakpoint = 'lg'
+		gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
 
+The following options are currently disabled:
+//animationSpeed: 100,	//disabled
+//shuffleSpeed: 200,	//disabled
+//gutter: 0,			//disabled
+				
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
