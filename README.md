@@ -71,6 +71,13 @@
 </code>
 </pre>
 
+<p>add the modernizer.js file to the head of your site</p>
+<pre>
+<code>
+ &#x3C;script type="text/javascript" src="js/modernizer.js"></script&#x3E;
+</code>
+</pre>
+
 ##Options:
 <p>make use of options:</p>
 <pre>
@@ -107,6 +114,9 @@
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
+###v 0.9.41
+* recalculate article position based on browser. Now we need to use modernizer.js
+
 ###v 0.9.40
 * added class "twocol" to ul. Format a vertical ruler between articles.
 * edit css for a better look on small and medium size
@@ -117,6 +127,7 @@ take a look at index.html in this repo, how to use css and js.
 ##Dependencies
 * Bootstrap 3.x http://getbootstrap.com/
 * require jQuery, 1.9 or higher
+* modernizer http://modernizr.com/download/
 
 ##Example website and demo
 * http://www.mattopen.com

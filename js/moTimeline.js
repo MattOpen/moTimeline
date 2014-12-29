@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.40
+ * moTimeline v 0.9.41
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -86,16 +86,10 @@
         the_post = $(elem);
         the_postID = the_post.attr('id');
         the_post_OK = Math.ceil(the_post.offset().top);
-        //the_post_OK = Math.ceil(the_post.position().top);
-        //the_post_Houter = the_post.outerHeight();
         the_post_H = Math.ceil(the_post.outerHeight(true));
         the_post_UK = (the_post_H + the_post_OK);
-        //console.log('the_postID: '+the_postID+': the_post_OK: '+the_post_OK+' the_post_H: '+the_post_H+' = the_post_UK: '+the_post_UK+' berechnet: '+(the_post_OK+the_post_H));
 
         return {
-//            o : Math.round(the_post_OK),
-//            h : Math.round(the_post_H),
-//            u : Math.round(the_post_UK)
             o : the_post_OK,
             h : the_post_H,
             gppu : the_post_UK,
@@ -111,6 +105,8 @@
             }else{
                 var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,pos, bo,
                     the_post = $(elem);
+				var moT_c = 0;
+                if ($('body').hasClass('ext-gecko')) moT_c = 1;
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
@@ -127,7 +123,7 @@
 
                 if(moTcolumns.col > 1){
 
-                    if (l.gppu >= e.o ) {
+                    if (l.gppu >= e.o + moT_c ) {
                         pos = 1;
                     }
                     if (r.gppu > l.gppu  ) {
@@ -187,14 +183,7 @@
             if (idx < (moTdefaults.total - 1)) {
                 moT_init(initarr,idx + 1);
             } else {
-                if(window.location.href.indexOf("www.mattopen.com") > -1 && typeof injectPlacements2 !== 'undefined' && $.isFunction( injectPlacements2 )) {
-                    injectPlacements2(initarr); //placements only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-                }
-                if(typeof moT_initEmbed !== 'undefined' && $.isFunction( moT_initEmbed )) {
-                    moT_initEmbed(initarr); //embed only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-                }
                 moT_RefreshPostsAll();
-                $(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
@@ -216,19 +205,9 @@
 (function ( $ ) {
     jQuery.fn.moTimeline = function (option) {
 
-        //  do not load more data until all posts arranged
-        //$(window).data('ajaxready', false);
-        //if ($(window).data('ajaxready') == false) return;
-
-        //mo_posts = $('li',this);
-
-        //var checkSelector = $(this).first().attr('id');
-        //var checkSelector = $('ul.mo-timeline > li').length;
         mo_posts = this;
         var checkSelector = mo_posts.length;
 
-
-        //if (!mo_posts || typeof checkSelector === "undefined") {
         if (!mo_posts || checkSelector == 0) {
             //console.log('sorry, no data...');
             return;
