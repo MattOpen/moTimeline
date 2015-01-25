@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.42
+ * moTimeline v 0.9.43
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -50,7 +50,9 @@
                 getBreakpointInt = 4;
                 Breakpoint = 'lg';
             }
+	//console.log(getBreakpointInt+Breakpoint);
 
+	if(typeof moToption !== 'undefined' && $.isFunction( moToption )) {
             if( moToption.startBreakpoint == 'xs'){
                 startBreakpointInt = 1;
                 gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
@@ -64,6 +66,8 @@
                 startBreakpointInt = 4;
                 gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
             }
+			console.log(gridValues);
+        }
 
             if( getBreakpointInt >= startBreakpointInt  ) {
                 col = 2;
@@ -88,6 +92,7 @@
         the_post_OK = Math.ceil(the_post.offset().top);
         the_post_H = Math.ceil(the_post.outerHeight(true));
         the_post_UK = (the_post_H + the_post_OK);
+	//console.log('the_postID: '+the_postID+': the_post_OK: '+the_post_OK+' the_post_H: '+the_post_H+' = the_post_UK: '+the_post_UK+' berechnet: '+(the_post_OK+the_post_H));
 
         return {
             o : the_post_OK,
@@ -107,6 +112,7 @@
                     the_post = $(elem);
 				var moT_c = 0;
                 if ($('body').hasClass('ext-gecko')) moT_c = 1;
+                if ($('body').hasClass('ext-webkit')) moT_c = 10;	//Safari - Apple
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
@@ -183,7 +189,8 @@
             if (idx < (moTdefaults.total - 1)) {
                 moT_init(initarr,idx + 1);
             } else {
-                moT_RefreshPostsAll();
+                //moT_RefreshPostsAll();				//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+				//$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
@@ -193,11 +200,12 @@
             moTcolumns =  moT_GetColumnCount();
             arr = $('ul.mo-timeline');
 
+			//$('li:not(:first)',arr).each(function(idx){
             $('li',arr).each(function(idx){
                 moT_setPostPosition($(this));
             });
 
-            $('li',arr).css({"opacity":"1"});
+            //$('li',arr).css({"opacity":"1"});
 
         });
 
@@ -215,9 +223,9 @@
             motrcount = 1;
 
             moToption = $.extend({
-                animationSpeed: 100,
-                shuffleSpeed: 200,
-                gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
+                //animationSpeed: 100,
+                //shuffleSpeed: 200,
+                //gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
                 badge: 'ver_b',
                 startBreakpoint: 'md',
                 startID: 0
@@ -291,7 +299,7 @@
 							//    nothing
 						} else{
 							$('.mo-timeline').addClass('twocol');
-							cosole.log('darf nicht sien')
+							cosole.log('darf nicht sein')
 						}
 					}
                 }, 500, fullDateString.getTime())
