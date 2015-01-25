@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.43
+ * moTimeline v 0.9.44
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -7,7 +7,10 @@
  */
 
 
-//  HELPER credits goes to http://stackoverflow.com/questions/18575582/how-to-detect-responsive-breakpoints-of-twitter-bootstrap-3-using-javascript
+
+
+(function ( $ ) {
+	//  HELPER credits goes to http://stackoverflow.com/questions/18575582/how-to-detect-responsive-breakpoints-of-twitter-bootstrap-3-using-javascript
     var breakpointHelper  = '<div class="device-xs visible-xs hidden"></div>';
         breakpointHelper += '<div class="device-sm visible-sm hidden"></div>';
         breakpointHelper += '<div class="device-md visible-md hidden"></div>';
@@ -189,8 +192,7 @@
             if (idx < (moTdefaults.total - 1)) {
                 moT_init(initarr,idx + 1);
             } else {
-                //moT_RefreshPostsAll();				//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-				//$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
@@ -208,9 +210,8 @@
             //$('li',arr).css({"opacity":"1"});
 
         });
-
-
-(function ( $ ) {
+		
+		
     jQuery.fn.moTimeline = function (option) {
 
         mo_posts = this;
