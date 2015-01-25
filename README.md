@@ -51,7 +51,7 @@
 </code>
 </pre>
 
-<p>add the moTimeline.js file to the bottom of your site</p>
+<p>add the moTimeline.js file to the bottom of your site or make use of minified version</p>
 <pre>
 <code>
  &#x3C;script type="text/javascript" src="js/moTimeline.js"></script&#x3E;
@@ -114,6 +114,10 @@
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
+###v 0.9.42
+* add minified version jquery.moTimeline.min.js
+* change some css attributes
+
 ###v 0.9.41
 * recalculate article position based on browser. Now we need to use modernizer.js
 

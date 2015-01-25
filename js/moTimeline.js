@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.41
+ * moTimeline v 0.9.42
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
