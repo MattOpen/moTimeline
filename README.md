@@ -71,12 +71,6 @@
 </code>
 </pre>
 
-<p>add the modernizer.js file to the head of your site</p>
-<pre>
-<code>
- &#x3C;script type="text/javascript" src="js/modernizer.js"></script&#x3E;
-</code>
-</pre>
 
 ##Options:
 <p>make use of options:</p>
@@ -114,6 +108,10 @@
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
+###v 0.9.45
+* remove modernizer.js and implement a check userAgent function to recalculate article position based on browser detection
+* clean code
+
 ###v 0.9.42
 * add minified version jquery.moTimeline.min.js
 * change some css attributes

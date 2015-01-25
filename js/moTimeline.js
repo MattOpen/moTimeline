@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.44
+ * moTimeline v 0.9.45
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -29,8 +29,19 @@
     function getBreakpoint( alias ) {
         return $('.device-' + alias).is(':visible');
     }
-//  HELPER end
+	//  HELPER end
 
+
+	var moTcolumns = [],
+		moToption = []
+		;
+	//	check userAgent
+	if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
+	{ $('html, Body').addClass('gecko ext-gecko')	}
+	if(navigator.userAgent.toLowerCase().indexOf('safari') > -1)
+	{  $('html, Body').addClass('safari ext-webkit') }
+
+	
         //  private functions
     var moT_GetColumnCount = (function(){
             var col = 0,
@@ -55,7 +66,8 @@
             }
 	//console.log(getBreakpointInt+Breakpoint);
 
-	if(typeof moToption !== 'undefined' && $.isFunction( moToption )) {
+	//if(typeof moToption !== 'undefined' && $.isFunction( moToption )) {
+		if(typeof moToption !== 'undefined') {
             if( moToption.startBreakpoint == 'xs'){
                 startBreakpointInt = 1;
                 gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
@@ -69,8 +81,10 @@
                 startBreakpointInt = 4;
                 gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
             }
-			console.log(gridValues);
-        }
+			//console.log(gridValues);
+        } else{
+		console.log('not defined');
+		}
 
             if( getBreakpointInt >= startBreakpointInt  ) {
                 col = 2;
@@ -115,7 +129,7 @@
                     the_post = $(elem);
 				var moT_c = 0;
                 if ($('body').hasClass('ext-gecko')) moT_c = 1;
-                if ($('body').hasClass('ext-webkit')) moT_c = 10;	//Safari - Apple
+                if ($('body').hasClass('ext-webkit')) moT_c = 2;	//Safari - Apple
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
@@ -192,14 +206,15 @@
             if (idx < (moTdefaults.total - 1)) {
                 moT_init(initarr,idx + 1);
             } else {
-                	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
+                moT_RefreshPostsAll();
+				//$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
             }
 
         });
 
     moT_RefreshPostsAll = (function() {
 
-            moTcolumns =  moT_GetColumnCount();
+            //moTcolumns =  moT_GetColumnCount();
             arr = $('ul.mo-timeline');
 
 			//$('li:not(:first)',arr).each(function(idx){
