@@ -108,6 +108,9 @@
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
+###v 0.9.46
+* minor bugfix in position calculation in webkit browser
+
 ###v 0.9.45
 * remove modernizer.js and implement a check userAgent function to recalculate article position based on browser detection
 * clean code

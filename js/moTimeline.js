@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.45
+ * moTimeline v 0.9.46
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -129,7 +129,7 @@
                     the_post = $(elem);
 				var moT_c = 0;
                 if ($('body').hasClass('ext-gecko')) moT_c = 1;
-                if ($('body').hasClass('ext-webkit')) moT_c = 2;	//Safari - Apple
+                if ($('body').hasClass('ext-webkit')) moT_c = 1;	//Safari - Apple
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
