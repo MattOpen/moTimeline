@@ -128,8 +128,8 @@ take a look at index.html in this repo, how to use css and js.
 * now work with every selector, instead of only $('ul.mo-timeline > li'), but you have to provide an unordered list
 * removed a bug with window resize function, not refreshing list
 * add a new test site to this repo under examples\mattopen
+* add a minified js file moTimeline.min.js
 
-##updates and version
 ###v 0.9.47
 * minor bugfix in position calculation in webkit browser
 
