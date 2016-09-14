@@ -7,15 +7,16 @@
 * auto arrange post left or right
 * bootstrap 3.x compatible
 
+<p>See in action at <a href="http://www.mattopen.com/" target="_blank">mattopen.com</a></p>
 <a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ##html markup
-<p>actually supported is only an unordered list. Add class "mo-timeline" to "ul"</p>
+<p>actually supported is only an unordered list.</p>
 <pre>
 <code>
 &#x3C;div class="row"&#x3E;
-	&#x3C;div class="timeline-wrapper container"&#x3E;
-		&#x3C;ul class="mo-timeline"&#x3E;
+	&#x3C;div class="container"&#x3E;
+		&#x3C;ul class="mySelector"&#x3E;
 			&#x3C;li&#x3E;
 				&#x3C;div class="panel panel-default"&#x3E;
 					&#x3C;div class="panel-heading"&#x3E;
@@ -58,15 +59,29 @@
 </code>
 </pre>
 
-<p>initialize the script after page load</p>
+<p>
+    initialize the script after page load<br />
+    important change to the version before, initialize only selector without child element. 
+</p>
 <pre>
 <code>
+        //NEW CODE
  &#x3C;script type="text/javascript"&#x3E;
+	$(document).ready(function () {
+		$('.mySelector').moTimeline();
+	});
+ &#x3C;/script&#x3E;
 
+    also possible: $('#myID ul').moTimeline();
+</code>
+</pre>
+<pre>
+<code>
+    //OLD CODE
+ &#x3C;script type="text/javascript"&#x3E;
 	$(document).ready(function () {
 		$('ul.mo-timeline > li').moTimeline();
 	});
-
  &#x3C;/script&#x3E;
 </code>
 </pre>
@@ -76,7 +91,7 @@
 <p>make use of options:</p>
 <pre>
 <code>
-	$('ul.mo-timeline > li').moTimeline(
+	$('.mySelector').moTimeline(
 			{
 			
 				startBreakpoint: 'md'	// possible 'xs','sm','md','lg'
@@ -104,10 +119,20 @@
 //shuffleSpeed: 200,	//disabled
 //gutter: 0,			//disabled
 ```
-		
+
 take a look at index.html in this repo, how to use css and js.
 
 ##updates and version
+###v 0.9.50
+* removed a lot of garbage code
+* now work with every selector, instead of only $('ul.mo-timeline > li'), but you have to provide an unordered list
+* removed a bug with window resize function, not refreshing list
+* add a new test site to this repo under examples\mattopen
+
+##updates and version
+###v 0.9.47
+* minor bugfix in position calculation in webkit browser
+
 ###v 0.9.46
 * minor bugfix in position calculation in webkit browser
 
@@ -143,7 +168,7 @@ take a look at index.html in this repo, how to use css and js.
 * LoremPixel.com Placeholder Images for every case. http://lorempixel.com/
 
 #License
-This plugin and all code contained is Copyright 2014 <a href="http://www.exponde.com" >exponde</a>, Germany. You are granted a license to use this code / software as you wish, free of charge and free of restrictions under the MIT license
+This plugin and all code contained is Copyright 2016 <a href="http://www.mattopen.com">mattopen</a>, Germany. You are granted a license to use this code / software as you wish, free of charge and free of restrictions under the MIT license
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -153,5 +178,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-This project is updated and maintained by:
-MattOpen http://www.mattopen.com
+Want to hire me?  <a href="http://www.pixelquadrat.com">pixelquadrat.com</a>

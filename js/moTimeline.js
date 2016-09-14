@@ -1,5 +1,5 @@
 /*
- * moTimeline v 0.9.46
+ * moTimeline v 0.9.50
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -43,7 +43,7 @@
 
 	
         //  private functions
-    var moT_GetColumnCount = (function(){
+    moT_GetColumnCount = (function(){
             var col = 0,
                 gridValues,
                 Breakpoint,
@@ -91,7 +91,7 @@
             }else{
                 col = 1;
             }
-
+        console.log('col: ' +col)
             return {
                 col:col,
                 gridValues : gridValues,
@@ -119,7 +119,6 @@
         }
 
     });
-
     var moT_GetLeftOrRight = (function (elem){
 
             if (elem == 0 || !elem || elem.length == 0 ) {
@@ -128,8 +127,8 @@
                 var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,pos, bo,
                     the_post = $(elem);
 				var moT_c = 0;
-                if ($('body').hasClass('ext-gecko')) moT_c = 1;
-                if ($('body').hasClass('ext-webkit')) moT_c = 1;	//Safari - Apple
+                //if ($('body').hasClass('ext-gecko')) moT_c = -1;
+                //if ($('body').hasClass('ext-webkit')) moT_c = 0;	//Safari - Apple
 
                 eid = the_post.attr('id');
                 pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
@@ -146,7 +145,7 @@
 
                 if(moTcolumns.col > 1){
 
-                    if (l.gppu >= e.o + moT_c ) {
+                    if (l.gppu > e.o + moT_c ) {
                         pos = 1;
                     }
                     if (r.gppu > l.gppu  ) {
@@ -177,7 +176,6 @@
                 }
             }
         });
-
     var moT_setPostPosition = (function(elem) {
 
        // if(elem == 'undefined') return;
@@ -195,7 +193,6 @@
             }
 
         });
-
     moT_init = (function(initarr,idx) {
 
             var elem;
@@ -211,29 +208,23 @@
             }
 
         });
-
     moT_RefreshPostsAll = (function() {
-
-            //moTcolumns =  moT_GetColumnCount();
-            arr = $('ul.mo-timeline');
-
-			//$('li:not(:first)',arr).each(function(idx){
-            $('li',arr).each(function(idx){
+        arr = mo_UL;
+        mo_posts.each(function (idx) {
                 moT_setPostPosition($(this));
             });
-
-            //$('li',arr).css({"opacity":"1"});
-
         });
-		
-		
-    jQuery.fn.moTimeline = function (option) {
 
-        mo_posts = this;
+    jQuery.fn.moTimeline = function (option) {
+        mo_UL = this;
+        mo_posts = mo_UL.find('li');
+        if (!mo_UL.parent().hasClass('timeline-wrapper')) mo_UL.wrap('<div class="timeline-wrapper"></div>');   //only for compatibility to moTimeline v 0.9.49
+        if (!mo_UL.hasClass('mo-timeline')) mo_UL.addClass('mo-timeline');
+
         var checkSelector = mo_posts.length;
 
         if (!mo_posts || checkSelector == 0) {
-            //console.log('sorry, no data...');
+            console.log('sorry, no data...');
             return;
         }else{
             motrcount = 1;
@@ -261,12 +252,12 @@
             $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
 
             if( moTcolumns.col == 1 ) {
-                $('.mo-timeline').removeClass('twocol');
+                mo_UL.removeClass('twocol');
             }else{
                 if ($('.timeline-wrapper').find('.twocol').length > 0){
                     //    nothing
                 } else{
-                    $('.mo-timeline').addClass('twocol');
+                    mo_UL.addClass('twocol');
                 }
             }
 
@@ -296,10 +287,8 @@
 
             if (typeof imagesLoaded !== 'undefined' && $.isFunction( imagesLoaded )) {
 
-                $('.mo-timeline').imagesLoaded( function() {
-
+                mo_UL.imagesLoaded(function () {
                     moT_RefreshPostsAll();
-
                 });
             }
 
@@ -309,13 +298,14 @@
                     moT_RefreshPostsAll();
 					moTcolumns =  moT_GetColumnCount();
 					if( moTcolumns.col == 1 ) {
-						$('.mo-timeline').removeClass('twocol');
+					    mo_UL.removeClass('twocol');
 					}else{
 						if ($('.timeline-wrapper').find('.twocol').length > 0){
 							//    nothing
 						} else{
-							$('.mo-timeline').addClass('twocol');
-							cosole.log('darf nicht sein')
+						    mo_UL.addClass('twocol');
+						    moT_RefreshPostsAll();
+							console.log('error')
 						}
 					}
                 }, 500, fullDateString.getTime())

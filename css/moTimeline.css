@@ -1,213 +1,216 @@
 
-/*      mo-timeline STYLE       */
 .panel-body.fullwidth {
+    padding: 0;
+}
+.mo-timeline .panel-body.fullwidthimg {
     padding: 0;
 }
 .left {
     float: left;
 }
-
 .right {
     float: right;
 }
 .mo-timeline {
-    list-style: none outside none;
+    display: inline-block;
+    list-style: outside none none;
+    margin-left: 0;
+    margin-right: 0;
     margin-top: 20px;
     padding: 0;
     position: relative;
     top: 0;
-    margin-left: 0;
-    margin-right: 0;
+    width: 100%;
 }
-.mo-timeline.twocol:before {
-    top: 0;
-    bottom: 0;
-    position: absolute;
-    content: " ";
-    width: 3px;
+.mo-timeline.twocol::before {
     background-color: #eeeeee;
+    bottom: 0;
+    content: " ";
     left: 50%;
     margin-left: -1.5px;
+    position: absolute;
+    top: 0;
+    width: 3px;
 }
-
 .mo-timeline > li {
+    display: block;
     float: left;
+    opacity: 1;
+    padding-left: 0;
+    padding-right: 15px;
     position: relative;
-    display: block;      /** IMPORTANT FOR THE POSITIONING**/
-    top:0;
+    top: 0;
 }
-
 .mo-timeline > li.mo-inverted > .panel {
+    margin-left: 20px;
+    margin-right: 0;
     padding-left: 0;
     padding-right: 0;
-    margin-right: 0 ;
-    margin-left: 20px;
 }
-
 .mo-timeline > li.mo-inverted {
+    display: block;
     float: right;
+    opacity: 1;
+    padding-left: 15px;
+    padding-right: 0;
     position: relative;
-    display: block;      /** IMPORTANT FOR THE POSITIONING**/
+    clear:right;
 }
-
+.mo-timeline > li.mo-inverted:after {
+    content: ".";
+    clear: both;
+    display: block;
+    visibility: hidden;
+    height: 0px;
+}
+.mo-timeline > li.mo-inverted.animate-in {
+    opacity: 1;
+    transition-duration: 1.5s;
+}
 .mo-timeline > li > .panel {
-    padding:0;
-    margin-right: 20px;
+    background: #ffffff none repeat scroll 0 0;
     border: 1px solid #d4d4d4;
-    position: relative;
-    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-    background: #ffffff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.176);
+    margin-right: 20px;
     min-height: 90px;
+    padding: 0;
+    position: relative;
 }
 .mo-timeline > li > .panel:hover {
     background-color: #f5f8fa;
 }
 .mo-timeline > li > .panel > .panel-body {
-    width: 100%;
     overflow: hidden;
+    width: 100%;
 }
 .mo-timeline > li > .panel > .panel-body img {
-    min-width: 100%;    /* WICHTIG*/
     display: block;
+    min-width: 100%;
 }
-
-.mo-timeline > li > .panel:before {
+.mo-timeline > li > .panel::before {
+    border-color: transparent #ccc;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    content: " ";
+    display: inline-block;
     position: absolute;
-    top: 26px;
     right: -15px;
-    display: inline-block;
-    border-top: 15px solid transparent;
-    border-left: 15px solid #ccc;
-    border-right: 0 solid #ccc;
-    border-bottom: 15px solid transparent;
-    content: " ";
+    top: 26px;
 }
-
-.mo-timeline > li > .panel:after {
+.mo-timeline > li > .panel::after {
+    border-color: transparent #fff;
+    border-style: solid;
+    border-width: 14px 0 14px 14px;
+    content: " ";
+    display: inline-block;
     position: absolute;
-    top: 27px;
     right: -13px;
-    display: inline-block;
-    border-top: 14px solid transparent;
-    border-left: 14px solid #fff;
-    border-right: 0 solid #fff;
-    border-bottom: 14px solid transparent;
-    content: " ";
+    top: 27px;
 }
-
-.mo-timeline > li.mo-inverted > .panel:before {
+.mo-timeline > li.mo-inverted > .panel::before {
     border-left-width: 0;
     border-right-width: 15px;
     left: -15px;
     right: auto;
 }
-
-.mo-timeline > li.mo-inverted > .panel:after {
+.mo-timeline > li.mo-inverted > .panel::after {
     border-left-width: 0;
     border-right-width: 14px;
     left: -14px;
     right: auto;
 }
-
-.mo-timeline > li.mo-inverted:before {
+.mo-timeline > li.mo-inverted::before {
     border-left-width: 0;
     border-right-width: 15px;
     left: -15px;
     right: auto;
 }
-
 .mo-timeline > li > .badge {
     border-radius: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.176);
     color: #fff;
     display: inline-block;
     font-size: 12px;
     line-height: 1;
     min-width: 10px;
     padding: 10px;
+    position: absolute;
     text-align: center;
     vertical-align: baseline;
     white-space: nowrap;
-    position: absolute;
     z-index: 1;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.176);
+}
+.mo-timeline > li > .badge .favicon > img {
+  max-width: 16px;
+}
+.panel-heading .favicon {
+  float: left;
+  margin-top: 8px;
+  padding-bottom: 5px;
+  padding-right: 5px;
 }
 .mo-timeline > li > .badge.ver_b {
+    margin-right: -18px;
     right: 0;
     top: 26px;
-    margin-right: -18px;
 }
-
 .mo-timeline > li.mo-inverted > .badge.ver_b {
     left: 0;
     margin-left: -18px;
     right: auto;
 }
-
-
-
 .mo-timeline > li > .badge.primary {
     background-color: #428bca !important;
 }
 .mo-timeline > li > .badge.default {
     background-color: #f5f5f5 !important;
 }
-.mo-timeline > li.offset > .panel:before {
-    top:102px;
+.mo-timeline > li.offset > .panel::before {
+    top: 102px;
 }
-
-.mo-timeline > li.offset > .panel:after {
-    top:103px;
+.mo-timeline > li.offset > .panel::after {
+    top: 103px;
 }
 .mo-timeline > li.offset > .badge {
     top: 100px;
 }
-
-
 @media (min-width: 768px) and (max-width: 1000px) {
-
 }
-
 @media (max-width: 768px) {
-/*@media (max-width: 767px) {*/
-    .mo-timeline:before {
-        background-color: transparent;
-        bottom: 0;
-        content: " ";
-        position: absolute;
-        top: 0;
-        width: 0;
-    }
-    .mo-timeline > li.mo-inverted > .panel {
-        margin-left: 0;
-    }
-
-    ul.mo-timeline > li > .panel {
-        width: 100%;
-    }
-	.col-md-9 .col-xs-12 ,.col-md-12 .col-xs-12 {
-	  padding-left: 0;
-	  padding-right: 0;
-	}
-	.mo-timeline > li > .panel:after {
-	  display: none;
-	}
-	.mo-timeline > li > .panel:before{
-	  display: none;
-	}
+.mo-timeline::before {
+    background-color: transparent;
+    bottom: 0;
+    content: " ";
+    position: absolute;
+    top: 0;
+    width: 0;
 }
-
-/* Landscape phones and down */
+.mo-timeline > li.mo-inverted > .panel {
+    margin-left: 0;
+}
+ul.mo-timeline > li > .panel {
+    width: 100%;
+}
+.col-xs-12 {
+    padding-left: 0;
+    padding-right: 0;
+}
+.mo-timeline > li > .panel::after {
+    display: none;
+}
+.mo-timeline > li > .panel::before {
+    display: none;
+}
+.mo-timeline > li.mo-inverted {
+    padding-left: 0;
+    padding-right: 0;
+}
+}
 @media (max-width: 480px) {
-	.col-md-9 .col-xs-12 ,.col-md-12 .col-xs-12 {
-	  padding-left: 0;
-	  padding-right: 0;
-	}
-	.mo-timeline > li > .panel:after {
-	  display: none;
-	}
-	.mo-timeline > li > .panel:before{
-	  display: none;
-	}
-
+.mo-timeline > li > .panel::after {
+    display: none;
+}
+.mo-timeline > li > .panel::before {
+    display: none;
+}
 }
