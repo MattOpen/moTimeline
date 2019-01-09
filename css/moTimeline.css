@@ -51,7 +51,6 @@
     display: block;
     float: right;
     opacity: 1;
-    padding-left: 15px;
     padding-right: 0;
     position: relative;
     clear:right;
@@ -141,13 +140,13 @@
     z-index: 1;
 }
 .mo-timeline > li > .badge .favicon > img {
-  max-width: 16px;
+    max-width: 16px;
 }
 .panel-heading .favicon {
-  float: left;
-  margin-top: 8px;
-  padding-bottom: 5px;
-  padding-right: 5px;
+    float: left;
+    margin-top: 8px;
+    padding-bottom: 5px;
+    padding-right: 5px;
 }
 .mo-timeline > li > .badge.ver_b {
     margin-right: -18px;
@@ -177,40 +176,39 @@
 @media (min-width: 768px) and (max-width: 1000px) {
 }
 @media (max-width: 768px) {
-.mo-timeline::before {
-    background-color: transparent;
-    bottom: 0;
-    content: " ";
-    position: absolute;
-    top: 0;
-    width: 0;
-}
-.mo-timeline > li.mo-inverted > .panel {
-    margin-left: 0;
-}
-ul.mo-timeline > li > .panel {
-    width: 100%;
-}
-.col-xs-12 {
-    padding-left: 0;
-    padding-right: 0;
-}
-.mo-timeline > li > .panel::after {
-    display: none;
-}
-.mo-timeline > li > .panel::before {
-    display: none;
-}
-.mo-timeline > li.mo-inverted {
-    padding-left: 0;
-    padding-right: 0;
-}
+    .mo-timeline::before {
+        background-color: transparent;
+        bottom: 0;
+        content: " ";
+        position: absolute;
+        top: 0;
+        width: 0;
+    }
+    .mo-timeline > li.mo-inverted > .panel {
+        margin-left: 0;
+    }
+    ul.mo-timeline > li > .panel {
+        width: 100%;
+    }
+    .col-xs-12 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .mo-timeline > li > .panel::after {
+        display: none;
+    }
+    .mo-timeline > li > .panel::before {
+        display: none;
+    }
+    .mo-timeline > li.mo-inverted {
+        padding-right: 0;
+    }
 }
 @media (max-width: 480px) {
-.mo-timeline > li > .panel::after {
-    display: none;
-}
-.mo-timeline > li > .panel::before {
-    display: none;
-}
+    .mo-timeline > li > .panel::after {
+        display: none;
+    }
+    .mo-timeline > li > .panel::before {
+        display: none;
+    }
 }

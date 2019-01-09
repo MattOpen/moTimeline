@@ -1,318 +1,329 @@
-/*
- * moTimeline v 0.9.50
+/*!
+ * moTimeline v 0.9.60
+ * last update 09.01.2019
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
  * by MattOpen
  */
 
-
-
-
-(function ( $ ) {
-	//  HELPER credits goes to http://stackoverflow.com/questions/18575582/how-to-detect-responsive-breakpoints-of-twitter-bootstrap-3-using-javascript
-    var breakpointHelper  = '<div class="device-xs visible-xs hidden"></div>';
-        breakpointHelper += '<div class="device-sm visible-sm hidden"></div>';
-        breakpointHelper += '<div class="device-md visible-md hidden"></div>';
-        breakpointHelper += '<div class="device-lg visible-lg hidden"></div>';
-
-    $('body').prepend(breakpointHelper);
-
-    if(typeof waitForFinalEvent !== 'undefined' && $.isFunction( waitForFinalEvent )) {
-        //nothing to do
-    }else{
-        var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="some string!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
-        var fullDateString = new Date();
-    }
-
-
-    function getBreakpoint( alias ) {
-        return $('.device-' + alias).is(':visible');
-    }
-	//  HELPER end
-
-
-	var moTcolumns = [],
-		moToption = []
-		;
-	//	check userAgent
-	if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1)
-	{ $('html, Body').addClass('gecko ext-gecko')	}
-	if(navigator.userAgent.toLowerCase().indexOf('safari') > -1)
-	{  $('html, Body').addClass('safari ext-webkit') }
-
-	
-        //  private functions
-    moT_GetColumnCount = (function(){
-            var col = 0,
-                gridValues,
-                Breakpoint,
-                getBreakpointInt = 0,
-                startBreakpointInt = 0;
-
-            //  get actual size width
-            if( getBreakpoint('xs')){
-                getBreakpointInt = 1;
-                Breakpoint = 'xs';
-            }else if( getBreakpoint('sm')){
-                getBreakpointInt = 2;
-                Breakpoint = 'sm';
-            }else if( getBreakpoint('md')){
-                getBreakpointInt = 3;
-                Breakpoint = 'md';
-            }else if( getBreakpoint('lg')){
-                getBreakpointInt = 4;
-                Breakpoint = 'lg';
-            }
-	//console.log(getBreakpointInt+Breakpoint);
-
-	//if(typeof moToption !== 'undefined' && $.isFunction( moToption )) {
-		if(typeof moToption !== 'undefined') {
-            if( moToption.startBreakpoint == 'xs'){
-                startBreakpointInt = 1;
-                gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
-            }else if( moToption.startBreakpoint == 'sm'){
-                startBreakpointInt = 2;
-                gridValues = 'col-xs-12 col-sm-6 col-md-6  col-lg-6 sm';
-            }else if( moToption.startBreakpoint == 'md'){
-                startBreakpointInt = 3;
-                gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
-            }else if( moToption.startBreakpoint == 'lg'){
-                startBreakpointInt = 4;
-                gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
-            }
-			//console.log(gridValues);
-        } else{
-		console.log('not defined');
-		}
-
-            if( getBreakpointInt >= startBreakpointInt  ) {
-                col = 2;
-            }else{
-                col = 1;
-            }
-        console.log('col: ' +col)
-            return {
-                col:col,
-                gridValues : gridValues,
-                Breakpoint : Breakpoint
-            }
-        });
-
-    var moT_GetPostPosition = (function(elem){
-        var o = 0,h = 0,gppu = 0, the_post, the_post_OK, the_post_H, the_post_UK,the_post_Houter, the_postID,eID;
-
-        if (elem == 0 || !elem || elem.length == 0 )return{o:0,h:0,gppu:0};
-
-        the_post = $(elem);
-        the_postID = the_post.attr('id');
-        the_post_OK = Math.ceil(the_post.offset().top);
-        the_post_H = Math.ceil(the_post.outerHeight(true));
-        the_post_UK = (the_post_H + the_post_OK);
-	//console.log('the_postID: '+the_postID+': the_post_OK: '+the_post_OK+' the_post_H: '+the_post_H+' = the_post_UK: '+the_post_UK+' berechnet: '+(the_post_OK+the_post_H));
-
-        return {
-            o : the_post_OK,
-            h : the_post_H,
-            gppu : the_post_UK,
-            eID : the_postID
-        }
-
-    });
-    var moT_GetLeftOrRight = (function (elem){
-
-            if (elem == 0 || !elem || elem.length == 0 ) {
-                return console.log('no element');
-            }else{
-                var e, l, r,OG,UG,AA,BB,eid,pRid,pLid,pos, bo,
-                    the_post = $(elem);
-				var moT_c = 0;
-                //if ($('body').hasClass('ext-gecko')) moT_c = -1;
-                //if ($('body').hasClass('ext-webkit')) moT_c = 0;	//Safari - Apple
-
-                eid = the_post.attr('id');
-                pRid = the_post.prevAll('.mo-inverted').attr('id'); // $pRid = $prevRid
-                pLid = the_post.prevAll('li').not('.mo-inverted').attr('id');    // $pLid = $prevLid
-
-
-                l = moT_GetPostPosition($('#'+pLid));
-                r = moT_GetPostPosition($('#'+pRid));
-                e = moT_GetPostPosition($('#'+eid));
-                OG = e.o - l.o;
-                UG = l.gppu - e.o;
-                AA = l.gppu - r.gppu;
-                BB = r.gppu - l.gppu;
-
-                if(moTcolumns.col > 1){
-
-                    if (l.gppu > e.o + moT_c ) {
-                        pos = 1;
+(function ($) {
+    window.moTimeline || (window.moTimeline = {});
+    var _moTimeline = function (options) {
+        var
+            _defaults = {
+                framework: {
+                    bootstrap3: {
+                        gridValues: 'col-xs-12 col-sm-6 col-md-6  col-lg-6',
+                        columnCount: {
+                            xs: 1,
+                            sm: 2,
+                            md: 2,
+                            lg: 2
+                        },
+                        badge: 'visible-md visible-lg'
+                    },
+                    materializecss: {
+                        gridValues: 'col s12 m6 l6 xl6',
+                        columnCount: {
+                            xs: 1,
+                            sm: 2,
+                            md: 2,
+                            lg: 2
+                        },
+                        badge: 'hide-on-med-and-down' //hide-on-med-and-down      hide-on-small-only
                     }
-                    if (r.gppu > l.gppu  ) {
-                        pos = 0;
-                    }
-                    if (l.gppu = r.gppu ) {
-                        //pos = 1;
-                    }
-
-                    //  adjust badge
-                    if( pos > 0 ){
-                        if (  OG < 40 && OG >= 0 ) {
-                            bo = 1;
+                },
+                init: {
+                    framework: 'materializecss',
+                    columnCount: null,
+                    gridValues: null,
+                    breakpoint: null,
+                    windowWidth: $(window).width(),
+                }
+            },
+            _settings = $.extend(true, {}, _defaults, options),
+            helper = {
+                getBreakpoint: function () {
+                    var ww = $(window).outerWidth();
+                    if (_settings.init.framework === 'bootstrap3') {
+                        //bootstrap3
+                        if (ww < 768) {
+                            return 'xs';
                         }
-                        if ( AA < 40 && BB < 40 )  {
-                            bo = 1;
+                        else if (ww >= 768 && ww <= 992) {
+                            return 'sm';
+                        }
+                        else if (ww > 992 && ww <= 1200) {
+                            return 'md';
+                        }
+                        else {
+                            return 'lg';
+                        }
+                    } else {
+                        if (ww <= 600) {
+                            return 'xs';
+                        }
+                        else if (ww >= 601 && ww <= 992) {
+                            return 'sm';
+                        }
+                        else if (ww > 992 && ww <= 1200) {
+                            return 'md';
+                        }
+                        else {
+                            return 'lg';
                         }
                     }
+                },
+                setDivider: function (itemArr) {
+                    var $itemArr = $(itemArr),
+                        col = helper.getState().columnCount;
+
+                    if (col === 1) {
+                        $itemArr.removeClass('twocol');
+                    } else {
+                        $itemArr.addClass('twocol');
+                    }
+                    return col;
+                },
+                getPosition: (function (elem) {
+                    var o = 0, h = 0, gppu = 0;
+
+                    if (elem == 0 || !elem || elem.length == 0) { o = o, h = h, gppu = gppu }
+                    else {
+                        elem = elem[0];
+                        o = elem.offsetTop;
+                        h = elem.offsetHeight;
+                        gppu = (h + o);
+                    }
+                    return { o, h, gppu }
+
+                }),
+                uuidv4: function () {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                },
+                setIdToEveryNode: function (arr) {
+                    $(arr).attr('id', function (index) {
+                        var id = this.id;
+                        return val = (id.length > 0) ? id : 'moT' + helper.uuidv4() + '_' + index;
+                    });
+                },
+                setPostPosition: function (elem) {
+                    var pPos = helper.getLeftOrRight(elem),
+                        $elem = $(elem);
+
+                    if (pPos.lr > 0) {
+                        $elem.addClass('mo-inverted');
+                    } else {
+                        $elem.removeClass('mo-inverted');
+                    }
+                    if (pPos.badge_offset > 0) {
+                        $elem.addClass('offset');
+                    } else {
+                        $elem.removeClass('offset');
+                    }
+                },
+                getLeftOrRight: function (elem) {
+
+                    if (elem === 0 || !elem || elem.length === 0) return console.log('no element');
+
+                    var e, l, r, OG, UG, AA, BB, prevRE, prevLE, pos, bo,
+                        $elem = $(elem), moT_c = 0;
+
+                    prevRE = $elem.prevAll('.mo-inverted').first();
+                    prevLE = $elem.prevAll('li').not('.mo-inverted').first();
+
+                    l = helper.getPosition(prevLE);
+                    r = helper.getPosition(prevRE);
+                    e = helper.getPosition($elem);
+                    OG = e.o - l.o;
+                    UG = l.gppu - e.o;
+                    AA = l.gppu - r.gppu;
+                    BB = r.gppu - l.gppu;
+                    var col = helper.getState().columnCount;
+
+                    if (col > 1) {
+
+                        if (l.gppu > e.o + moT_c) {
+                            pos = 1;
+                        }
+                        if (r.gppu > l.gppu) {
+                            pos = 0;
+                        }
+                        if (l.gppu = r.gppu) {
+                            //pos = 1;
+                        }
+
+                        //  adjust badge
+                        if (pos > 0) {
+                            if (OG < 40 && OG >= 0) {
+                                bo = 1;
+                            }
+                            if (AA < 40 && BB < 40) {
+                                bo = 1;
+                            }
+                        }
+                    }
+
+                    return {
+                        lr: pos,
+                        badge_offset: bo,
+                        e: e,
+                        l: l,
+                        r: r,
+                    }
+                },
+                debounce: function (func) {
+                    var timer;
+                    return function (event) {
+                        if (timer) clearTimeout(timer);
+                        timer = setTimeout(func, 300, event);
+                    };
+                },
+                resizeListener: function () {
+                    window.addEventListener("resize", helper.debounce(function (e) {
+                        if ($(window).width() != _settings.init.windowWidth) {
+                            _settings.init.windowWidth = $(window).width();
+                            window.moTimeline.refresh()
+                        }
+                    }));
+                },
+                initImagesLoaded: function (elem) {
+                    var instance = elem;
+                    var itemArr = instance[0].children;
+                    if (typeof imagesLoaded !== 'undefined' && $.isFunction(imagesLoaded)) {
+                        $(itemArr).imagesLoaded()
+                            .done(function () {
+                                console.log('all images successfully loaded');
+                                refreshTree(instance);
+                            })
+                    }
+                    else {
+                        setTimeout(function () {
+                            refreshTree(instance);
+                        }, 1000);
+                    }
+                },
+                getState: function () {
+                    var framework = _settings.init.framework,
+                        breakpoint = helper.getBreakpoint(),
+                        columnCount = _settings.framework[framework].columnCount[breakpoint],
+                        gridValues = _settings.framework[framework].gridValues,
+                        badge = _settings.framework[framework].badge;
+
+                    return {
+                        columnCount: columnCount,
+                        gridValue: gridValues,
+                        breakpoint: breakpoint,
+                        badge: badge
+                    }
+                },
+                createBadge: function (elem, idx) {
+                    var badge = helper.getState().badge;
+                    var html = '<span class="js-badge-mo badge-mo '+badge+'">'+idx+'</span>';
+                    $(elem).prepend(html);
+                    return html;
+                },
+                createBadgeArrow: function (elem, idx) {
+                    var badge = helper.getState().badge;
+                    var html = '<span class="js-badge-arrow badge-arrow '+badge+'">&nbsp;</span>';
+                    $(elem).prepend(html);
+                    return html;
                 }
-
-
-                return {
-                    lr : pos
-                    ,badge_offset : bo
-                    ,e:e
-                    ,l:l
-                    ,r:r
+            },
+            refreshTree = (function (itemArr) {
+                var arr;
+                if (itemArr) {
+                    arr = itemArr;
+                } else {
+                    arr = this.instances;
                 }
-            }
-        });
-    var moT_setPostPosition = (function(elem) {
+                $.each(arr, function (index, value) {
+                    var mo_posts = value.children;
 
-       // if(elem == 'undefined') return;
-            var pPos = moT_GetLeftOrRight(elem);
+                    helper.setDivider(value);
 
-            if (pPos.lr > 0) {
-                elem.addClass('mo-inverted');
-            } else {
-                elem.removeClass('mo-inverted');
-            }
-            if (pPos.badge_offset > 0) {
-                elem.addClass('offset');
-            } else {
-                elem.removeClass('offset');
-            }
+                    $.each(mo_posts, function (index, value) {
+                        helper.setPostPosition(value);
+                    })
+                })
+            }),
+            init = function (elem) {
+                $.each(elem, function (index, value) {
 
-        });
-    moT_init = (function(initarr,idx) {
+                    if (typeof window.moTimeline.instances === 'undefined') {
+                        window.moTimeline.instances = new Array;
+                    }
 
-            var elem;
+                    var instance = $(value),
+                        itemArr = instance[0];
 
-            elem = $(initarr[idx]);
-            moT_setPostPosition(elem);
+                    //  if elem already initialised - only refresh the list
+                    if ($(itemArr).data().moTimelineData) {
+                        console.log('instance already there');
+                        refreshTree(instance);
+                        return;
+                    } else {
+                        moTimeline.instances.push.apply(moTimeline.instances, instance);
+                    }
 
-            if (idx < (moTdefaults.total - 1)) {
-                moT_init(initarr,idx + 1);
-            } else {
-                moT_RefreshPostsAll();
-				//$(window).data('ajaxready', true);	//	need only on mattopen.com. YOU CAN SAFELY DELETE THIS LINE
-            }
+                    $(instance).data('moTimeline' + 'Data', _settings.init);
 
-        });
-    moT_RefreshPostsAll = (function() {
-        arr = mo_UL;
-        mo_posts.each(function (idx) {
-                moT_setPostPosition($(this));
-            });
-        });
+                    var mo_posts = itemArr.children;
 
-    jQuery.fn.moTimeline = function (option) {
-        mo_UL = this;
-        mo_posts = mo_UL.find('li');
-        if (!mo_UL.parent().hasClass('timeline-wrapper')) mo_UL.wrap('<div class="timeline-wrapper"></div>');   //only for compatibility to moTimeline v 0.9.49
-        if (!mo_UL.hasClass('mo-timeline')) mo_UL.addClass('mo-timeline');
+                    if (itemArr.className !== 'mo-timeline') {
+                        itemArr.classList.add("mo-timeline");
+                    }
 
-        var checkSelector = mo_posts.length;
+                    if (!mo_posts || mo_posts.length === 0) {
+                        console.log('sorry, no data...');
+                        return;
+                    }
 
-        if (!mo_posts || checkSelector == 0) {
-            console.log('sorry, no data...');
-            return;
-        }else{
-            motrcount = 1;
+                    //  initialize
+                    helper.setIdToEveryNode(mo_posts);
+                    helper.resizeListener();
+                    helper.initImagesLoaded(instance);
 
-            moToption = $.extend({
-                //animationSpeed: 100,
-                //shuffleSpeed: 200,
-                //gutter: 0,          //  should be same as margin-bottom LI  $('ul.mo-timeline > li')
-                badge: 'ver_b',
-                startBreakpoint: 'md',
-                startID: 0
-            },option);
 
-            moTdefaults = {
-                calcSpeed: 100,
-                total : mo_posts.length,
-                gridValues : 'col-xs-12 col-sm-12 col-md-6  col-lg-6'
+                    $.each(instance, function (index, value) {
+                        var mo_posts = value.children,
+                            $mo_posts = $(mo_posts);
+                        $mo_posts.removeClass().addClass(helper.getState().gridValue);
+                        helper.setDivider(value);
+                        $.each($mo_posts, function (index, value) {
+                            var index = index+1;
+                            helper.createBadge(value, index);
+                            helper.createBadgeArrow(value, index);
+                        });
+                    });
+
+                    refreshTree(instance);
+                })
             };
 
+        return {
+            //  publish functions
+            init: init,
+            refresh: refreshTree
+        }
+    };
 
 
-            //  initialize
-            moTcolumns =  moT_GetColumnCount();
-            $(mo_posts).addClass( moTcolumns.gridValues );
-            $('.badge', mo_posts).addClass('visible-lg visible-md '+ moToption.badge);
-
-            if( moTcolumns.col == 1 ) {
-                mo_UL.removeClass('twocol');
-            }else{
-                if ($('.timeline-wrapper').find('.twocol').length > 0){
-                    //    nothing
-                } else{
-                    mo_UL.addClass('twocol');
-                }
-            }
-
-            var idx = 0;
-            if (moToption.startID > 0){
-                $(mo_posts).addClass( moTcolumns.gridValues );
-            }
-
-
-            //  set id to every li -
-            //  check id exist before change id
-            mo_posts.attr('id', function (index) {
-
-                var theid = this.id;
-                if(theid.length  > 0) {
-                    return theid;
-                }else{
-                    return 'moT' + index;
-                }
-
-            });
-
-
-
-            moT_init(mo_posts,idx);
-
-
-            if (typeof imagesLoaded !== 'undefined' && $.isFunction( imagesLoaded )) {
-
-                mo_UL.imagesLoaded(function () {
-                    moT_RefreshPostsAll();
-                });
-            }
-
-
-            $(window).on('resize', function() {
-                waitForFinalEvent(function(){
-                    moT_RefreshPostsAll();
-					moTcolumns =  moT_GetColumnCount();
-					if( moTcolumns.col == 1 ) {
-					    mo_UL.removeClass('twocol');
-					}else{
-						if ($('.timeline-wrapper').find('.twocol').length > 0){
-							//    nothing
-						} else{
-						    mo_UL.addClass('twocol');
-						    moT_RefreshPostsAll();
-							console.log('error')
-						}
-					}
-                }, 500, fullDateString.getTime())
-            });
+    $.fn.moTimeline = function (options) {
+        var _self = this;
+        if ($.type(options) !== 'object'){
+            var options = {};
         }
 
+        // expose the library
+        $.extend(true, window.moTimeline, _moTimeline());
 
+        //  init the library
+        _moTimeline(options).init(_self);
 
     };
-}( jQuery ));
+}(jQuery));
