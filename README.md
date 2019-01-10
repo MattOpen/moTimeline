@@ -14,8 +14,8 @@
 
 ##html markup
 <p>initialize as unordered list</p>
-<pre>
-	<code>
+&lt;pre&gt;
+	&lt;code&gt;
 		&lt;ul class=&quot;moTimeline&quot;&gt;
 			&lt;li&gt;
 				
@@ -24,12 +24,12 @@
 				
 			&lt;/li&gt;
 		&lt;/ul&gt;
-	</code>
-</pre>
+	&lt;/code&gt;
+&lt;/pre&gt;
 
 <p> or initialize with div</p>
-<pre>
-	<code>
+&lt;pre&gt;
+	&lt;code&gt;
 		&lt;div class=&quot;moTimeline&quot;&gt;
 			&lt;div&gt;
 				
@@ -38,8 +38,8 @@
 				
 			&lt;/div&gt;
 		&lt;/div&gt;
-	</code>
-</pre>
+	&lt;/code&gt;
+&lt;/pre&gt;
 
 every child element from element with class "moTimeline" will be used as item and therefor re-arranged.
 
