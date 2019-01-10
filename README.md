@@ -16,28 +16,28 @@
 <p>initialize as unordered list</p>
 <pre>
 	<code>
-		<ul class="moTimeline">
-			<li>
+		&lt;ul class=&quot;moTimeline&quot;&gt;
+			&lt;li&gt;
 				
-			</li>
-			<li>
+			&lt;/li&gt;
+			&lt;li&gt;
 				
-			</li>
-		</ul>
+			&lt;/li&gt;
+		&lt;/ul&gt;
 	</code>
 </pre>
 
 <p> or initialize with div</p>
 <pre>
 	<code>
-		<div class="moTimeline">
-			<div>
+		&lt;div class=&quot;moTimeline&quot;&gt;
+			&lt;div&gt;
 				
-			</div>
-			<div>
+			&lt;/div&gt;
+			&lt;div&gt;
 				
-			</div>
-		</div>
+			&lt;/div&gt;
+		&lt;/div&gt;
 	</code>
 </pre>
 
