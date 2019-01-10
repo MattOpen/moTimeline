@@ -3,7 +3,7 @@
 
 ##Features
 * one or two column layout
-* re-arrange items like "<li></li>" or "<div></div>"
+* re-arrange items with ul-li or with any parent-child system like div in div
 * add or remove badge to every item
 * grid system bootstrap 3.x compatible
 * grid system materializecss compatible
@@ -15,30 +15,30 @@
 ##html markup
 <p>initialize as unordered list</p>
 <pre>
-<code>
-	<ul class="moTimeline">
-		<li>
-			
-		</li>
-		<li>
-			
-		</li>
-	</ul>
-</code>
+	<code>
+		<ul class="moTimeline">
+			<li>
+				
+			</li>
+			<li>
+				
+			</li>
+		</ul>
+	</code>
 </pre>
 
 <p> or initialize with div</p>
 <pre>
-<code>
-	<div class="moTimeline">
-		<div>
-			
+	<code>
+		<div class="moTimeline">
+			<div>
+				
+			</div>
+			<div>
+				
+			</div>
 		</div>
-		<div>
-			
-		</div>
-	</div>
-</code>
+	</code>
 </pre>
 
 every child element from element with class "moTimeline" will be used as item and therefor re-arranged.
@@ -64,13 +64,13 @@ every child element from element with class "moTimeline" will be used as item an
     initialize the script after page load
 </p>
 <pre>
-<code>
- &#x3C;script type="text/javascript"&#x3E;
-	$(document).ready(function () {
-		$('.moTimeline').moTimeline();
-	});
- &#x3C;/script&#x3E;
-</code>
+	<code>
+	 &#x3C;script type="text/javascript"&#x3E;
+		$(document).ready(function () {
+			$('.moTimeline').moTimeline();
+		});
+	 &#x3C;/script&#x3E;
+	</code>
 </pre>
 
 
