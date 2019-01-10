@@ -1,50 +1,51 @@
 #moTimeline
 <p>moTimeline is a responsive two column timeline layout library - MIT licensed.</p>
-<p>I like OpenSource, I like sharing. Do what ever you want with this little piece of code. (-:</p>
 
 ##Features
-* one or two column
-* auto arrange post left or right
-* bootstrap 3.x compatible
+* one or two column layout
+* re-arrange items like "<li></li>" or "<div></div>"
+* add or remove badge to every item
+* grid system bootstrap 3.x compatible
+* grid system materializecss compatible
+* fully customizable
 
 <p>See in action at <a href="http://www.mattopen.com/" target="_blank">mattopen.com</a></p>
 <a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ##html markup
-<p>actually supported is only an unordered list.</p>
+<p>initialize as unordered list</p>
 <pre>
 <code>
-&#x3C;div class="row"&#x3E;
-	&#x3C;div class="container"&#x3E;
-		&#x3C;ul class="mySelector"&#x3E;
-			&#x3C;li&#x3E;
-				&#x3C;div class="panel panel-default"&#x3E;
-					&#x3C;div class="panel-heading"&#x3E;
-						&#x3C;h3 class="panel-title"&#x3E;a headline&#x3C;/h3&#x3E;
-					&#x3C;/div&#x3E;
-					&#x3C;div class="panel-body"&#x3E;
-						&#x3C;p&#x3E;some text&#x3C;/p&#x3E;
-					&#x3C;/div&#x3E;
-				&#x3C;/div&#x3E;
-			&#x3C;/li&#x3E;
-			&#x3C;li id="test"&#x3E;
-				&#x3C;div class="panel panel-default"&#x3E;
-					&#x3C;div class="panel-heading"&#x3E;
-						&#x3C;h3 class="panel-title"&#x3E;next headline&#x3C;/h3&#x3E;
-					&#x3C;/div&#x3E;
-					&#x3C;div class="panel-body"&#x3E;
-						&#x3C;p&#x3E;some text.&#x3C;/p&#x3E;
-					&#x3C;/div&#x3E;
-				&#x3C;/div&#x3E;
-			&#x3C;/li&#x3E;
-		&#x3C;/ul&#x3E;
-	&#x3C;/div&#x3E;
-&#x3C;/div&#x3E;
+	<ul class="moTimeline">
+		<li>
+			
+		</li>
+		<li>
+			
+		</li>
+	</ul>
 </code>
 </pre>
 
+<p> or initialize with div</p>
+<pre>
+<code>
+	<div class="moTimeline">
+		<div>
+			
+		</div>
+		<div>
+			
+		</div>
+	</div>
+</code>
+</pre>
+
+every child element from element with class "moTimeline" will be used as item and therefor re-arranged.
+
 ##Installation
-<p>add the bootstrap.css and the moTimeline.css files to the head of your site</p>
+<p>add your preferred grid system "bootstrap.css" or "materializecss.css" to your website.</p>
+<p>add the moTimeline.css files to the head of your site</p>
 <pre>
 <code>
  &#x3C;link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css"&#x3E;
@@ -60,27 +61,13 @@
 </pre>
 
 <p>
-    initialize the script after page load<br />
-    important change to the version before, initialize only selector without child element. 
+    initialize the script after page load
 </p>
 <pre>
 <code>
-        //NEW CODE
  &#x3C;script type="text/javascript"&#x3E;
 	$(document).ready(function () {
-		$('.mySelector').moTimeline();
-	});
- &#x3C;/script&#x3E;
-
-    also possible: $('#myID ul').moTimeline();
-</code>
-</pre>
-<pre>
-<code>
-    //OLD CODE
- &#x3C;script type="text/javascript"&#x3E;
-	$(document).ready(function () {
-		$('ul.mo-timeline > li').moTimeline();
+		$('.moTimeline').moTimeline();
 	});
  &#x3C;/script&#x3E;
 </code>
@@ -89,40 +76,59 @@
 
 ##Options:
 <p>make use of options:</p>
+<p>for detailed information about the desired grid system, please refer to the vendor pages.</p>
+<p><a href="https://materializecss.com/grid.html" target="_blank">materializecss.com</a> </p>
+<p><a href="https://getbootstrap.com/docs/3.3/css/#grid" target="_blank">getbootstrap.com</a> </p>
 <pre>
 <code>
-	$('.mySelector').moTimeline(
-			{
-			
-				startBreakpoint: 'md'	// possible 'xs','sm','md','lg'
-				
-			}
-	);
+	$('.moTimeline').moTimeline({
+		framework: 'bootstrap3',		// your preferred grid system
+		columnCount: {					// override col count
+			xs: 1,
+			sm: 1,
+			md: 2,
+			lg: 2
+		},
+		badge: 'visible-md visible-lg'	// hide and show badge 
+	});
 </code>
 </pre>
 
-<p>The "startBreakpoint" option will result in the following Bootstrap-Gridvalues:</p>
-```html
-	startBreakpoint = 'xs'
-		gridValues = 'col-xs-6 col-sm-6 col-md-6  col-lg-6 xs';
-	startBreakpoint = 'sm'
-		gridValues = 'col-xs-12 col-sm-6 col-md-6  col-lg-6 sm';
-	startBreakpoint = 'md'
-		gridValues = 'col-xs-12 col-sm-12 col-md-6  col-lg-6 md';
-	startBreakpoint = 'lg'
-		gridValues = 'col-xs-12 col-sm-12 col-md-12 col-lg-6 lg';
-```
+<p>if you do not provide any options, the array will initialised with the following settings</p>
+<pre>
+<code>
+	$('.moTimeline').moTimeline({
+		framework: 'materializecss',
+		columnCount: {
+			xs: 1,
+			sm: 2,
+			md: 2,
+			lg: 2
+		},
+		badge: 'hide-on-med-and-down'
+	});
+</code>
+</pre>
 
-<p>The following options are currently disabled:</p>
-```html
-//animationSpeed: 100,	//disabled
-//shuffleSpeed: 200,	//disabled
-//gutter: 0,			//disabled
-```
+<p>at least you should provide the grid system with "bootstrap3" or "materializecss", the array will then initialised automatically</p>
+<pre>
+<code>
+	$('.moTimeline').moTimeline({
+		framework: 'materializecss'
+	});
+</code>
+</pre>
 
-take a look at index.html in this repo, how to use css and js.
+take a look at the example folder.
 
 ##updates and version
+###v 0.9.61
+* completely rewritten
+* minified version only 5 kb
+* now support for bootstrap3 and materializecss grid system
+* add examples
+* initialize now with ul-li or with any parent-child system like div in div
+
 ###v 0.9.50
 * removed a lot of garbage code
 * now work with every selector, instead of only $('ul.mo-timeline > li'), but you have to provide an unordered list
@@ -154,10 +160,6 @@ take a look at index.html in this repo, how to use css and js.
 ###v 0.9.39
 * found a bug in position calculation
 
-##Dependencies
-* Bootstrap 3.x http://getbootstrap.com/
-* require jQuery, 1.9 or higher
-* modernizer http://modernizr.com/download/
 
 ##Example website and demo
 * http://www.mattopen.com
@@ -165,7 +167,6 @@ take a look at index.html in this repo, how to use css and js.
 
 ##special thanks to...
 * Livestamp.js A simple, unobtrusive jQuery plugin that provides auto-updating timeago text to your timestamped HTML elements using Moment.js.http://mattbradley.github.com/livestampjs
-* LoremPixel.com Placeholder Images for every case. http://lorempixel.com/
 
 #License
 This plugin and all code contained is Copyright 2016 <a href="http://www.mattopen.com">mattopen</a>, Germany. You are granted a license to use this code / software as you wish, free of charge and free of restrictions under the MIT license
