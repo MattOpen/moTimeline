@@ -1,5 +1,8 @@
 # moTimeline
-moTimeline is a responsive two column timeline layout library - MIT licensed
+moTimeline is a responsive two column timeline layout library, written in JavaScript and jQuery - MIT licensed.
+It depends on materializecss and bootstraps grid systems.
+
+#bootstrap #materializecss #jQuery #JavaScript
 
 ## Features
 * one or two column layout
