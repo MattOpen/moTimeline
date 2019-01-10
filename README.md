@@ -14,32 +14,32 @@
 
 ##html markup
 <p>initialize as unordered list</p>
-&lt;pre&gt;
-	&lt;code&gt;
-		&lt;ul class=&quot;moTimeline&quot;&gt;
-			&lt;li&gt;
+<pre>
+	<code>
+		&#x3C;ul class="moTimeline"&#x3E;
+			&#x3C;li&#x3E;
 				
-			&lt;/li&gt;
-			&lt;li&gt;
+			&#x3C;/li&#x3E;
+			&#x3C;li&#x3E;
 				
-			&lt;/li&gt;
-		&lt;/ul&gt;
-	&lt;/code&gt;
-&lt;/pre&gt;
+			&#x3C;/li&#x3E;
+		&#x3C;/ul&#x3E;
+	</code>
+</pre>
 
 <p> or initialize with div</p>
-&lt;pre&gt;
-	&lt;code&gt;
-		&lt;div class=&quot;moTimeline&quot;&gt;
-			&lt;div&gt;
+<pre>
+	<code>
+		&#x3C;div class="moTimeline"&#x3E;
+			&#x3C;div&#x3E;
 				
-			&lt;/div&gt;
-			&lt;div&gt;
+			&#x3C;/div&#x3E;
+			&#x3C;div&#x3E;
 				
-			&lt;/div&gt;
-		&lt;/div&gt;
-	&lt;/code&gt;
-&lt;/pre&gt;
+			&#x3C;/div&#x3E;
+		&#x3C;/div&#x3E;
+	</code>
+</pre>
 
 every child element from element with class "moTimeline" will be used as item and therefor re-arranged.
 
