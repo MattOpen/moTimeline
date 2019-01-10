@@ -14,6 +14,7 @@ It depends on materializecss and bootstraps grid systems.
 
 See in action at 
 [www.mattopen.com](http://www.mattopen.com/)
+<a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="https://github.com/MattOpen/moTimeline/blob/master/images/preview1.PNG" class="img-responsive"></a>
 <a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ## html markup
