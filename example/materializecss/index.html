@@ -318,11 +318,16 @@
     <script type="text/javascript" src="../../js/moTimeline.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.moTimeline').moTimeline(
-                {
-                    init: { framework: 'materializecss' }
-                }
-            );
+            $('.moTimeline').moTimeline({
+                framework: 'materializecss',
+                columnCount: {
+                    xs: 1,
+                    sm: 2,
+                    md: 2,
+                    lg: 2
+                },
+                badge: 'hide-on-small-only',
+            });
         });
     </script>
 

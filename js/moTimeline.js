@@ -1,5 +1,5 @@
 /*!
- * moTimeline v 0.9.60
+ * moTimeline v 0.9.61
  * last update 09.01.2019
  * responsive two column timeline layout library
  * http://www.mattopen.com
@@ -14,7 +14,7 @@
             _defaults = {
                 framework: {
                     bootstrap3: {
-                        gridValues: 'col-xs-12 col-sm-6 col-md-6  col-lg-6',
+                        gridValues: 'col-xs-' + 12 / 1 + ' col-sm-' + 12 / 2 + ' col-md-6  col-lg-6',
                         columnCount: {
                             xs: 1,
                             sm: 2,
@@ -33,25 +33,57 @@
                         },
                         badge: 'hide-on-med-and-down' //hide-on-med-and-down      hide-on-small-only
                     }
-                },
-                init: {
-                    framework: 'materializecss',
-                    columnCount: null,
-                    gridValues: null,
-                    breakpoint: null,
-                    windowWidth: $(window).width(),
                 }
             },
-            _settings = $.extend(true, {}, _defaults, options),
+            _init = {
+                framework: 'materializecss',
+                columnCount: null,
+                col: null,
+                gridValues: null,
+                windowWidth: $(window).width(),
+                badge: null
+            },
+            _settings = $.extend(true, {}, _init, options),
             helper = {
+                getColumnCount: function (d) {
+                    return 12 / d;
+                },
+                initInstanceValues: function () {
+                    var framework = _settings.framework,
+                        defaults = _defaults.framework[framework];
+
+                    _settings.columnCount = _settings.columnCount === null ? defaults.columnCount : _settings.columnCount;
+                    _settings.badge = _settings.badge === null ? defaults.badge : _settings.badge;
+                    _settings.col = _settings.columnCount[helper.getBreakpoint()];
+
+                    if (framework === 'bootstrap3' && _settings.gridValues === null) {
+                        _settings.gridValues = 'col-xs-' + helper.getColumnCount(_settings.columnCount.xs) + ' col-sm-' + helper.getColumnCount(_settings.columnCount.sm) + ' col-md-' + helper.getColumnCount(_settings.columnCount.md) + '  col-lg-' + helper.getColumnCount(_settings.columnCount.lg);
+                    } else if (framework === 'materializecss' && _settings.gridValues === null) {
+                        _settings.gridValues = 'col s' + helper.getColumnCount(_settings.columnCount.xs) + ' m' + helper.getColumnCount(_settings.columnCount.sm) + ' l' + helper.getColumnCount(_settings.columnCount.md) + '  xl' + helper.getColumnCount(_settings.columnCount.lg);
+                    }
+
+                },
                 getBreakpoint: function () {
                     var ww = $(window).outerWidth();
-                    if (_settings.init.framework === 'bootstrap3') {
+                    if (_settings.framework === 'bootstrap3') {
                         //bootstrap3
                         if (ww < 768) {
                             return 'xs';
                         }
                         else if (ww >= 768 && ww <= 992) {
+                            return 'sm';
+                        }
+                        else if (ww > 992 && ww <= 1200) {
+                            return 'md';
+                        }
+                        else {
+                            return 'lg';
+                        }
+                    } else if (_settings.framework === 'materializecss') {
+                        if (ww <= 600) {
+                            return 'xs';
+                        }
+                        else if (ww >= 601 && ww <= 992) {
                             return 'sm';
                         }
                         else if (ww > 992 && ww <= 1200) {
@@ -77,7 +109,7 @@
                 },
                 setDivider: function (itemArr) {
                     var $itemArr = $(itemArr),
-                        col = helper.getState().columnCount;
+                        col = helper.getInstanceData(itemArr).col;
 
                     if (col === 1) {
                         $itemArr.removeClass('twocol');
@@ -89,14 +121,16 @@
                 getPosition: (function (elem) {
                     var o = 0, h = 0, gppu = 0;
 
-                    if (elem == 0 || !elem || elem.length == 0) { o = o, h = h, gppu = gppu }
+                    if (elem == 0 || !elem || elem.length == 0) {
+                        //  nothing to do here
+                    }
                     else {
                         elem = elem[0];
                         o = elem.offsetTop;
                         h = elem.offsetHeight;
                         gppu = (h + o);
                     }
-                    return { o, h, gppu }
+                    return { o: o, h: h, gppu: gppu }
 
                 }),
                 uuidv4: function () {
@@ -126,6 +160,12 @@
                         $elem.removeClass('offset');
                     }
                 },
+                getParentInstance: function (elem) {
+                    var parent = $(elem).closest('.mo-timeline');
+                    //console.log('parent instance');
+                    //console.log(parent);
+                    return parent;
+                },
                 getLeftOrRight: function (elem) {
 
                     if (elem === 0 || !elem || elem.length === 0) return console.log('no element');
@@ -143,7 +183,7 @@
                     UG = l.gppu - e.o;
                     AA = l.gppu - r.gppu;
                     BB = r.gppu - l.gppu;
-                    var col = helper.getState().columnCount;
+                    var col = helper.getInstanceData(helper.getParentInstance(elem)).col;
 
                     if (col > 1) {
 
@@ -173,20 +213,20 @@
                         badge_offset: bo,
                         e: e,
                         l: l,
-                        r: r,
+                        r: r
                     }
                 },
                 debounce: function (func) {
                     var timer;
                     return function (event) {
                         if (timer) clearTimeout(timer);
-                        timer = setTimeout(func, 300, event);
+                        timer = setTimeout(func, 100, event);
                     };
                 },
                 resizeListener: function () {
                     window.addEventListener("resize", helper.debounce(function (e) {
-                        if ($(window).width() != _settings.init.windowWidth) {
-                            _settings.init.windowWidth = $(window).width();
+                        if ($(window).width() != _settings.windowWidth) {
+                            _settings.windowWidth = $(window).width();
                             window.moTimeline.refresh()
                         }
                     }));
@@ -207,29 +247,18 @@
                         }, 1000);
                     }
                 },
-                getState: function () {
-                    var framework = _settings.init.framework,
-                        breakpoint = helper.getBreakpoint(),
-                        columnCount = _settings.framework[framework].columnCount[breakpoint],
-                        gridValues = _settings.framework[framework].gridValues,
-                        badge = _settings.framework[framework].badge;
-
-                    return {
-                        columnCount: columnCount,
-                        gridValue: gridValues,
-                        breakpoint: breakpoint,
-                        badge: badge
-                    }
+                getInstanceData: function (elem) {
+                    return $(elem).data().moTimelineData;
                 },
                 createBadge: function (elem, idx) {
-                    var badge = helper.getState().badge;
-                    var html = '<span class="js-badge-mo badge-mo '+badge+'">'+idx+'</span>';
+                    var badge = helper.getInstanceData(helper.getParentInstance(elem)).badge;
+                    var html = '<span class="js-badge-mo badge-mo ' + badge + '">' + idx + '</span>';
                     $(elem).prepend(html);
                     return html;
                 },
                 createBadgeArrow: function (elem, idx) {
-                    var badge = helper.getState().badge;
-                    var html = '<span class="js-badge-arrow badge-arrow '+badge+'">&nbsp;</span>';
+                    var badge = helper.getInstanceData(helper.getParentInstance(elem)).badge;
+                    var html = '<span class="js-badge-arrow badge-arrow ' + badge + '">&nbsp;</span>';
                     $(elem).prepend(html);
                     return html;
                 }
@@ -243,7 +272,7 @@
                 }
                 $.each(arr, function (index, value) {
                     var mo_posts = value.children;
-
+                    $(value).data().moTimelineData.col = $(value).data().moTimelineData.columnCount[helper.getBreakpoint()];
                     helper.setDivider(value);
 
                     $.each(mo_posts, function (index, value) {
@@ -259,7 +288,8 @@
                     }
 
                     var instance = $(value),
-                        itemArr = instance[0];
+                        itemArr = instance[0]
+                        ;
 
                     //  if elem already initialised - only refresh the list
                     if ($(itemArr).data().moTimelineData) {
@@ -267,11 +297,12 @@
                         refreshTree(instance);
                         return;
                     } else {
+                        helper.initInstanceValues();
                         moTimeline.instances.push.apply(moTimeline.instances, instance);
                     }
 
-                    $(instance).data('moTimeline' + 'Data', _settings.init);
-
+                    $(instance).data('moTimeline' + 'Data', _settings);
+                    //console.log(instance.data().moTimelineData);
                     var mo_posts = itemArr.children;
 
                     if (itemArr.className !== 'mo-timeline') {
@@ -288,14 +319,13 @@
                     helper.resizeListener();
                     helper.initImagesLoaded(instance);
 
-
                     $.each(instance, function (index, value) {
                         var mo_posts = value.children,
                             $mo_posts = $(mo_posts);
-                        $mo_posts.removeClass().addClass(helper.getState().gridValue);
+                        $mo_posts.removeClass().addClass(helper.getInstanceData(value).gridValues);
                         helper.setDivider(value);
                         $.each($mo_posts, function (index, value) {
-                            var index = index+1;
+                            index = index + 1;
                             helper.createBadge(value, index);
                             helper.createBadgeArrow(value, index);
                         });
@@ -315,8 +345,8 @@
 
     $.fn.moTimeline = function (options) {
         var _self = this;
-        if ($.type(options) !== 'object'){
-            var options = {};
+        if ($.type(options) !== 'object') {
+            options = {};
         }
 
         // expose the library
