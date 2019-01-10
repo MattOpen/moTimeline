@@ -1,7 +1,7 @@
-#moTimeline
-<p>moTimeline is a responsive two column timeline layout library - MIT licensed.</p>
+# moTimeline
+moTimeline is a responsive two column timeline layout library - MIT licensed
 
-##Features
+## Features
 * one or two column layout
 * re-arrange items with ul-li or with any parent-child system like div in div
 * add or remove badge to every item
@@ -9,35 +9,50 @@
 * grid system materializecss compatible
 * fully customizable
 
-<p>See in action at <a href="http://www.mattopen.com/" target="_blank">mattopen.com</a></p>
+See in action at 
+[www.mattopen.com](http://www.mattopen.com/)
+
+<a href="http://www.mattopen.com/" target="_blank">mattopen.com</a>
 <a href="http://www.mattopen.com/" target="_blank"><img style="width:80%" alt="no picture...:o(" src="http://www.mattopen.com/Portals/7/Images/moTimeline-preview.jpg" class="img-responsive"></a>
 
 ##html markup
-<p>initialize as unordered list</p>
+initialize as unordered list
+```sh
+<ul class="moTimeline">
+	<li>
+		
+	</li>
+	<li>
+		
+	</li>
+</ul>
+```
+
+
 <pre>
 	<code>
-		&#x3C;ul class="moTimeline"&#x3E;
-			&#x3C;li&#x3E;
+		<ul class="moTimeline">
+			<li>
 				
-			&#x3C;/li&#x3E;
-			&#x3C;li&#x3E;
+			</li>
+			<li>
 				
-			&#x3C;/li&#x3E;
-		&#x3C;/ul&#x3E;
+			</li>
+		</ul>
 	</code>
 </pre>
 
 <p> or initialize with div</p>
 <pre>
 	<code>
-		&#x3C;div class="moTimeline"&#x3E;
-			&#x3C;div&#x3E;
+		<div class="moTimeline">
+			<div>
 				
-			&#x3C;/div&#x3E;
-			&#x3C;div&#x3E;
+			</div>
+			<div>
 				
-			&#x3C;/div&#x3E;
-		&#x3C;/div&#x3E;
+			</div>
+		</div>
 	</code>
 </pre>
 
