@@ -1,6 +1,6 @@
 /*!
- * moTimeline v 0.9.61
- * last update 09.01.2019
+ * moTimeline v 0.9.63
+ * last update 18.02.2019
  * responsive two column timeline layout library
  * http://www.mattopen.com
  * MIT License
@@ -55,6 +55,7 @@
                     _settings.columnCount = _settings.columnCount === null ? defaults.columnCount : _settings.columnCount;
                     _settings.badge = _settings.badge === null ? defaults.badge : _settings.badge;
                     _settings.col = _settings.columnCount[helper.getBreakpoint()];
+                    _settings.lastItemIdx = 0;
 
                     if (framework === 'bootstrap3' && _settings.gridValues === null) {
                         _settings.gridValues = 'col-xs-' + helper.getColumnCount(_settings.columnCount.xs) + ' col-sm-' + helper.getColumnCount(_settings.columnCount.sm) + ' col-md-' + helper.getColumnCount(_settings.columnCount.md) + '  col-lg-' + helper.getColumnCount(_settings.columnCount.lg);
@@ -121,7 +122,7 @@
                 getPosition: (function (elem) {
                     var o = 0, h = 0, gppu = 0;
 
-                    if (elem == 0 || !elem || elem.length == 0) {
+                    if (elem === 0 || !elem || elem.length === 0) {
                         //  nothing to do here
                     }
                     else {
@@ -135,14 +136,14 @@
                 }),
                 uuidv4: function () {
                     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                         return v.toString(16);
                     });
                 },
-                setIdToEveryNode: function (arr) {
+                setIdToEveryNode: function (arr, lastidx) {
                     $(arr).attr('id', function (index) {
                         var id = this.id;
-                        return val = (id.length > 0) ? id : 'moT' + helper.uuidv4() + '_' + index;
+                        return val = id.length > 0 ? id : 'moT' + helper.uuidv4() + '_' + (index + lastidx);
                     });
                 },
                 setPostPosition: function (elem) {
@@ -193,9 +194,9 @@
                         if (r.gppu > l.gppu) {
                             pos = 0;
                         }
-                        if (l.gppu = r.gppu) {
-                            //pos = 1;
-                        }
+                        //if (l.gppu === r.gppu) {
+                        //    //pos = 1;
+                        //}
 
                         //  adjust badge
                         if (pos > 0) {
@@ -225,21 +226,21 @@
                 },
                 resizeListener: function () {
                     window.addEventListener("resize", helper.debounce(function (e) {
-                        if ($(window).width() != _settings.windowWidth) {
+                        if ($(window).width() !== _settings.windowWidth) {
                             _settings.windowWidth = $(window).width();
-                            window.moTimeline.refresh()
+                            moTimeline.refresh();
                         }
                     }));
                 },
                 initImagesLoaded: function (elem) {
                     var instance = elem;
-                    var itemArr = instance[0].children;
+                    var items = instance.children();
                     if (typeof imagesLoaded !== 'undefined' && $.isFunction(imagesLoaded)) {
-                        $(itemArr).imagesLoaded()
+                        $(items).imagesLoaded()
                             .done(function () {
                                 console.log('all images successfully loaded');
                                 refreshTree(instance);
-                            })
+                            });
                     }
                     else {
                         setTimeout(function () {
@@ -254,34 +255,30 @@
                     var badge = helper.getInstanceData(helper.getParentInstance(elem)).badge;
                     var html = '<span class="js-badge-mo badge-mo ' + badge + '">' + idx + '</span>';
                     $(elem).prepend(html);
-                    return html;
+                    //return html;
                 },
-                createBadgeArrow: function (elem, idx) {
+                createBadgeArrow: function (elem) {
                     var badge = helper.getInstanceData(helper.getParentInstance(elem)).badge;
                     var html = '<span class="js-badge-arrow badge-arrow ' + badge + '">&nbsp;</span>';
                     $(elem).prepend(html);
                     return html;
                 }
             },
-            refreshTree = (function (itemArr) {
-                var arr;
-                if (itemArr) {
-                    arr = itemArr;
-                } else {
-                    arr = this.instances;
-                }
-                $.each(arr, function (index, value) {
-                    var mo_posts = value.children;
+            refreshTree = function (itemArr) {
+                var instances = $(moTimeline.instances);
+                $.each(instances, function (index, value) {
+                    var elems = value.children;
                     $(value).data().moTimelineData.col = $(value).data().moTimelineData.columnCount[helper.getBreakpoint()];
                     helper.setDivider(value);
 
-                    $.each(mo_posts, function (index, value) {
+                    $.each(elems, function (index, value) {
                         helper.setPostPosition(value);
-                    })
-                })
-            }),
+                    });
+                });
+            },
             init = function (elem) {
-                $.each(elem, function (index, value) {
+                var instances = elem;
+                $.each(instances, function (index, value) {
 
                     if (typeof window.moTimeline.instances === 'undefined') {
                         window.moTimeline.instances = new Array;
@@ -291,10 +288,10 @@
                         itemArr = instance[0]
                         ;
 
-                    //  if elem already initialised - only refresh the list
+                    //  if instance already initialised - only refresh the list
                     if ($(itemArr).data().moTimelineData) {
                         console.log('instance already there');
-                        refreshTree(instance);
+                        refreshTree();
                         return;
                     } else {
                         helper.initInstanceValues();
@@ -302,44 +299,64 @@
                     }
 
                     $(instance).data('moTimeline' + 'Data', _settings);
-                    //console.log(instance.data().moTimelineData);
-                    var mo_posts = itemArr.children;
+                    var elems = itemArr.children;
 
                     if (itemArr.className !== 'mo-timeline') {
                         itemArr.classList.add("mo-timeline");
                     }
 
-                    if (!mo_posts || mo_posts.length === 0) {
+                    if (!elems || elems.length === 0) {
                         console.log('sorry, no data...');
                         return;
                     }
 
                     //  initialize
-                    helper.setIdToEveryNode(mo_posts);
-                    helper.resizeListener();
-                    helper.initImagesLoaded(instance);
-
-                    $.each(instance, function (index, value) {
-                        var mo_posts = value.children,
-                            $mo_posts = $(mo_posts);
-                        $mo_posts.removeClass().addClass(helper.getInstanceData(value).gridValues);
-                        helper.setDivider(value);
-                        $.each($mo_posts, function (index, value) {
-                            index = index + 1;
-                            helper.createBadge(value, index);
-                            helper.createBadgeArrow(value, index);
-                        });
+                    initItems(instance);
+                });
+            },
+            initItems = function (instance) {
+                var
+                    $instance = $(instance),
+                    lastItemIdx = $instance.data().moTimelineData.lastItemIdx,
+                    retValIdx = 0,
+                    elems = $.grep($instance.children(), function (n, i) {
+                        return (i >= lastItemIdx);
                     });
 
-                    refreshTree(instance);
-                })
+                if (elems.length === 0) return;
+
+                helper.setIdToEveryNode(elems, lastItemIdx);
+                helper.resizeListener();
+                helper.initImagesLoaded($instance);
+
+                $(elems).removeClass().addClass(helper.getInstanceData(instance).gridValues + ' moitem');
+                helper.setDivider(instance);
+
+                $.each(elems, function (index, value) {
+                    index = index + 1;
+                    helper.createBadge(value, (index + lastItemIdx));
+                    helper.createBadgeArrow(value);
+                    retValIdx = index;
+                });
+
+                $(instance).data().moTimelineData['lastItemIdx'] = retValIdx + lastItemIdx;
+
+                refreshTree(instance);
+            },
+            initNewItems = function (itemArr) {
+                var instances = $(moTimeline.instances);
+                $.each(instances, function (index, value) {
+                    //  initialize items
+                    initItems(value);
+                });
             };
 
         return {
             //  publish functions
             init: init,
-            refresh: refreshTree
-        }
+            refresh: refreshTree,
+            initNewItems: initNewItems
+        };
     };
 
 

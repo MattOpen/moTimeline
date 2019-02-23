@@ -11,6 +11,8 @@ It depends on materializecss and bootstraps grid systems.
 * grid system bootstrap 3.x compatible
 * grid system materializecss compatible
 * fully customizable
+* override the grid system parameter by passing in your own parameter
+* append new items to the list and initialize them
 
 See in action at 
 [www.mattopen.com](http://www.mattopen.com/)
@@ -104,9 +106,19 @@ $('.moTimeline').moTimeline({
 });
 ```
 
+add new items to the list
+after you had appended new items, the items has to be initialized first.
+```sh
+moTimeLine.initNewItems();
+```
+
 take a look at the example folder.
 
 ## updates and version
+### v 0.9.63
+* add new function "initNewItems"
+* Now you can append new items to your list and then you can init them by executing moTimeLine.initNewItems(). Automatically all instances will be initialized.
+
 ### v 0.9.61
 * completely rewritten
 * minified version only 5 kb

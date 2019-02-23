@@ -1,4 +1,4 @@
-<!DOCTYPE>
+﻿<!DOCTYPE>
 <html lang="en">
 
 <head>
@@ -319,8 +319,18 @@
     <script type="text/javascript" src="../../js/moTimeline.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.moTimeline').moTimeline({
+            $('.moTimeline').eq(0).moTimeline({
                 framework: 'materializecss',
+                columnCount: {
+                    xs: 1,
+                    sm: 2,
+                    md: 2,
+                    lg: 2
+                },
+                badge: 'hide-on-small-only',
+            });
+            $('.moTimeline').eq(1).moTimeline({
+                framework: 'bootstrap3',
                 columnCount: {
                     xs: 1,
                     sm: 2,
