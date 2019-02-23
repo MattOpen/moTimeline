@@ -109,7 +109,7 @@ $('.moTimeline').moTimeline({
 add new items to the list
 after you had appended new items, the items has to be initialized first.
 ```sh
-moTimeLine.initNewItems();
+moTimeline.initNewItems();
 ```
 
 take a look at the example folder.
