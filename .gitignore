@@ -28,10 +28,12 @@ $RECYCLE.BIN/
 .vs
 .vscode
 fonts
+node_modules
 
 
 # Icon must ends with two \r.
-Icon
+Icon
+
 
 # Thumbnails
 ._*
