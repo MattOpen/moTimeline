@@ -1,0 +1,2 @@
+D:\GitHub\moTimeline\obj\x86\Debug\moTimeline.csprojAssemblyReference.cache
+D:\GitHub\moTimeline\obj\x86\Debug\moTimeline.csproj.CoreCompileInputs.cache

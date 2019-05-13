@@ -1,0 +1,30 @@
+.mo-timeline {
+    display: inline-block;
+    list-style: outside none none;
+    position: relative;
+    width: 100%;
+
+    &.twocol::before {
+        background-color: #eeeeee;
+        bottom: 0;
+        content: " ";
+        left: 50%;
+        margin-left: -1.5px;
+        position: absolute;
+        top: 0;
+        width: 3px;
+    }
+
+    > li {
+        display: block;
+        float: left;
+        opacity: 1;
+        position: relative;
+        top: 0;
+
+        &.mo-inverted {
+            float: right;
+            opacity: 1;
+        }
+    }
+}
