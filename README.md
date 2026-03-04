@@ -4,6 +4,7 @@ Responsive two-column timeline layout library — plain JavaScript, zero depende
 
 **[Live demo & docs → mattopen.github.io/moTimeline](https://mattopen.github.io/moTimeline/)**
 
+[![npm](https://img.shields.io/npm/v/motimeline.svg)](https://www.npmjs.com/package/motimeline)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 [![Preview](images/preview1.PNG)](https://mattopen.github.io/moTimeline/)
