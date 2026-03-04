@@ -2,214 +2,387 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>moTimeline — Livestamp Example</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/mystyle.css">
   <link rel="stylesheet" href="../../src/moTimeline.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body { background: #f3f4f6; color: #1f2937; }
-    .mo-timestamp {
-      align-items: center;
-      color: #6b7280;
-      display: flex;
-      font-size: 0.78rem;
-      gap: 0.3em;
-      margin-bottom: 0.5rem;
-    }
-  </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background:#1e1b4b">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="#">moTimeline</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navLinks">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="../index.html">Main example</a></li>
-        <li class="nav-item"><a class="nav-link" href="../mattopen/">Bootstrap</a></li>
-      </ul>
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">moTimeline</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Livestamp</a></li>
+          <li><a href="../index.html">Main example</a></li>
+          <li><a href="../mattopen/">Bootstrap</a></li>
+        </ul>
+      </div>
     </div>
   </div>
-</nav>
 
-<div class="container my-5">
-  <div class="mb-4">
-    <h1 class="h3 mb-1">Livestamp Integration</h1>
-    <p class="text-muted mb-0">
-      Timestamps are rendered by <strong>livestamp.js</strong> + <strong>moment.js</strong> —
-      they display as <em>"3 months ago"</em> and auto-update every minute.
-      Add <code>data-livestamp="&lt;ISO date&gt;"</code> to any element.
-    </p>
+  <section>
+    <article>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="page-header container">
+            <h1>moTimeline — Livestamp</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="container">
+
+            <ul id="timeline">
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li id="test">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="">
+                    <img class="img-responsive" src="../../images/sample-1.jpg" alt="">
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time"></i> 11 hours ago via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacil...</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T11:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                    <hr>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T12:19:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="">
+                    <img class="img-responsive" src="../../images/banner1.svg" alt="">
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T13:29:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                    <p>Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Interagi no
+                      mé, cursus quis, vehicula ac nisi. Aenean vel dui dui. Nullam leo erat, aliquet quis tempus
+                      a, posuere ut mi. Ut scelerisque neque et turpis posuere pulvinar pellentesque nibh
+                      ullamcorper. Pharetra in mattis molestie, volutpat elementum justo. Aenean ut ante turpis.
+                      Pellentesque laoreet mé vel lectus scelerisque interdum cursus velit auctor. Lorem ipsum
+                      dolor sit amet, consectetur adipiscing elit. Etiam ac mauris lectus, non scelerisque augue.
+                      Aenean justo massa.</p>
+                    <p>Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Interagi no
+                      mé, cursus quis, vehicula ac nisi. Aenean vel dui dui. Nullam leo erat, aliquet quis tempus
+                      a, posuere ut mi. Ut scelerisque neque et turpis posuere pulvinar pellentesque nibh
+                      ullamcorper. Pharetra in mattis molestie, volutpat elementum justo. Aenean ut ante turpis.
+                      Pellentesque laoreet mé vel lectus scelerisque interdum cursus velit auctor. Lorem ipsum
+                      dolor sit amet, consectetur adipiscing elit. Etiam ac mauris lectus, non scelerisque augue.
+                      Aenean justo massa.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-body fullwidth">
+                    <img class="img-responsive" src="../../images/banner2.svg" alt="">
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                  <div class="panel-footer">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-18T12:19:22"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2014-08-12T00:29:22-00:00"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                    <p>Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Interagi no
+                      mé, cursus quis, vehicula ac nisi. Aenean vel dui dui. Nullam leo erat, aliquet quis tempus
+                      a, posuere ut mi. Ut scelerisque neque et turpis posuere pulvinar pellentesque nibh
+                      ullamcorper. Pharetra in mattis molestie, volutpat elementum justo. Aenean ut ante turpis.
+                      Pellentesque laoreet mé vel lectus scelerisque interdum cursus velit auctor. Lorem ipsum
+                      dolor sit amet, consectetur adipiscing elit. Etiam ac mauris lectus, non scelerisque augue.
+                      Aenean justo massa.</p>
+                    <p>Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Interagi no
+                      mé, cursus quis, vehicula ac nisi. Aenean vel dui dui. Nullam leo erat, aliquet quis tempus
+                      a, posuere ut mi. Ut scelerisque neque et turpis posuere pulvinar pellentesque nibh
+                      ullamcorper. Pharetra in mattis molestie, volutpat elementum justo. Aenean ut ante turpis.
+                      Pellentesque laoreet mé vel lectus scelerisque interdum cursus velit auctor. Lorem ipsum
+                      dolor sit amet, consectetur adipiscing elit. Etiam ac mauris lectus, non scelerisque augue.
+                      Aenean justo massa.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Mussum ipsum cacilds</h3>
+                    <p>
+                      <small class="text-muted">
+                        <i class="glyphicon glyphicon-time">&nbsp;</i>
+                        <span data-livestamp="2012-08-03T00:29:22-07:00"></span> via Twitter
+                      </small>
+                    </p>
+                  </div>
+                  <div class="panel-body">
+                    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois
+                      divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi
+                      eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia
+                      nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss
+                      quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                  </div>
+                </div>
+              </li>
+
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <div class="footer">
+    <div class="container">
+      <p class="text-muted">moTimeline — Livestamp example</p>
+    </div>
   </div>
 
-  <ul id="timeline">
+  <!-- jQuery required by Bootstrap 3 JS and livestamp.js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/moment.min.js"></script>
+  <script src="js/livestamp.min.js"></script>
 
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-image">
-          <img class="mo-banner" src="../../images/banner1.svg" alt="">
-          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
-        </div>
-        <div class="mo-card-body">
-          <h3>API goes live</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-12-01T09:15:00">2025-12-01</span>
-          </p>
-          <p>The public REST API is now live. Rate limits and OpenAPI docs published at /api/v1/docs.</p>
-        </div>
-      </div>
-    </li>
+  <script type="module">
+    import MoTimeline from '../../src/moTimeline.js';
 
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-body">
-          <h3>Performance milestone</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-10-20T14:00:00">2025-10-20</span>
-          </p>
-          <p>P95 response time dropped below 120 ms after the caching layer rolled out to all regions.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-image">
-          <img class="mo-banner" src="../../images/banner2.svg" alt="">
-          <img class="mo-avatar" src="../../images/eva.jpg" alt="">
-        </div>
-        <div class="mo-card-body">
-          <h3>Beta program opens</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-08-15T08:30:00">2025-08-15</span>
-          </p>
-          <p>300 early adopters onboarded. First structured feedback sessions completed this week.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-body">
-          <h3>Design system shipped</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-06-10T11:45:00">2025-06-10</span>
-          </p>
-          <p>Shared component library published. Tokens for color, spacing, and typography now live in CSS custom properties.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-image">
-          <img class="mo-banner" src="../../images/banner3.svg" alt="">
-          <img class="mo-avatar" src="../../images/avatar.jpg" alt="">
-        </div>
-        <div class="mo-card-body">
-          <h3>Infrastructure migration</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-04-03T07:00:00">2025-04-03</span>
-          </p>
-          <p>Moved from bare-metal to Kubernetes. Zero-downtime migration, costs reduced by 40%.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-body">
-          <h3>Team doubles</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2025-02-17T10:00:00">2025-02-17</span>
-          </p>
-          <p>Six new engineers joined across frontend, backend, and DevOps. Remote-first onboarding playbook published.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-image">
-          <img class="mo-banner" src="../../images/banner4.svg" alt="">
-          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
-        </div>
-        <div class="mo-card-body">
-          <h3>Seed round closed</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2024-11-05T15:30:00">2024-11-05</span>
-          </p>
-          <p>$2.4 M raised. Runway extended to 24 months. First enterprise pilots begin Q1.</p>
-        </div>
-      </div>
-    </li>
-
-    <li>
-      <div class="mo-card">
-        <div class="mo-card-body">
-          <h3>First commit</h3>
-          <p class="mo-timestamp">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <span data-livestamp="2024-08-01T09:00:00">2024-08-01</span>
-          </p>
-          <p>Repository created. Initial architecture decision records written. Let's build something great.</p>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-</div>
-
-<!-- jQuery required by livestamp.js -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="./js/moment.min.js"></script>
-<script src="./js/livestamp.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script type="module">
-  import MoTimeline from '../../src/moTimeline.js';
-
-  new MoTimeline(document.getElementById('timeline'), {
-    badgeShow: true,
-    arrowShow: true,
-    theme: true,
-  });
-</script>
+    new MoTimeline(document.getElementById('timeline'), {
+      badgeShow: true,
+      arrowShow: true,
+    });
+  </script>
 
 </body>
 </html>
