@@ -169,6 +169,105 @@ tl.addItems('[{"title":"From JSON","meta":"Today","text":"Parsed automatically."
 
 ---
 
+## React
+
+moTimeline manipulates the DOM directly, so use a `useRef` + `useEffect` wrapper to bridge it with React's rendering. Save the snippet below as `Timeline.jsx`:
+
+```jsx
+import { useEffect, useRef } from 'react';
+import MoTimeline from 'motimeline';
+import 'motimeline/dist/moTimeline.css';
+
+/**
+ * items shape: [{ id, title, meta, text, banner, avatar, icon }]
+ * All item fields are optional except a stable `id` for React keys.
+ */
+export default function Timeline({ items = [], options = {} }) {
+  const ulRef  = useRef(null);
+  const tlRef  = useRef(null);
+  const lenRef = useRef(0);
+
+  // Initialise once on mount
+  useEffect(() => {
+    tlRef.current = new MoTimeline(ulRef.current, options);
+    lenRef.current = items.length;
+    return () => tlRef.current?.destroy();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // When items array grows, pick up the new <li> elements React just rendered
+  useEffect(() => {
+    if (!tlRef.current) return;
+    if (items.length > lenRef.current) {
+      tlRef.current.initNewItems();
+    } else {
+      // Items removed or reordered — full reinit
+      tlRef.current.destroy();
+      tlRef.current = new MoTimeline(ulRef.current, options);
+    }
+    lenRef.current = items.length;
+  }, [items]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <ul ref={ulRef}>
+      {items.map((item) => (
+        <li key={item.id} {...(item.icon && { 'data-mo-icon': item.icon })}>
+          <div className="mo-card">
+            {item.banner && (
+              <div className="mo-card-image">
+                <img className="mo-banner" src={item.banner} alt="" />
+                {item.avatar && <img className="mo-avatar" src={item.avatar} alt="" />}
+              </div>
+            )}
+            <div className="mo-card-body">
+              {item.title && <h3>{item.title}</h3>}
+              {item.meta  && <p className="mo-meta">{item.meta}</p>}
+              {item.text  && <p>{item.text}</p>}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Usage
+
+```jsx
+import { useState } from 'react';
+import Timeline from './Timeline';
+
+export default function App() {
+  const [items, setItems] = useState([
+    { id: '1', title: 'Project kickoff', meta: 'Jan 2024', text: 'Team aligned on goals.' },
+    { id: '2', title: 'Design system',   meta: 'Feb 2024', text: 'Component library shipped.',
+      banner: 'banner.jpg', avatar: 'avatar.jpg' },
+  ]);
+
+  const addItem = () =>
+    setItems(prev => [...prev, {
+      id:    String(Date.now()),
+      title: 'New event',
+      meta:  'Just now',
+      text:  'Added dynamically from React state.',
+    }]);
+
+  return (
+    <>
+      <Timeline
+        items={items}
+        options={{ badgeShow: true, arrowShow: true, theme: true }}
+      />
+      <button onClick={addItem}>Add item</button>
+    </>
+  );
+}
+```
+
+> **How it works:** React renders the `<li>` elements. moTimeline initialises once on mount and reads the DOM. When the `items` array grows, `initNewItems()` picks up the new `<li>` nodes React just appended. When items are removed or reordered React re-renders the list and the instance is fully reinitialised.
+
+---
+
 ## CSS custom properties
 
 ```css

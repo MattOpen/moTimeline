@@ -422,6 +422,96 @@
   &lt;/<span class="fn">li</span>&gt;
 &lt;/<span class="fn">ul</span>&gt;</code></pre>
 
+    <h3>React wrapper</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">Save as <code>Timeline.jsx</code> and import it wherever you need a timeline.</p>
+    <pre><code><span class="kw">import</span> { useEffect, useRef } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> MoTimeline <span class="kw">from</span> <span class="str">'motimeline'</span>;
+<span class="kw">import</span> <span class="str">'motimeline/dist/moTimeline.css'</span>;
+
+<span class="cm">/**
+ * items shape: [{ id, title, meta, text, banner, avatar, icon }]
+ * All item fields are optional except a stable `id` for React keys.
+ */</span>
+<span class="kw">export default function</span> <span class="fn">Timeline</span>({ items = [], options = {} }) {
+  <span class="kw">const</span> ulRef  = <span class="fn">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> tlRef  = <span class="fn">useRef</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> lenRef = <span class="fn">useRef</span>(<span class="kw">0</span>);
+
+  <span class="cm">// Initialise once on mount</span>
+  <span class="fn">useEffect</span>(() =&gt; {
+    tlRef.current = <span class="kw">new</span> <span class="fn">MoTimeline</span>(ulRef.current, options);
+    lenRef.current = items.length;
+    <span class="kw">return</span> () =&gt; tlRef.current?.<span class="fn">destroy</span>();
+  }, []); <span class="cm">// eslint-disable-line react-hooks/exhaustive-deps</span>
+
+  <span class="cm">// When items array grows, pick up the new &lt;li&gt; elements React just rendered</span>
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">if</span> (!tlRef.current) <span class="kw">return</span>;
+    <span class="kw">if</span> (items.length &gt; lenRef.current) {
+      tlRef.current.<span class="fn">initNewItems</span>();
+    } <span class="kw">else</span> {
+      <span class="cm">// Items removed or reordered — full reinit</span>
+      tlRef.current.<span class="fn">destroy</span>();
+      tlRef.current = <span class="kw">new</span> <span class="fn">MoTimeline</span>(ulRef.current, options);
+    }
+    lenRef.current = items.length;
+  }, [items]); <span class="cm">// eslint-disable-line react-hooks/exhaustive-deps</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">ul</span> ref={ulRef}&gt;
+      {items.<span class="fn">map</span>((item) =&gt; (
+        &lt;<span class="fn">li</span> key={item.id} {...(item.icon &amp;&amp; { <span class="str">'data-mo-icon'</span>: item.icon })}&gt;
+          &lt;<span class="fn">div</span> className=<span class="str">"mo-card"</span>&gt;
+            {item.banner &amp;&amp; (
+              &lt;<span class="fn">div</span> className=<span class="str">"mo-card-image"</span>&gt;
+                &lt;<span class="fn">img</span> className=<span class="str">"mo-banner"</span> src={item.banner} alt=<span class="str">""</span> /&gt;
+                {item.avatar &amp;&amp; &lt;<span class="fn">img</span> className=<span class="str">"mo-avatar"</span> src={item.avatar} alt=<span class="str">""</span> /&gt;}
+              &lt;/<span class="fn">div</span>&gt;
+            )}
+            &lt;<span class="fn">div</span> className=<span class="str">"mo-card-body"</span>&gt;
+              {item.title &amp;&amp; &lt;<span class="fn">h3</span>&gt;{item.title}&lt;/<span class="fn">h3</span>&gt;}
+              {item.meta  &amp;&amp; &lt;<span class="fn">p</span> className=<span class="str">"mo-meta"</span>&gt;{item.meta}&lt;/<span class="fn">p</span>&gt;}
+              {item.text  &amp;&amp; &lt;<span class="fn">p</span>&gt;{item.text}&lt;/<span class="fn">p</span>&gt;}
+            &lt;/<span class="fn">div</span>&gt;
+          &lt;/<span class="fn">div</span>&gt;
+        &lt;/<span class="fn">li</span>&gt;
+      ))}
+    &lt;/<span class="fn">ul</span>&gt;
+  );
+}</code></pre>
+
+    <h3>React — usage example</h3>
+    <pre><code><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> Timeline <span class="kw">from</span> <span class="str">'./Timeline'</span>;
+
+<span class="kw">const</span> INITIAL = [
+  { id: <span class="str">'1'</span>, title: <span class="str">'Project kickoff'</span>, meta: <span class="str">'Jan 2024'</span>, text: <span class="str">'Team aligned on goals and tech stack.'</span> },
+  { id: <span class="str">'2'</span>, title: <span class="str">'Design system'</span>,   meta: <span class="str">'Feb 2024'</span>, text: <span class="str">'Component library shipped.'</span>,
+    banner: <span class="str">'banner.jpg'</span>, avatar: <span class="str">'avatar.jpg'</span> },
+];
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [items, setItems] = <span class="fn">useState</span>(INITIAL);
+
+  <span class="kw">const</span> addItem = () =&gt;
+    <span class="fn">setItems</span>(prev =&gt; [...prev, {
+      id:    <span class="fn">String</span>(Date.<span class="fn">now</span>()),
+      title: <span class="str">'New event'</span>,
+      meta:  <span class="str">'Just now'</span>,
+      text:  <span class="str">'Added dynamically from React state.'</span>,
+    }]);
+
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="fn">Timeline</span>
+        items={items}
+        options={{ badgeShow: <span class="kw">true</span>, arrowShow: <span class="kw">true</span>, theme: <span class="kw">true</span> }}
+      /&gt;
+      &lt;<span class="fn">button</span> onClick={addItem}&gt;Add item&lt;/<span class="fn">button</span>&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+
     <h3>Bootstrap</h3>
     <pre><code><span class="cm">&lt;!-- Bootstrap is fully compatible — just wrap in a container.
      No framework option needed; moTimeline handles its own layout. --&gt;</span>
