@@ -96,6 +96,28 @@
     .demo-controls button { background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.875rem; font-weight: 600; padding: 0.55rem 1.3rem; }
     .demo-controls button:hover { background: var(--accent2); }
 
+    /* ── DEMO TABS ── */
+    .demo-tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.75rem; }
+    .demo-tab { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-bottom: -2px; padding: 0.65rem 1.3rem; transition: color .15s, border-color .15s; }
+    .demo-tab:hover { color: var(--text); }
+    .demo-tab.active { border-bottom-color: var(--accent); color: var(--accent); }
+    .demo-panel { display: none; }
+    .demo-panel.active { display: block; }
+
+    /* ── TIMESTAMP DEMO ── */
+    .ts-label { color: #9ca3af; font-size: 0.75rem; margin-bottom: 0.4rem; }
+
+    /* ── BOOTSTRAP DEMO — minimal panel CSS ── */
+    #tl-bootstrap { --mo-badge-bg: #337ab7; --mo-arrow-color: #ddd; --mo-line-color: #ddd; }
+    .bs-panel { background: #fff; border: 1px solid #ddd; border-radius: 4px; margin: 0.5rem 1rem 0.5rem 0.5rem; }
+    .mo-item.mo-inverted .bs-panel { margin: 0.5rem 0.5rem 0.5rem 1rem; }
+    .bs-panel-heading { background: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 3px 3px 0 0; padding: 0.65rem 1rem; }
+    .bs-panel-heading h3 { color: #333; font-size: 0.95rem; font-weight: 600; margin: 0 0 0.2rem; }
+    .bs-panel-heading .bs-meta { color: #777; font-size: 0.78rem; margin: 0; }
+    .bs-panel-body { color: #555; font-size: 0.875rem; line-height: 1.55; padding: 0.75rem 1rem; }
+    .bs-panel-primary .bs-panel-heading { background: #337ab7; border-color: #2e6da4; color: #fff; }
+    .bs-panel-primary .bs-panel-heading .bs-meta { color: rgba(255,255,255,.8); }
+
     /* ── INSTALL ── */
     #install { background: var(--bg); }
     pre { background: #1e1e2e; border-radius: 10px; color: #e2e8f0; font-size: 0.875rem; margin: 1rem 0 1.5rem; overflow-x: auto; padding: 1.25rem 1.5rem; }
@@ -147,10 +169,211 @@
 <section id="demo">
   <div class="container">
     <h2>Live <span>demo</span></h2>
-    <ul id="timeline" class="mo-timeline mo-theme"></ul>
-    <div class="demo-controls">
-      <button id="addBtn">+ Add item</button>
+
+    <div class="demo-tabs">
+      <button class="demo-tab active" data-tab="tab-motimeline">moTimeline</button>
+      <button class="demo-tab" data-tab="tab-timestamp">Timestamp</button>
+      <button class="demo-tab" data-tab="tab-bootstrap">Bootstrap</button>
     </div>
+
+    <!-- ── Tab 1: moTimeline ── -->
+    <div class="demo-panel active" id="tab-motimeline">
+      <ul id="tl-motimeline"></ul>
+      <div class="demo-controls">
+        <button id="addBtn">+ Add item</button>
+      </div>
+    </div>
+
+    <!-- ── Tab 2: Timestamp ── -->
+    <div class="demo-panel" id="tab-timestamp">
+      <ul id="tl-timestamp">
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>API v2 released</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2026-02-28T09:00:00"></span> via Blog</p>
+              <p>The new v2 API is live. Breaking changes are listed in the migration guide; all v1 endpoints remain available until Q3.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>Performance update</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2026-02-15T14:30:00"></span> via Twitter</p>
+              <p>P95 latency dropped from 340 ms to 88 ms after rolling out the new caching layer to all edge nodes.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>New team member</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2026-01-20T10:00:00"></span> via LinkedIn</p>
+              <p>Welcome to the team! Six engineers joined this month across frontend, backend, and infrastructure.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>Year in review</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2025-12-10T16:00:00"></span> via Blog</p>
+              <p>We shipped 38 features, resolved 214 issues, and grew the user base 4× in 2025. Thank you for being part of the journey.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>v1.5 shipped</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2025-10-15T11:00:00"></span> via GitHub</p>
+              <p>Dark mode, keyboard navigation, and a new plugin API landed in this release. Full changelog on GitHub.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>Beta program opens</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2025-08-01T08:00:00"></span> via Email</p>
+              <p>300 early adopters onboarded this week. Structured feedback sessions start Monday — sign up in the dashboard.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>First public demo</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2025-05-20T13:00:00"></span> via YouTube</p>
+              <p>Live-streamed the first public walkthrough to 1 400 viewers. Recording available on the YouTube channel.</p>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="mo-card">
+            <div class="mo-card-body">
+              <h3>Project kickoff</h3>
+              <p class="ts-label"><span class="js-ts-ago" data-ts="2025-01-10T07:00:00"></span> via Slack</p>
+              <p>Repository created, architecture decisions recorded, first sprint planned. Let's build something great.</p>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- ── Tab 3: Bootstrap ── -->
+    <div class="demo-panel" id="tab-bootstrap">
+      <ul id="tl-bootstrap">
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>Project kickoff</h3>
+              <p class="bs-meta">January 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Kicked off the new product roadmap. Team aligned on goals, milestones, and chosen tech stack.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>Design system</h3>
+              <p class="bs-meta">February 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Shared component library built. Tokens for color, spacing, and typography exported to CSS custom properties.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>API development</h3>
+              <p class="bs-meta">March 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Core REST endpoints shipped. Authentication, rate limiting, and OpenAPI documentation all live.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel bs-panel-primary">
+            <div class="bs-panel-heading">
+              <h3>Beta launch</h3>
+              <p class="bs-meta">April 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              200 early users invited. Structured feedback via in-app surveys and recorded user interviews collected.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>User testing</h3>
+              <p class="bs-meta">May 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Five rounds of usability testing. 12 critical UX issues resolved before general availability.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>Performance pass</h3>
+              <p class="bs-meta">June 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Lighthouse score up from 62 to 96. Bundle size halved through code splitting and tree shaking.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel bs-panel-primary">
+            <div class="bs-panel-heading">
+              <h3>v1.0 released</h3>
+              <p class="bs-meta">July 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              General availability. 1 200 signups in the first week. Featured on Product Hunt front page.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="bs-panel">
+            <div class="bs-panel-heading">
+              <h3>Roadmap planning</h3>
+              <p class="bs-meta">August 2024</p>
+            </div>
+            <div class="bs-panel-body">
+              Q3 / Q4 roadmap published. Community voting open for the next feature batch.
+            </div>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -325,7 +548,7 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
   }
   window.MoTimeline = MoTimeline;
 
-  // ── Demo ──
+  // ── Tab 1: moTimeline demo ──────────────────────────────────────────────────
   const COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6'];
   const ITEMS = [
     { title:'Project kickoff',       meta:'Jan 2024', text:'Removed jQuery, migrated to plain JavaScript with a class-based API and zero dependencies.', color: COLORS[0] },
@@ -337,10 +560,9 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
     { title:'Theme system',          meta:'Jul 2024', text:'Opt-in theme: card images, overlapping avatars, styled badges. Enable with theme: true.', color: COLORS[0] },
     { title:'CSS custom properties', meta:'Aug 2024', text:'Override --mo-badge-bg, --mo-line-color and others to match your brand in one line.', color: COLORS[1] },
   ];
-
   function svg(color){ return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='160'><rect width='700' height='160' fill='${encodeURIComponent(color)}'/></svg>`; }
 
-  const tlEl = document.getElementById('timeline');
+  const tlEl = document.getElementById('tl-motimeline');
   ITEMS.forEach((d,i) => {
     const li = document.createElement('li');
     const hasImg = i % 2 === 0;
@@ -349,16 +571,53 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
       : `<div class="mo-card"><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`;
     tlEl.appendChild(li);
   });
-
-  const tl = new MoTimeline(tlEl, { badgeShow:true, arrowShow:true, theme:true });
-
-  let c = ITEMS.length + 1;
+  const tl1 = new MoTimeline(tlEl, { badgeShow:true, arrowShow:true, theme:true });
+  let addCount = ITEMS.length + 1;
   document.getElementById('addBtn').addEventListener('click', () => {
     const li = document.createElement('li');
-    li.innerHTML = `<div class="mo-card"><div class="mo-card-body"><h3>New item ${c}</h3><p class="mo-meta">Just now</p><p>Dynamically appended via initNewItems().</p></div></div>`;
+    li.innerHTML = `<div class="mo-card"><div class="mo-card-body"><h3>New item ${addCount}</h3><p class="mo-meta">Just now</p><p>Dynamically appended via initNewItems().</p></div></div>`;
     tlEl.appendChild(li);
-    tl.initNewItems();
-    c++;
+    tl1.initNewItems();
+    addCount++;
+  });
+
+  // ── Tab 2: Timestamp demo ───────────────────────────────────────────────────
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(mins / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30.5);
+    const years = Math.floor(days / 365);
+    if (years  >= 1) return years  === 1 ? 'about 1 year ago'  : `${years} years ago`;
+    if (months >= 1) return months === 1 ? 'about 1 month ago' : `about ${months} months ago`;
+    if (days   >= 1) return days   === 1 ? '1 day ago'         : `${days} days ago`;
+    if (hours  >= 1) return hours  === 1 ? '1 hour ago'        : `${hours} hours ago`;
+    if (mins   >= 1) return mins   === 1 ? '1 minute ago'      : `${mins} minutes ago`;
+    return 'just now';
+  }
+  function updateTimestamps() {
+    document.querySelectorAll('.js-ts-ago').forEach(el => { el.textContent = timeAgo(el.dataset.ts); });
+  }
+  updateTimestamps();
+  setInterval(updateTimestamps, 60000);
+
+  const tl2 = new MoTimeline(document.getElementById('tl-timestamp'), { badgeShow:true, arrowShow:true, theme:true });
+
+  // ── Tab 3: Bootstrap demo ───────────────────────────────────────────────────
+  const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { badgeShow:true, arrowShow:true, theme:false });
+
+  // ── Tab switching ───────────────────────────────────────────────────────────
+  const instances = { 'tab-motimeline': tl1, 'tab-timestamp': tl2, 'tab-bootstrap': tl3 };
+  document.querySelectorAll('.demo-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.demo-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panel = document.getElementById(btn.dataset.tab);
+      panel.classList.add('active');
+      instances[btn.dataset.tab].refresh();
+    });
   });
 })();
 </script>
