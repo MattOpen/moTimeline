@@ -9,124 +9,220 @@
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f3f4f6;
+      color: #1f2937;
       margin: 0;
-      background: #f5f5f5;
-      color: #333;
     }
 
     header {
-      background: #1a1a2e;
+      background: #1e1b4b;
       color: #fff;
-      padding: 2rem;
+      padding: 2.5rem 1.5rem;
       text-align: center;
     }
-    header h1 { margin: 0 0 0.5rem; font-size: 2rem; }
-    header p  { margin: 0; opacity: 0.7; }
+    header h1 { margin: 0 0 0.5rem; font-size: 2rem; letter-spacing: -0.5px; }
+    header p  { margin: 0; opacity: 0.65; font-size: 0.95rem; }
 
-    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    main { max-width: 960px; margin: 2.5rem auto; padding: 0 1rem; }
 
-    /* Timeline item card */
-    .tl-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
-      margin: 0.75rem;
-      padding: 1rem 1.25rem;
-    }
-    .tl-card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
-    .tl-card .meta { font-size: 0.8rem; color: #888; margin-bottom: 0.75rem; }
-    .tl-card p   { margin: 0; font-size: 0.9rem; line-height: 1.5; }
-
-    /* Add item button */
-    .controls { text-align: center; margin: 1.5rem 0; }
+    .controls { display: flex; gap: 0.75rem; justify-content: center; margin: 1.5rem 0 2rem; flex-wrap: wrap; }
     button {
-      background: #1a1a2e;
+      background: #4f46e5;
       border: none;
-      border-radius: 6px;
+      border-radius: 7px;
       color: #fff;
       cursor: pointer;
-      font-size: 0.95rem;
-      padding: 0.6rem 1.4rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.55rem 1.2rem;
     }
-    button:hover { background: #2a2a4e; }
+    button:hover { background: #4338ca; }
+    button.secondary {
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      color: #374151;
+    }
+    button.secondary:hover { background: #f9fafb; }
+
+    /* ── Note about Bootstrap ──────────────────────────────────
+       Bootstrap is fully compatible: just wrap the <ul> inside a
+       Bootstrap .container / .row — no special library option needed.
+       moTimeline handles its own 50% column widths internally.
+    ──────────────────────────────────────────────────────────── */
   </style>
 </head>
 <body>
 
 <header>
   <h1>moTimeline</h1>
-  <p>Responsive two-column timeline — plain JavaScript, no dependencies</p>
+  <p>Responsive two-column timeline — plain JavaScript, no dependencies · Bootstrap-compatible</p>
 </header>
 
 <main>
-  <ul id="timeline" class="mo-timeline">
-    <li>
-      <div class="tl-card">
-        <h3>Project kickoff</h3>
-        <div class="meta">January 2024</div>
-        <p>Kicked off the new moTimeline rewrite. Removed jQuery, migrated to plain JavaScript with a class-based API.</p>
-      </div>
-    </li>
-    <li>
-      <div class="tl-card">
-        <h3>Vite build pipeline</h3>
-        <div class="meta">February 2024</div>
-        <p>Set up Vite in library mode. Now ships ESM, CJS and UMD bundles so any project can import it.</p>
-      </div>
-    </li>
-    <li>
-      <div class="tl-card">
-        <h3>Two-column layout</h3>
-        <div class="meta">March 2024</div>
-        <p>The core layout algorithm places items in left and right columns automatically based on available height.</p>
-      </div>
-    </li>
-    <li>
-      <div class="tl-card">
-        <h3>Responsive design</h3>
-        <div class="meta">April 2024</div>
-        <p>Collapses to a single column on mobile. Breakpoints are fully configurable via <code>columnCount</code>.</p>
-      </div>
-    </li>
-    <li>
-      <div class="tl-card">
-        <h3>Badge support</h3>
-        <div class="meta">May 2024</div>
-        <p>Optional numbered badges appear on the center line. Enable with <code>badgeShow: true</code>.</p>
-      </div>
-    </li>
-    <li>
-      <div class="tl-card">
-        <h3>GitHub Pages</h3>
-        <div class="meta">June 2024</div>
-        <p>Published a live demo and documentation page using GitHub Pages. This is that page!</p>
-      </div>
-    </li>
-  </ul>
-
   <div class="controls">
     <button id="addBtn">+ Add item</button>
+    <button id="toggleThemeBtn" class="secondary">Toggle theme</button>
+    <button id="toggleBadgeBtn" class="secondary">Toggle badges</button>
   </div>
+
+  <!-- mo-theme is added/removed by JS via the theme option.
+       Card structure when using the theme:
+         <li>
+           <div class="mo-card">
+             <div class="mo-card-image">            (optional)
+               <img class="mo-banner" src="...">
+               <img class="mo-avatar" src="...">
+             </div>
+             <div class="mo-card-body">
+               <h3>Title</h3>
+               <p class="mo-meta">Date</p>
+               <p>Text</p>
+             </div>
+           </div>
+         </li>
+  -->
+  <ul id="timeline"></ul>
 </main>
 
 <script type="module">
   import MoTimeline from '../src/moTimeline.js';
 
-  const tl = new MoTimeline('#timeline', { badgeShow: true });
+  // ── Item data ───────────────────────────────────────────────────────────────
+  const ITEMS = [
+    {
+      title: 'Project kickoff',
+      meta: 'January 2024',
+      text: 'Started the moTimeline rewrite. Removed jQuery, migrated to plain JavaScript with a class-based API and zero dependencies.',
+      banner: '../images/banner1.svg',
+      avatar: '../images/ryan.jpg',
+    },
+    {
+      title: 'Vite build pipeline',
+      meta: 'February 2024',
+      text: 'Set up Vite in library mode. Ships ESM, CJS and UMD bundles so any project can import it — bundled or via a plain script tag.',
+    },
+    {
+      title: 'Two-column layout',
+      meta: 'March 2024',
+      text: 'Core algorithm places items left and right automatically, filling the shorter column first.',
+      banner: '../images/banner2.svg',
+      avatar: '../images/eva.jpg',
+    },
+    {
+      title: 'Responsive design',
+      meta: 'April 2024',
+      text: 'Collapses to a single column on mobile. Breakpoints configurable per instance via the columnCount option.',
+    },
+    {
+      title: 'Badge & arrow support',
+      meta: 'May 2024',
+      text: 'Numbered badges sit on the center line. Arrows point from each card toward the center — left or right automatically.',
+      banner: '../images/banner3.svg',
+      avatar: '../images/avatar.jpg',
+    },
+    {
+      title: 'Bootstrap compatible',
+      meta: 'June 2024',
+      text: 'No framework option needed. Wrap the <ul> inside a Bootstrap .container for page layout — the library handles its own column widths.',
+    },
+    {
+      title: 'GitHub Pages',
+      meta: 'July 2024',
+      text: 'Published a live demo and documentation page. Set GH Pages source to /docs in repo settings.',
+      banner: '../images/banner4.svg',
+      avatar: '../images/ryan.jpg',
+    },
+    {
+      title: 'Theme system',
+      meta: 'August 2024',
+      text: 'Opt-in visual theme with card images, overlapping avatars, and styled badges. Enable with theme: true.',
+    },
+    {
+      title: 'Dynamic items',
+      meta: 'September 2024',
+      text: 'Append new <li> elements at any time and call initNewItems() — the library picks them up and positions them correctly.',
+      banner: '../images/sample-1.jpg',
+      avatar: '../images/eva.jpg',
+    },
+    {
+      title: 'CSS custom properties',
+      meta: 'October 2024',
+      text: 'Override --mo-badge-bg, --mo-line-color, --mo-arrow-color and others to match your brand in one line of CSS.',
+    },
+    {
+      title: 'Resize handling',
+      meta: 'November 2024',
+      text: 'Debounced resize listener re-layouts on window resize. Smooth collapse from two columns to one on narrow screens.',
+      banner: '../images/banner1.svg',
+      avatar: '../images/avatar.jpg',
+    },
+    {
+      title: 'v2.1.0 released',
+      meta: 'December 2024',
+      text: 'Badges, arrows, theme, CSS variables, zero dependencies, Vite build. The timeline library, done right.',
+    },
+  ];
 
-  let count = 7;
-  document.getElementById('addBtn').addEventListener('click', () => {
+  // ── Build themed card HTML ──────────────────────────────────────────────────
+  function makeItem(d) {
     const li = document.createElement('li');
-    li.innerHTML = `
-      <div class="tl-card">
-        <h3>New item ${count}</h3>
-        <div class="meta">Dynamically added</div>
-        <p>This item was added via <code>initNewItems()</code> after the initial render.</p>
-      </div>`;
-    document.getElementById('timeline').appendChild(li);
+    if (d.banner) {
+      li.innerHTML = `
+        <div class="mo-card">
+          <div class="mo-card-image">
+            <img class="mo-banner" src="${d.banner}" alt="">
+            ${d.avatar ? `<img class="mo-avatar" src="${d.avatar}" alt="">` : ''}
+          </div>
+          <div class="mo-card-body">
+            <h3>${d.title}</h3>
+            <p class="mo-meta">${d.meta}</p>
+            <p>${d.text}</p>
+          </div>
+        </div>`;
+    } else {
+      li.innerHTML = `
+        <div class="mo-card">
+          <div class="mo-card-body">
+            <h3>${d.title}</h3>
+            <p class="mo-meta">${d.meta}</p>
+            <p>${d.text}</p>
+          </div>
+        </div>`;
+    }
+    return li;
+  }
+
+  // ── Populate ────────────────────────────────────────────────────────────────
+  const tlEl = document.getElementById('timeline');
+  ITEMS.forEach(d => tlEl.appendChild(makeItem(d)));
+
+  // ── Initialize ──────────────────────────────────────────────────────────────
+  let tl = new MoTimeline(tlEl, {
+    badgeShow: true,
+    arrowShow: true,
+    theme: true,
+  });
+
+  // ── Controls ────────────────────────────────────────────────────────────────
+  let addCount = ITEMS.length + 1;
+  document.getElementById('addBtn').addEventListener('click', () => {
+    tlEl.appendChild(makeItem({
+      title: `New item ${addCount}`,
+      meta: 'Just now',
+      text: 'Dynamically appended item, picked up by initNewItems().',
+    }));
     tl.initNewItems();
-    count++;
+    addCount++;
+  });
+
+  document.getElementById('toggleThemeBtn').addEventListener('click', () => {
+    tlEl.classList.toggle('mo-theme');
+  });
+
+  document.getElementById('toggleBadgeBtn').addEventListener('click', () => {
+    const badges = tlEl.querySelectorAll('.js-badge-mo');
+    badges.forEach(b => b.style.display = b.style.display === 'none' ? '' : 'none');
   });
 </script>
 

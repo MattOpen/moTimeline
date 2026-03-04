@@ -4,206 +4,116 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>moTimeline — Responsive Two-Column Timeline</title>
-  <meta name="description" content="moTimeline: a lightweight, dependency-free JavaScript library for responsive two-column timeline layouts.">
+  <meta name="description" content="moTimeline: lightweight, dependency-free JavaScript library for responsive two-column timeline layouts with themes, badges and arrows.">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
     :root {
-      --accent: #4f46e5;
-      --accent-dark: #3730a3;
-      --bg: #f8f8fb;
-      --card: #fff;
-      --text: #1e1e2e;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --line: #c7d2fe;
+      --accent:  #4f46e5;
+      --accent2: #3730a3;
+      --bg:      #f8f8fb;
+      --card:    #fff;
+      --text:    #1e1e2e;
+      --muted:   #6b7280;
+      --border:  #e5e7eb;
+      /* timeline vars */
+      --mo-line-color:  #c7d2fe;
+      --mo-badge-bg:    #4f46e5;
+      --mo-badge-color: #fff;
+      --mo-badge-size:  26px;
+      --mo-arrow-color: #c7d2fe;
     }
 
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      line-height: 1.6;
-    }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
 
     /* ── NAV ── */
-    nav {
-      background: var(--text);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.9rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    nav .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px; }
-    nav a { color: rgba(255,255,255,.75); text-decoration: none; font-size: 0.9rem; margin-left: 1.5rem; }
+    nav { background: var(--text); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; position: sticky; top: 0; z-index: 100; }
+    nav .logo { font-weight: 700; font-size: 1.1rem; }
+    nav a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 0.875rem; margin-left: 1.5rem; }
     nav a:hover { color: #fff; }
 
     /* ── HERO ── */
-    .hero {
-      background: linear-gradient(135deg, var(--text) 0%, #312e81 100%);
-      color: #fff;
-      text-align: center;
-      padding: 5rem 1.5rem 6rem;
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      margin: 0 0 1rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-    .hero p {
-      font-size: 1.15rem;
-      opacity: 0.8;
-      max-width: 540px;
-      margin: 0 auto 2rem;
-    }
+    .hero { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #fff; text-align: center; padding: 5rem 1.5rem 6rem; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 0 1rem; font-weight: 800; letter-spacing: -1px; }
+    .hero p  { font-size: 1.1rem; opacity: 0.75; max-width: 520px; margin: 0 auto 2rem; }
     .badge-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
-    .badge {
-      background: rgba(255,255,255,.15);
-      border-radius: 99px;
-      font-size: 0.78rem;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid rgba(255,255,255,.2);
-    }
+    .pill { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 99px; font-size: 0.78rem; padding: 0.25rem 0.8rem; }
     .btn-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.65rem 1.5rem;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .btn-primary { background: var(--accent); color: #fff; border: none; }
-    .btn-primary:hover { background: var(--accent-dark); }
-    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.5); }
+    .btn { border-radius: 8px; font-size: 0.9rem; font-weight: 600; padding: 0.65rem 1.5rem; text-decoration: none; }
+    .btn-primary  { background: var(--accent); color: #fff; border: none; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-outline  { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.45); }
     .btn-outline:hover { border-color: #fff; }
 
     /* ── SECTIONS ── */
     section { padding: 4rem 1.5rem; }
-    .container { max-width: 920px; margin: 0 auto; }
-    h2 { font-size: 1.75rem; font-weight: 700; margin: 0 0 1.5rem; }
+    .container { max-width: 940px; margin: 0 auto; }
+    h2 { font-size: 1.7rem; font-weight: 700; margin: 0 0 1.5rem; }
     h2 span { color: var(--accent); }
 
-    /* ── LIVE DEMO ── */
+    /* ── DEMO ── */
     #demo { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 
-    /* Timeline CSS (inlined for self-contained docs page) */
-    .mo-timeline {
-      display: inline-block;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      position: relative;
-      width: 100%;
-    }
-    .mo-timeline.twocol::before {
-      background-color: var(--line);
-      bottom: 0;
-      content: '';
-      left: 50%;
-      margin-left: -1.5px;
-      position: absolute;
-      top: 0;
-      width: 3px;
-    }
-    .mo-timeline > .moitem {
-      box-sizing: border-box;
-      display: block;
-      float: left;
-      position: relative;
-      width: 50%;
-    }
-    .mo-timeline:not(.twocol) > .moitem { width: 100%; }
-    .mo-timeline > .moitem.mo-inverted { float: right; }
+    /* ─ Timeline (inlined CSS for self-contained page) ─ */
+    .mo-timeline { display: block; list-style: none; margin: 0; padding: 0; position: relative; width: 100%; }
     .mo-timeline::after { content: ''; display: table; clear: both; }
-    .badge-mo {
-      display: inline-block;
-      background: var(--accent);
-      border-radius: 50%;
-      color: #fff;
-      font-size: 11px;
-      height: 22px;
-      line-height: 22px;
-      min-width: 22px;
-      text-align: center;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1;
-    }
+    .mo-timeline.twocol::before { background: var(--mo-line-color); bottom: 0; content: ''; left: 50%; margin-left: -1.5px; position: absolute; top: 0; width: 3px; z-index: 0; }
+    .mo-timeline > .moitem { box-sizing: border-box; display: block; float: left; position: relative; width: 50%; }
+    .mo-timeline:not(.twocol) > .moitem { float: none; width: 100%; }
+    .mo-timeline > .moitem.mo-inverted { float: right; }
 
-    /* Demo cards */
-    .tl-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin: 0.75rem;
-      padding: 1.1rem 1.25rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-    }
-    .tl-card h3 { margin: 0 0 0.2rem; font-size: 0.95rem; }
-    .tl-card .meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.6rem; }
-    .tl-card p   { margin: 0; font-size: 0.875rem; color: var(--muted); line-height: 1.5; }
+    .badge-mo { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); position: absolute; top: 18px; z-index: 2; }
+    .mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-mo { left: auto; right: calc(var(--mo-badge-size) / -2); }
+    .mo-timeline.twocol > .moitem.mo-inverted        .badge-mo { left: calc(var(--mo-badge-size) / -2); right: auto; }
+    .mo-timeline:not(.twocol) > .moitem .badge-mo    { right: 12px; left: auto; top: 12px; }
 
+    .badge-arrow { border: 8px solid transparent; display: block; height: 0; position: absolute; top: 26px; width: 0; z-index: 1; }
+    .mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-arrow { border-left: 8px solid var(--mo-arrow-color); border-right: none; left: auto; right: 0; }
+    .mo-timeline.twocol > .moitem.mo-inverted        .badge-arrow { border-right: 8px solid var(--mo-arrow-color); border-left: none; left: 0; right: auto; }
+    .mo-timeline:not(.twocol) > .moitem .badge-arrow { display: none; }
+
+    /* ─ Theme ─ */
+    .mo-theme > .moitem .mo-card { background: #fff; border-radius: 9px; box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: 0.5rem 1.25rem 0.5rem 0.5rem; overflow: hidden; position: relative; }
+    .mo-theme > .moitem.mo-inverted .mo-card { margin: 0.5rem 0.5rem 0.5rem 1.25rem; }
+    .mo-theme > .moitem .mo-banner  { display: block; height: 150px; object-fit: cover; width: 100%; }
+    .mo-theme > .moitem .mo-card-image { overflow: visible; position: relative; }
+    .mo-theme > .moitem .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: -22px; box-shadow: 0 2px 8px rgba(0,0,0,.18); height: 50px; object-fit: cover; position: absolute; right: 14px; width: 50px; z-index: 1; }
+    .mo-theme > .moitem.mo-inverted .mo-avatar { left: 14px; right: auto; }
+    .mo-theme > .moitem .mo-card-body { padding: 1.75rem 1rem 1rem; }
+    .mo-theme > .moitem .mo-card-body h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.25rem; }
+    .mo-theme > .moitem .mo-card-body .mo-meta { color: #9ca3af; font-size: 0.75rem; margin-bottom: 0.4rem; }
+    .mo-theme > .moitem .mo-card-body p  { color: #6b7280; font-size: 0.875rem; line-height: 1.55; margin: 0; }
+    .mo-theme.twocol > .moitem:not(.mo-inverted) .badge-arrow { border-left-color: #e5e7eb; right: 10px; }
+    .mo-theme.twocol > .moitem.mo-inverted        .badge-arrow { border-right-color: #e5e7eb; left: 10px; }
+    .mo-theme .badge-mo { background: #fff; border: 2px solid var(--mo-line-color); box-shadow: 0 2px 6px rgba(0,0,0,.1); color: #374151; }
+
+    /* demo controls */
     .demo-controls { text-align: center; margin-top: 1.5rem; }
-    .demo-controls button {
-      background: var(--accent);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      padding: 0.55rem 1.3rem;
-    }
-    .demo-controls button:hover { background: var(--accent-dark); }
+    .demo-controls button { background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.875rem; font-weight: 600; padding: 0.55rem 1.3rem; }
+    .demo-controls button:hover { background: var(--accent2); }
 
     /* ── INSTALL ── */
     #install { background: var(--bg); }
-    pre {
-      background: var(--text);
-      color: #e2e8f0;
-      border-radius: 10px;
-      padding: 1.25rem 1.5rem;
-      font-size: 0.875rem;
-      overflow-x: auto;
-      margin: 1rem 0;
-    }
+    pre { background: #1e1e2e; border-radius: 10px; color: #e2e8f0; font-size: 0.875rem; margin: 1rem 0 1.5rem; overflow-x: auto; padding: 1.25rem 1.5rem; }
     code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
-    .comment { color: #6d7fa8; }
-    .kw   { color: #c792ea; }
-    .str  { color: #c3e88d; }
-    .fn   { color: #82aaff; }
+    .cm { color: #6d7fa8; } .kw { color: #c792ea; } .str { color: #c3e88d; } .fn { color: #82aaff; }
 
     /* ── OPTIONS TABLE ── */
     #options { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    th { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--border); color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: .05em; }
-    td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table { border-collapse: collapse; font-size: 0.9rem; width: 100%; }
+    th { border-bottom: 2px solid var(--border); color: var(--muted); font-size: 0.78rem; letter-spacing: .05em; padding: 0.6rem 0.75rem; text-align: left; text-transform: uppercase; }
+    td { border-bottom: 1px solid var(--border); padding: 0.7rem 0.75rem; vertical-align: top; }
     tr:last-child td { border-bottom: none; }
-    td code { background: #f1f5f9; border-radius: 4px; padding: 0.1em 0.4em; font-size: 0.82rem; color: var(--accent); }
+    td code { background: #f1f5f9; border-radius: 4px; color: var(--accent); font-size: 0.82rem; padding: 0.1em 0.4em; }
 
     /* ── FOOTER ── */
-    footer {
-      background: var(--text);
-      color: rgba(255,255,255,.5);
-      text-align: center;
-      padding: 2rem;
-      font-size: 0.85rem;
-    }
-    footer a { color: rgba(255,255,255,.7); }
+    footer { background: var(--text); color: rgba(255,255,255,.45); font-size: 0.85rem; padding: 2rem; text-align: center; }
+    footer a { color: rgba(255,255,255,.65); }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <span class="logo">moTimeline</span>
   <div>
@@ -214,16 +124,15 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <h1>moTimeline</h1>
   <p>Lightweight, dependency-free JavaScript library for responsive two-column timeline layouts.</p>
   <div class="badge-row">
-    <span class="badge">No jQuery</span>
-    <span class="badge">No dependencies</span>
-    <span class="badge">ESM · CJS · UMD</span>
-    <span class="badge">MIT License</span>
-    <span class="badge">&lt; 3 kB gzipped</span>
+    <span class="pill">No jQuery</span>
+    <span class="pill">Zero dependencies</span>
+    <span class="pill">ESM · CJS · UMD</span>
+    <span class="pill">Bootstrap-compatible</span>
+    <span class="pill">MIT License</span>
   </div>
   <div class="btn-row">
     <a class="btn btn-primary" href="#install">Get started</a>
@@ -235,9 +144,7 @@
 <section id="demo">
   <div class="container">
     <h2>Live <span>demo</span></h2>
-
-    <ul id="timeline" class="mo-timeline"></ul>
-
+    <ul id="timeline" class="mo-timeline mo-theme"></ul>
     <div class="demo-controls">
       <button id="addBtn">+ Add item</button>
     </div>
@@ -258,33 +165,57 @@
 
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
   badgeShow: <span class="kw">true</span>,
+  arrowShow: <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,
 });</code></pre>
 
-    <h3>UMD (script tag, no bundler)</h3>
-    <pre><code>&lt;<span class="fn">link</span> rel=<span class="str">"stylesheet"</span> href=<span class="str">"moTimeline.css"</span>&gt;
+    <h3>UMD (no bundler)</h3>
+    <pre><code>&lt;<span class="fn">link</span>   rel=<span class="str">"stylesheet"</span> href=<span class="str">"moTimeline.css"</span>&gt;
 &lt;<span class="fn">script</span> src=<span class="str">"moTimeline.umd.js"</span>&gt;&lt;/<span class="fn">script</span>&gt;
 &lt;<span class="fn">script</span>&gt;
-  <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>);
+  <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span> });
 &lt;/<span class="fn">script</span>&gt;</code></pre>
 
-    <h3>HTML structure</h3>
+    <h3>HTML structure (with theme)</h3>
     <pre><code>&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
-  &lt;<span class="fn">li</span>&gt; <span class="comment">&lt;!-- your card content here --&gt;</span> &lt;/<span class="fn">li</span>&gt;
-  &lt;<span class="fn">li</span>&gt; <span class="comment">&lt;!-- ... --&gt;</span>               &lt;/<span class="fn">li</span>&gt;
+  &lt;<span class="fn">li</span>&gt;
+    &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-image"</span>&gt;           <span class="cm">&lt;!-- optional --&gt;</span>
+        &lt;<span class="fn">img</span> class=<span class="str">"mo-banner"</span> src=<span class="str">"..."</span>&gt;
+        &lt;<span class="fn">img</span> class=<span class="str">"mo-avatar"</span> src=<span class="str">"..."</span>&gt;   <span class="cm">&lt;!-- optional --&gt;</span>
+      &lt;/<span class="fn">div</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
+        &lt;<span class="fn">h3</span>&gt;Title&lt;/<span class="fn">h3</span>&gt;
+        &lt;<span class="fn">p</span> class=<span class="str">"mo-meta"</span>&gt;Date&lt;/<span class="fn">p</span>&gt;
+        &lt;<span class="fn">p</span>&gt;Text...&lt;/<span class="fn">p</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
 &lt;/<span class="fn">ul</span>&gt;</code></pre>
 
+    <h3>Bootstrap</h3>
+    <pre><code><span class="cm">&lt;!-- Bootstrap is fully compatible — just wrap in a container.
+     No framework option needed; moTimeline handles its own layout. --&gt;</span>
+&lt;<span class="fn">div</span> class=<span class="str">"container"</span>&gt;
+  &lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;...&lt;/<span class="fn">ul</span>&gt;
+&lt;/<span class="fn">div</span>&gt;</code></pre>
+
     <h3>API</h3>
-    <pre><code><span class="comment">// Initialize</span>
+    <pre><code><span class="cm">// Initialize (also called automatically in constructor)</span>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(elementOrSelector, options);
 
-<span class="comment">// Re-layout (e.g. after content changes)</span>
-tl.<span class="fn">refresh</span>();
+tl.<span class="fn">refresh</span>();       <span class="cm">// re-layout (after content changes)</span>
+tl.<span class="fn">initNewItems</span>(); <span class="cm">// pick up newly appended &lt;li&gt; elements</span>
+tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners, reset DOM</span></code></pre>
 
-<span class="comment">// Initialize newly appended &lt;li&gt; items</span>
-tl.<span class="fn">initNewItems</span>();
-
-<span class="comment">// Tear down (removes listeners, resets DOM)</span>
-tl.<span class="fn">destroy</span>();</code></pre>
+    <h3>CSS custom properties</h3>
+    <pre><code><span class="fn">#my-timeline</span> {
+  <span class="str">--mo-line-color</span>:      <span class="str">#c7d2fe</span>;
+  <span class="str">--mo-badge-bg</span>:        <span class="str">#4f46e5</span>;
+  <span class="str">--mo-badge-color</span>:     <span class="str">#fff</span>;
+  <span class="str">--mo-badge-size</span>:      <span class="str">26px</span>;
+  <span class="str">--mo-arrow-color</span>:     <span class="str">#c7d2fe</span>;
+}</code></pre>
   </div>
 </section>
 
@@ -294,184 +225,138 @@ tl.<span class="fn">destroy</span>();</code></pre>
     <h2>Options</h2>
     <table>
       <thead>
-        <tr>
-          <th>Option</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
+        <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>columnCount</code></td>
-          <td>object</td>
-          <td><code>{xs:1, sm:2, md:2, lg:2}</code></td>
-          <td>Number of columns at each breakpoint. Set a breakpoint to <code>1</code> to force single-column.</td>
+          <td><code>columnCount</code></td><td>object</td><td><code>{xs:1, sm:2, md:2, lg:2}</code></td>
+          <td>Columns at each breakpoint (xs &lt;600px, sm &lt;992px, md &lt;1200px, lg ≥1200px).</td>
         </tr>
         <tr>
-          <td><code>badgeShow</code></td>
-          <td>boolean</td>
-          <td><code>false</code></td>
-          <td>Show a numbered badge on the center line for each item.</td>
+          <td><code>badgeShow</code></td><td>boolean</td><td><code>false</code></td>
+          <td>Show numbered badges on the center line, one per item.</td>
         </tr>
         <tr>
-          <td><code>arrowShow</code></td>
-          <td>boolean</td>
-          <td><code>false</code></td>
-          <td>Show an arrow indicator pointing from the item toward the center line.</td>
+          <td><code>arrowShow</code></td><td>boolean</td><td><code>false</code></td>
+          <td>Show a triangle arrow pointing from each card toward the center line.</td>
+        </tr>
+        <tr>
+          <td><code>theme</code></td><td>boolean</td><td><code>false</code></td>
+          <td>Enable the built-in card theme: image banners, overlapping avatars, styled badges. Adds <code>mo-theme</code> class to the container.</td>
         </tr>
       </tbody>
     </table>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <p>
-    moTimeline · MIT License ·
-    <a href="https://github.com/MattOpen/moTimeline" target="_blank">GitHub</a> ·
-    by <a href="http://www.mattopen.com" target="_blank">MattOpen</a>
-  </p>
+  moTimeline · MIT License ·
+  <a href="https://github.com/MattOpen/moTimeline" target="_blank">GitHub</a> ·
+  by <a href="http://www.mattopen.com" target="_blank">MattOpen</a>
 </footer>
 
-<!-- Self-contained demo script (no bundler needed for GH Pages) -->
+<!-- Self-contained demo runtime -->
 <script>
-  // ── Minimal MoTimeline runtime (inlined for zero-build GH Pages) ──
+(function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount: { xs: 1, sm: 2, md: 2, lg: 2 }, badgeShow: false, arrowShow: false };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false };
 
-  function getBreakpoint() {
-    const w = window.innerWidth;
-    if (w < 600) return 'xs';
-    if (w < 992) return 'sm';
-    if (w < 1200) return 'md';
-    return 'lg';
-  }
-  function debounce(fn, delay = 100) {
-    let t;
-    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
-  }
-  function getPos(el) {
-    if (!el) return { o: 0, h: 0, gppu: 0 };
-    return { o: el.offsetTop, h: el.offsetHeight, gppu: el.offsetTop + el.offsetHeight };
-  }
-  function prevAll(el, sel) {
-    const r = [];
-    let s = el.previousElementSibling;
-    while (s) { if (!sel || s.matches(sel)) r.push(s); s = s.previousElementSibling; }
-    return r;
-  }
+  function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
+  function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
+  function pos(el){ if(!el) return{o:0,h:0,gppu:0}; return{o:el.offsetTop,h:el.offsetHeight,gppu:el.offsetTop+el.offsetHeight}; }
+  function prevAll(el,sel){ const r=[]; let s=el.previousElementSibling; while(s){ if(!sel||s.matches(sel)) r.push(s); s=s.previousElementSibling; } return r; }
 
   class MoTimeline {
     static instances = new Set();
-    constructor(el, opts = {}) {
-      if (typeof el === 'string') el = document.querySelector(el);
-      this.element = el;
-      this.settings = Object.assign({}, DEFAULTS, opts, { columnCount: Object.assign({}, DEFAULTS.columnCount, opts.columnCount) });
-      this._rh = debounce(() => this.refresh(), 100);
+    constructor(el,opts={}){
+      if(typeof el==='string') el=document.querySelector(el);
+      this.element=el;
+      this.settings=Object.assign({},DEFAULTS,opts,{columnCount:Object.assign({},DEFAULTS.columnCount,opts.columnCount)});
+      this._rh=debounce(()=>this.refresh(),100);
       this.init();
     }
-    init() {
-      const el = this.element;
-      if (instanceData.has(el)) { this.refresh(); return; }
-      instanceData.set(el, Object.assign({}, this.settings, { lastItemIdx: 0 }));
+    init(){
+      const el=this.element;
+      if(instanceData.has(el)){this.refresh();return;}
+      const data=Object.assign({},this.settings,{lastItemIdx:0});
+      instanceData.set(el,data);
       MoTimeline.instances.add(this);
       el.classList.add('mo-timeline');
+      if(data.theme) el.classList.add('mo-theme');
       this._initItems();
-      window.addEventListener('resize', this._rh);
+      window.addEventListener('resize',this._rh);
     }
-    refresh() {
-      MoTimeline.instances.forEach(inst => {
-        const d = instanceData.get(inst.element);
-        if (!d) return;
-        d.col = d.columnCount[getBreakpoint()];
-        inst._setDivider();
-        Array.from(inst.element.children).forEach(c => inst._setPostPos(c));
+    refresh(){
+      MoTimeline.instances.forEach(inst=>{
+        const d=instanceData.get(inst.element); if(!d) return;
+        d.col=d.columnCount[bp()]; inst._div();
+        Array.from(inst.element.children).forEach(c=>inst._spp(c));
       });
     }
-    initNewItems() { this._initItems(); }
-    destroy() {
-      window.removeEventListener('resize', this._rh);
-      instanceData.delete(this.element);
-      MoTimeline.instances.delete(this);
-    }
-    _getData() { return instanceData.get(this.element); }
-    _setDivider() {
-      const d = this._getData();
-      if (!d) return;
-      d.col = d.columnCount[getBreakpoint()];
-      this.element.classList.toggle('twocol', d.col > 1);
-    }
-    _initItems() {
-      const el = this.element, d = this._getData();
-      if (!d) return;
-      const all = Array.from(el.children);
-      const items = all.slice(d.lastItemIdx);
-      if (!items.length) return;
-      items.forEach((item, i) => {
-        if (!item.id) item.id = 'moT' + Math.random().toString(36).slice(2) + '_' + (i + d.lastItemIdx);
+    initNewItems(){ this._initItems(); }
+    destroy(){ window.removeEventListener('resize',this._rh); instanceData.delete(this.element); MoTimeline.instances.delete(this); }
+    _d(){ return instanceData.get(this.element); }
+    _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('twocol',d.col>1); }
+    _initItems(){
+      const el=this.element,d=this._d(); if(!d) return;
+      const all=Array.from(el.children), items=all.slice(d.lastItemIdx);
+      if(!items.length) return;
+      items.forEach((item,i)=>{
+        if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
         item.classList.add('moitem');
-        if (d.badgeShow) { const s = document.createElement('span'); s.className = 'badge-mo js-badge-mo'; s.textContent = i + d.lastItemIdx + 1; item.prepend(s); }
-        if (d.arrowShow) { const s = document.createElement('span'); s.className = 'badge-arrow js-badge-arrow'; item.prepend(s); }
+        if(d.badgeShow){ const s=document.createElement('span'); s.className='badge-mo js-badge-mo'; s.textContent=i+d.lastItemIdx+1; item.prepend(s); }
+        if(d.arrowShow){ const s=document.createElement('span'); s.className='badge-arrow js-badge-arrow'; item.prepend(s); }
       });
-      d.lastItemIdx = all.length;
-      this._setDivider();
-      this.refresh();
+      d.lastItemIdx=all.length; this._div(); this.refresh();
     }
-    _setPostPos(el) {
-      const r = this._getLR(el);
-      if (!r) return;
-      el.classList.toggle('mo-inverted', r.lr > 0);
-      el.classList.toggle('offset', r.bo > 0);
-    }
-    _getLR(el) {
-      const d = this._getData();
-      if (!d) return null;
-      const prevR = prevAll(el, '.mo-inverted')[0] || null;
-      const prevL = prevAll(el, '.moitem:not(.mo-inverted)')[0] || null;
-      const l = getPos(prevL), r = getPos(prevR), e = getPos(el);
-      let pos = 0, bo = 0;
-      if (d.col > 1) {
-        const OG = e.o - l.o, AA = l.gppu - r.gppu, BB = r.gppu - l.gppu;
-        if (l.gppu > e.o) pos = 1;
-        if (r.gppu > l.gppu) pos = 0;
-        if (pos > 0 && ((OG < 40 && OG >= 0) || (AA < 40 && BB < 40))) bo = 1;
-      }
-      return { lr: pos, bo };
+    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('offset',r.bo>0); }
+    _lr(el){
+      const d=this._d(); if(!d) return null;
+      const prevR=prevAll(el,'.mo-inverted')[0]||null, prevL=prevAll(el,'.moitem:not(.mo-inverted)')[0]||null;
+      const l=pos(prevL),r=pos(prevR),e=pos(el);
+      let p=0,bo=0;
+      if(d.col>1){ const OG=e.o-l.o,AA=l.gppu-r.gppu,BB=r.gppu-l.gppu; if(l.gppu>e.o) p=1; if(r.gppu>l.gppu) p=0; if(p>0&&((OG<40&&OG>=0)||(AA<40&&BB<40))) bo=1; }
+      return{lr:p,bo};
     }
   }
+  window.MoTimeline = MoTimeline;
 
-  // ── Demo data ──
-  const DEMO_ITEMS = [
-    { title: 'Project kickoff',       date: 'January 2024',   text: 'Started the moTimeline rewrite. Removed jQuery, migrated to plain JavaScript with a class-based API.' },
-    { title: 'Vite build pipeline',   date: 'February 2024',  text: 'Set up Vite in library mode. Now ships ESM, CJS and UMD bundles for any project.' },
-    { title: 'Two-column layout',     date: 'March 2024',     text: 'Core algorithm places items in left and right columns automatically based on available height.' },
-    { title: 'Responsive design',     date: 'April 2024',     text: 'Collapses to a single column on mobile. Breakpoints configurable via columnCount option.' },
-    { title: 'Badge support',         date: 'May 2024',       text: 'Optional numbered badges appear on the center line. Enable with badgeShow: true.' },
-    { title: 'GitHub Pages',          date: 'June 2024',      text: 'Published a live demo and documentation using GitHub Pages. You\'re looking at it!' },
+  // ── Demo ──
+  const COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+  const ITEMS = [
+    { title:'Project kickoff',       meta:'Jan 2024', text:'Removed jQuery, migrated to plain JavaScript with a class-based API and zero dependencies.', color: COLORS[0] },
+    { title:'Vite build pipeline',   meta:'Feb 2024', text:'Ships ESM, CJS and UMD bundles — works with any bundler or as a plain script tag.', color: COLORS[1] },
+    { title:'Two-column layout',     meta:'Mar 2024', text:'Core algorithm fills the shorter column first, creating a natural zigzag flow.', color: COLORS[2] },
+    { title:'Responsive design',     meta:'Apr 2024', text:'Collapses to single column on mobile. Breakpoints configurable per instance.', color: COLORS[3] },
+    { title:'Badges & arrows',       meta:'May 2024', text:'Numbered badges sit on the center line. Arrows point from each card toward the center.', color: COLORS[4] },
+    { title:'Bootstrap compatible',  meta:'Jun 2024', text:'No framework option needed. Wrap the <ul> in a Bootstrap container for page layout.', color: COLORS[5] },
+    { title:'Theme system',          meta:'Jul 2024', text:'Opt-in theme: card images, overlapping avatars, styled badges. Enable with theme: true.', color: COLORS[0] },
+    { title:'CSS custom properties', meta:'Aug 2024', text:'Override --mo-badge-bg, --mo-line-color and others to match your brand in one line.', color: COLORS[1] },
   ];
 
-  function makeCard(item) {
-    const li = document.createElement('li');
-    li.innerHTML = `<div class="tl-card"><h3>${item.title}</h3><div class="meta">${item.date}</div><p>${item.text}</p></div>`;
-    return li;
-  }
+  function svg(color){ return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='160'><rect width='700' height='160' fill='${encodeURIComponent(color)}'/></svg>`; }
 
   const tlEl = document.getElementById('timeline');
-  DEMO_ITEMS.forEach(d => tlEl.appendChild(makeCard(d)));
-
-  const tl = new MoTimeline(tlEl, { badgeShow: true });
-
-  let count = DEMO_ITEMS.length + 1;
-  document.getElementById('addBtn').addEventListener('click', () => {
-    tlEl.appendChild(makeCard({
-      title: `New item ${count}`,
-      date: 'Dynamically added',
-      text: 'This item was appended after initialization and picked up via initNewItems().'
-    }));
-    tl.initNewItems();
-    count++;
+  ITEMS.forEach((d,i) => {
+    const li = document.createElement('li');
+    const hasImg = i % 2 === 0;
+    li.innerHTML = hasImg
+      ? `<div class="mo-card"><div class="mo-card-image"><img class="mo-banner" src="${svg(d.color)}" alt=""><img class="mo-avatar" src="https://i.pravatar.cc/50?img=${i+10}" alt="" onerror="this.style.display='none'"></div><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`
+      : `<div class="mo-card"><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`;
+    tlEl.appendChild(li);
   });
+
+  const tl = new MoTimeline(tlEl, { badgeShow:true, arrowShow:true, theme:true });
+
+  let c = ITEMS.length + 1;
+  document.getElementById('addBtn').addEventListener('click', () => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="mo-card"><div class="mo-card-body"><h3>New item ${c}</h3><p class="mo-meta">Just now</p><p>Dynamically appended via initNewItems().</p></div></div>`;
+    tlEl.appendChild(li);
+    tl.initNewItems();
+    c++;
+  });
+})();
 </script>
 
 </body>

@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.0.0
+ * moTimeline v2.1.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -20,6 +20,7 @@ const DEFAULTS = {
   columnCount: { xs: 1, sm: 2, md: 2, lg: 2 },
   badgeShow: false,
   arrowShow: false,
+  theme: false,
 };
 
 function getBreakpoint() {
@@ -89,6 +90,7 @@ export class MoTimeline {
     MoTimeline.instances.add(this);
 
     el.classList.add('mo-timeline');
+    if (data.theme) el.classList.add('mo-theme');
 
     const children = Array.from(el.children);
     if (children.length === 0) return;
@@ -122,7 +124,7 @@ export class MoTimeline {
     window.removeEventListener('resize', this._resizeHandler);
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
-    this.element.classList.remove('mo-timeline', 'twocol');
+    this.element.classList.remove('mo-timeline', 'mo-theme', 'twocol');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('moitem', 'mo-inverted', 'offset');
       child.querySelectorAll('.js-badge-mo, .js-badge-arrow').forEach((b) => b.remove());
@@ -249,7 +251,6 @@ export class MoTimeline {
   _createArrow(el) {
     const span = document.createElement('span');
     span.className = 'js-badge-arrow badge-arrow';
-    span.innerHTML = '&nbsp;';
     el.prepend(span);
   }
 }

@@ -1,9 +1,21 @@
 /*!
- * moTimeline v2.0.0 — CSS
+ * moTimeline v2.1.0 — CSS
  */
 
+/* ── CSS custom properties (easy override) ─────────────────── */
+:root {
+  --mo-line-color:      #dde1e7;
+  --mo-badge-bg:        #4f46e5;
+  --mo-badge-color:     #fff;
+  --mo-badge-size:      26px;
+  --mo-badge-font-size: 12px;
+  --mo-arrow-color:     #dde1e7;
+}
+
+/* ── Container ──────────────────────────────────────────────── */
+
 .mo-timeline {
-  display: inline-block;
+  display: block;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -11,9 +23,16 @@
   width: 100%;
 }
 
-/* Center line — only visible in two-column mode */
+/* Clearfix */
+.mo-timeline::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+/* Center vertical line — only in two-column mode */
 .mo-timeline.twocol::before {
-  background-color: #e0e0e0;
+  background-color: var(--mo-line-color);
   bottom: 0;
   content: '';
   left: 50%;
@@ -21,9 +40,11 @@
   position: absolute;
   top: 0;
   width: 3px;
+  z-index: 0;
 }
 
-.mo-timeline > li,
+/* ── Items ──────────────────────────────────────────────────── */
+
 .mo-timeline > .moitem {
   box-sizing: border-box;
   display: block;
@@ -32,54 +53,179 @@
   width: 50%;
 }
 
-.mo-timeline.twocol > li,
-.mo-timeline.twocol > .moitem {
-  width: 50%;
-}
-
-/* Single column — full width */
-.mo-timeline:not(.twocol) > li,
+/* Single column */
 .mo-timeline:not(.twocol) > .moitem {
+  float: none;
   width: 100%;
 }
 
 /* Right-column item */
-.mo-timeline > li.mo-inverted,
 .mo-timeline > .moitem.mo-inverted {
   float: right;
 }
 
-/* Badge — numbered dot on the center line */
+/* ── Badge — circle sitting ON the center line ──────────────── */
+
 .badge-mo {
-  display: inline-block;
-  background: #555;
+  align-items: center;
+  background: var(--mo-badge-bg);
   border-radius: 50%;
-  color: #fff;
-  font-size: 12px;
-  height: 22px;
-  line-height: 22px;
-  min-width: 22px;
-  text-align: center;
+  color: var(--mo-badge-color);
+  display: flex;
+  font-size: var(--mo-badge-font-size);
+  font-weight: 700;
+  height: var(--mo-badge-size);
+  justify-content: center;
+  min-width: var(--mo-badge-size);
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 18px;
+  z-index: 2;
+}
+
+/* Left item → badge pokes out to the RIGHT (= center line) */
+.mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-mo {
+  left: auto;
+  right: calc(var(--mo-badge-size) / -2);
+}
+
+/* Right item → badge pokes out to the LEFT (= center line) */
+.mo-timeline.twocol > .moitem.mo-inverted .badge-mo {
+  left: calc(var(--mo-badge-size) / -2);
+  right: auto;
+}
+
+/* Single column: badge in top-right of item */
+.mo-timeline:not(.twocol) > .moitem .badge-mo {
+  right: 12px;
+  left: auto;
+  top: 12px;
+}
+
+/* ── Arrow — triangle pointing FROM card TOWARD center line ─── */
+
+.badge-arrow {
+  border: 8px solid transparent;
+  display: block;
+  height: 0;
+  position: absolute;
+  top: 26px;
+  width: 0;
   z-index: 1;
 }
 
-/* Arrow indicator */
-.badge-arrow {
-  display: inline-block;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-style: solid;
+/* Left item → tip at right edge (center line), pointing right → */
+.mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-arrow {
+  border-left: 8px solid var(--mo-arrow-color);
+  border-right: none;
+  left: auto;
+  right: 0;
 }
 
-/* Clearfix for float-based layout */
-.mo-timeline::after {
-  content: '';
-  display: table;
-  clear: both;
+/* Right item → tip at left edge (center line), pointing left ← */
+.mo-timeline.twocol > .moitem.mo-inverted .badge-arrow {
+  border-right: 8px solid var(--mo-arrow-color);
+  border-left: none;
+  left: 0;
+  right: auto;
+}
+
+/* Hide arrow in single-column mode */
+.mo-timeline:not(.twocol) > .moitem .badge-arrow {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME  —  enabled via new MoTimeline(el, { theme: true })
+             or by adding .mo-theme manually to the container
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Themed card shell */
+.mo-theme > .moitem .mo-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .10);
+  margin: 0.5rem 1.25rem 0.5rem 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.mo-theme > .moitem.mo-inverted .mo-card {
+  margin: 0.5rem 0.5rem 0.5rem 1.25rem;
+}
+
+/* Banner image */
+.mo-theme > .moitem .mo-banner {
+  display: block;
+  height: 160px;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Image wrapper (needed for avatar overlap) */
+.mo-theme > .moitem .mo-card-image {
+  overflow: visible;
+  position: relative;
+}
+
+/* Avatar — overlaps bottom of banner image */
+.mo-theme > .moitem .mo-avatar {
+  border: 3px solid #fff;
+  border-radius: 50%;
+  bottom: -22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+  height: 50px;
+  object-fit: cover;
+  position: absolute;
+  right: 14px;
+  width: 50px;
+  z-index: 1;
+}
+
+/* Mirror: right-column items → avatar on left side (toward center) */
+.mo-theme > .moitem.mo-inverted .mo-avatar {
+  left: 14px;
+  right: auto;
+}
+
+/* Card body text area */
+.mo-theme > .moitem .mo-card-body {
+  padding: 1.75rem 1rem 1rem;
+}
+
+.mo-theme > .moitem .mo-card-body h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+
+.mo-theme > .moitem .mo-card-body .mo-meta {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.mo-theme > .moitem .mo-card-body p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Theme: arrow color matches card shadow edge */
+.mo-theme.twocol > .moitem:not(.mo-inverted) .badge-arrow {
+  border-left-color: #e5e7eb;
+  right: 10px; /* = gap between card and center line */
+}
+
+.mo-theme.twocol > .moitem.mo-inverted .badge-arrow {
+  border-right-color: #e5e7eb;
+  left: 10px;
+}
+
+/* Theme: badge styled to match card aesthetic */
+.mo-theme .badge-mo {
+  background: #fff;
+  border: 2px solid var(--mo-line-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .10);
+  color: #374151;
 }
