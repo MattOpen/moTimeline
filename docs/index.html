@@ -440,6 +440,7 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
   <span class="str">--mo-badge-bg</span>:        <span class="str">#4f46e5</span>;
   <span class="str">--mo-badge-color</span>:     <span class="str">#fff</span>;
   <span class="str">--mo-badge-size</span>:      <span class="str">26px</span>;
+  <span class="str">--mo-badge-font-size</span>: <span class="str">12px</span>;
   <span class="str">--mo-arrow-color</span>:     <span class="str">#c7d2fe</span>;
 }</code></pre>
   </div>
@@ -469,6 +470,14 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
         <tr>
           <td><code>theme</code></td><td>boolean</td><td><code>false</code></td>
           <td>Enable the built-in card theme: image banners, overlapping avatars, styled badges. Adds <code>mo-theme</code> class to the container.</td>
+        </tr>
+        <tr>
+          <td><code>showCounter</code></td><td>boolean</td><td><code>true</code></td>
+          <td>Show the badge number. <code>false</code> keeps the badge element (preserving center-line layout) but sets <code>opacity: 0</code>.</td>
+        </tr>
+        <tr>
+          <td><code>showCounterStyle</code></td><td>string</td><td><code>'counter'</code></td>
+          <td><code>'counter'</code> renders the sequential item number. <code>'image'</code> renders the icon from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>, or a built-in flat SVG if no attribute is present.</td>
         </tr>
       </tbody>
     </table>
