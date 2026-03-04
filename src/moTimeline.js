@@ -233,8 +233,13 @@ export class MoTimeline {
       }
 
       if (pos > 0) {
+        // Right item: badge overlap with previous left item's badge
         if (OG < 40 && OG >= 0) bo = 1;
         if (AA < 40 && BB < 40) bo = 1;
+      } else {
+        // Left item: badge overlap with previous right item's badge
+        // (left item can start above the right item when columns re-balance)
+        if (prevInverted && Math.abs(e.o - r.o) < 40) bo = 1;
       }
     }
 
