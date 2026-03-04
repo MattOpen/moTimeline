@@ -94,6 +94,16 @@
   right: auto;
 }
 
+/* Right item starts at same vertical position as a left item →
+   push badge & arrow down so they don't overlap on the center line */
+.mo-timeline.twocol > .moitem.mo-inverted.offset .badge-mo {
+  top: calc(18px + var(--mo-badge-size) + 10px);
+}
+
+.mo-timeline.twocol > .moitem.mo-inverted.offset .badge-arrow {
+  top: calc(26px + var(--mo-badge-size) + 10px);
+}
+
 /* Single column: badge in top-right of item */
 .mo-timeline:not(.twocol) > .moitem .badge-mo {
   right: 12px;
