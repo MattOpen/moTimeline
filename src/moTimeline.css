@@ -113,11 +113,9 @@
   top: calc(26px + var(--mo-badge-size) + 10px);
 }
 
-/* Single column: badge in top-right of item */
+/* Single column: hide badge (center-line elements have no meaning without a center line) */
 .mo-timeline:not(.mo-twocol) > .mo-item .mo-badge {
-  right: 12px;
-  left: auto;
-  top: 12px;
+  display: none;
 }
 
 /* ── Arrow — triangle pointing FROM card TOWARD center line ─── */

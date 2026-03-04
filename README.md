@@ -111,9 +111,28 @@ import 'motimeline/dist/moTimeline.css';
 ```js
 const tl = new MoTimeline(elementOrSelector, options);
 
-tl.refresh();        // re-layout all items (called automatically on resize)
-tl.initNewItems();   // pick up newly appended <li> elements
-tl.destroy();        // remove listeners and reset DOM classes
+tl.refresh();          // re-layout all items (called automatically on resize)
+tl.initNewItems();     // pick up manually appended <li> elements
+tl.addItems(items);    // create and append <li> from an array of item objects (or JSON string)
+tl.destroy();          // remove listeners and reset DOM classes
+```
+
+### addItems — item schema
+
+```js
+tl.addItems([
+  {
+    title:  "Project kickoff",         // <h3> heading
+    meta:   "January 2024",            // date / subtitle line
+    text:   "Kicked off the roadmap.", // body paragraph
+    banner: "images/banner.jpg",       // img.mo-banner (optional)
+    avatar: "images/avatar.jpg",       // img.mo-avatar (optional)
+    icon:   "images/icon.svg"          // data-mo-icon on <li>, used by showCounterStyle:'image'
+  },
+]);
+
+// A JSON string is also accepted:
+tl.addItems('[{"title":"From JSON","meta":"Today","text":"Parsed automatically."}]');
 ```
 
 ---
@@ -156,6 +175,10 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.4.0
+- Added `addItems(items)` — creates and appends `<li>` elements from an array of item objects or a JSON string, then initializes them in one batch
+- Badges and arrows now hidden in single-column mode (center-line elements have no meaning without a center line)
 
 ### v2.3.0
 - Added `showCounter` (opacity toggle) and `showCounterStyle` (`'counter'` | `'image'`) badge options

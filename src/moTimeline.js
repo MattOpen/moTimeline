@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.3.0
+ * moTimeline v2.4.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -121,6 +121,21 @@ export class MoTimeline {
   }
 
   initNewItems() {
+    this._initItems();
+  }
+
+  /**
+   * Create <li> elements from an array of item objects (or a JSON string) and
+   * append them to the timeline, then initialize them in one batch.
+   *
+   * Item shape:
+   *   { title, meta, text, banner, avatar, icon }
+   *   — banner / avatar / icon are all optional
+   *   — icon sets data-mo-icon on the <li> for showCounterStyle:'image'
+   */
+  addItems(items) {
+    if (typeof items === 'string') items = JSON.parse(items);
+    items.forEach((item) => this.element.appendChild(this._createItemElement(item)));
     this._initItems();
   }
 
@@ -246,6 +261,54 @@ export class MoTimeline {
     }
 
     el.prepend(span);
+  }
+
+  _createItemElement(item) {
+    const li = document.createElement('li');
+    if (item.icon) li.dataset.moIcon = item.icon;
+
+    const card = document.createElement('div');
+    card.className = 'mo-card';
+
+    if (item.banner) {
+      const wrap = document.createElement('div');
+      wrap.className = 'mo-card-image';
+      const banner = document.createElement('img');
+      banner.className = 'mo-banner';
+      banner.src = item.banner;
+      banner.alt = '';
+      wrap.appendChild(banner);
+      if (item.avatar) {
+        const avatar = document.createElement('img');
+        avatar.className = 'mo-avatar';
+        avatar.src = item.avatar;
+        avatar.alt = '';
+        wrap.appendChild(avatar);
+      }
+      card.appendChild(wrap);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'mo-card-body';
+    if (item.title) {
+      const h = document.createElement('h3');
+      h.textContent = item.title;
+      body.appendChild(h);
+    }
+    if (item.meta) {
+      const m = document.createElement('p');
+      m.className = 'mo-meta';
+      m.textContent = item.meta;
+      body.appendChild(m);
+    }
+    if (item.text) {
+      const p = document.createElement('p');
+      p.textContent = item.text;
+      body.appendChild(p);
+    }
+    card.appendChild(body);
+    li.appendChild(card);
+    return li;
   }
 
   _createArrow(el) {

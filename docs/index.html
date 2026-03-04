@@ -69,7 +69,7 @@
     .mo-timeline.mo-twocol > .mo-item.mo-inverted        .mo-badge { left: calc(var(--mo-badge-size) / -2); right: auto; }
     .mo-timeline.mo-twocol > .mo-item.mo-offset .mo-badge { top: calc(18px + var(--mo-badge-size) + 10px); }
     .mo-timeline.mo-twocol > .mo-item.mo-offset .mo-arrow { top: calc(26px + var(--mo-badge-size) + 10px); }
-    .mo-timeline:not(.mo-twocol) > .mo-item .mo-badge    { right: 12px; left: auto; top: 12px; }
+    .mo-timeline:not(.mo-twocol) > .mo-item .mo-badge    { display: none; }
 
     .mo-arrow { border: 8px solid transparent; display: block; height: 0; position: absolute; top: 26px; width: 0; z-index: 1; }
     .mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow { border-left: 8px solid var(--mo-arrow-color); border-right: none; left: auto; right: 0; }
@@ -181,6 +181,7 @@
       <ul id="tl-motimeline"></ul>
       <div class="demo-controls">
         <button id="addBtn">+ Add item</button>
+        <button id="addJsonBtn" style="margin-left:0.5rem;background:#0ea5e9">+ Load via JSON</button>
       </div>
     </div>
 
@@ -430,9 +431,27 @@
     <pre><code><span class="cm">// Initialize (also called automatically in constructor)</span>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(elementOrSelector, options);
 
-tl.<span class="fn">refresh</span>();       <span class="cm">// re-layout (after content changes)</span>
-tl.<span class="fn">initNewItems</span>(); <span class="cm">// pick up newly appended &lt;li&gt; elements</span>
-tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners, reset DOM</span></code></pre>
+tl.<span class="fn">refresh</span>();          <span class="cm">// re-layout (after content changes)</span>
+tl.<span class="fn">initNewItems</span>();    <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
+tl.<span class="fn">addItems</span>(items);   <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
+tl.<span class="fn">destroy</span>();         <span class="cm">// remove listeners, reset DOM</span></code></pre>
+
+    <h3>addItems — item schema</h3>
+    <pre><code><span class="cm">// All fields are optional except at least one of title / text</span>
+tl.<span class="fn">addItems</span>([
+  {
+    <span class="str">title</span>:  <span class="str">"Project kickoff"</span>,        <span class="cm">// &lt;h3&gt; heading</span>
+    <span class="str">meta</span>:   <span class="str">"January 2024"</span>,           <span class="cm">// date / subtitle line</span>
+    <span class="str">text</span>:   <span class="str">"Kicked off the roadmap."</span>, <span class="cm">// body paragraph</span>
+    <span class="str">banner</span>: <span class="str">"images/banner.jpg"</span>,       <span class="cm">// img.mo-banner (optional)</span>
+    <span class="str">avatar</span>: <span class="str">"images/avatar.jpg"</span>,       <span class="cm">// img.mo-avatar (optional)</span>
+    <span class="str">icon</span>:   <span class="str">"images/icon.svg"</span>          <span class="cm">// data-mo-icon on &lt;li&gt;, used by showCounterStyle:'image'</span>
+  },
+  <span class="cm">// … more items</span>
+]);
+
+<span class="cm">// JSON string is also accepted:</span>
+tl.<span class="fn">addItems</span>(<span class="str">'[{"title":"From JSON","meta":"Today","text":"Parsed automatically."}]'</span>);</code></pre>
 
     <h3>CSS custom properties</h3>
     <pre><code><span class="fn">#my-timeline</span> {
@@ -530,6 +549,27 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
       });
     }
     initNewItems(){ this._initItems(); }
+    addItems(items){
+      if(typeof items==='string') items=JSON.parse(items);
+      items.forEach(item=>this.element.appendChild(this._cie(item)));
+      this._initItems();
+    }
+    _cie(item){
+      const li=document.createElement('li');
+      if(item.icon) li.dataset.moIcon=item.icon;
+      const card=document.createElement('div'); card.className='mo-card';
+      if(item.banner){
+        const wrap=document.createElement('div'); wrap.className='mo-card-image';
+        const b=document.createElement('img'); b.className='mo-banner'; b.src=item.banner; b.alt=''; wrap.appendChild(b);
+        if(item.avatar){ const a=document.createElement('img'); a.className='mo-avatar'; a.src=item.avatar; a.alt=''; wrap.appendChild(a); }
+        card.appendChild(wrap);
+      }
+      const body=document.createElement('div'); body.className='mo-card-body';
+      if(item.title){ const h=document.createElement('h3'); h.textContent=item.title; body.appendChild(h); }
+      if(item.meta){ const m=document.createElement('p'); m.className='mo-meta'; m.textContent=item.meta; body.appendChild(m); }
+      if(item.text){ const p=document.createElement('p'); p.textContent=item.text; body.appendChild(p); }
+      card.appendChild(body); li.appendChild(card); return li;
+    }
     destroy(){ window.removeEventListener('resize',this._rh); instanceData.delete(this.element); MoTimeline.instances.delete(this); }
     _d(){ return instanceData.get(this.element); }
     _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('mo-twocol',d.col>1); }
@@ -588,6 +628,18 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
     tlEl.appendChild(li);
     tl1.initNewItems();
     addCount++;
+  });
+
+  const JSON_ITEMS = [
+    { title: 'Loaded from JSON', meta: 'March 2025', text: 'This item was created by passing a JSON array to addItems().',
+      banner: svg(COLORS[2]), avatar: 'https://i.pravatar.cc/50?img=33' },
+    { title: 'Second JSON item',  meta: 'April 2025', text: 'Each object maps title, meta, text, banner, avatar and icon.' },
+    { title: 'Third JSON item',   meta: 'May 2025',   text: 'All fields are optional — only provide what you need.',
+      banner: svg(COLORS[4]) },
+  ];
+  document.getElementById('addJsonBtn').addEventListener('click', () => {
+    tl1.addItems(JSON_ITEMS);
+    addCount += JSON_ITEMS.length;
   });
 
   // ── Tab 2: Timestamp demo ───────────────────────────────────────────────────
