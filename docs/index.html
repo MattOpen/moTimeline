@@ -478,28 +478,66 @@ tl.<span class="fn">addItems</span>(<span class="str">'[{"title":"From JSON","me
       <tbody>
         <tr>
           <td><code>columnCount</code></td><td>object</td><td><code>{xs:1, sm:2, md:2, lg:2}</code></td>
-          <td>Columns at each breakpoint (xs &lt;600px, sm &lt;992px, md &lt;1200px, lg ≥1200px).</td>
+          <td>Columns at each responsive breakpoint: <code>xs</code> &lt; 600 px · <code>sm</code> &lt; 992 px · <code>md</code> &lt; 1 200 px · <code>lg</code> ≥ 1 200 px. Set any key to <code>1</code> to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode.</td>
         </tr>
         <tr>
           <td><code>badgeShow</code></td><td>boolean</td><td><code>false</code></td>
-          <td>Show numbered badges on the center line, one per item.</td>
+          <td>Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active (no center line to attach to).</td>
         </tr>
         <tr>
           <td><code>arrowShow</code></td><td>boolean</td><td><code>false</code></td>
-          <td>Show a triangle arrow pointing from each card toward the center line.</td>
+          <td>Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode.</td>
         </tr>
         <tr>
           <td><code>theme</code></td><td>boolean</td><td><code>false</code></td>
-          <td>Enable the built-in card theme: image banners, overlapping avatars, styled badges. Adds <code>mo-theme</code> class to the container.</td>
+          <td>Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds the <code>mo-theme</code> class to the container — can also be set manually in HTML.</td>
         </tr>
         <tr>
           <td><code>showCounter</code></td><td>boolean</td><td><code>true</code></td>
-          <td>Show the badge number. <code>false</code> keeps the badge element (preserving center-line layout) but sets <code>opacity: 0</code>.</td>
+          <td>Controls badge content visibility in two-column mode. <code>false</code> sets <code>opacity: 0</code> on the badge — the element stays in the DOM to preserve center-line spacing without displaying a number or icon.</td>
         </tr>
         <tr>
           <td><code>showCounterStyle</code></td><td>string</td><td><code>'counter'</code></td>
-          <td><code>'counter'</code> renders the sequential item number. <code>'image'</code> renders the icon from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>, or a built-in flat SVG if no attribute is present.</td>
+          <td><code>'counter'</code> — sequential item number (1, 2, 3…). <code>'image'</code> — image from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>; falls back to a built-in flat SVG dot if the attribute is absent.</td>
         </tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:2.5rem">Data attributes</h2>
+    <table>
+      <thead>
+        <tr><th>Attribute</th><th>Element</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>data-mo-icon</code></td><td><code>&lt;li&gt;</code></td>
+          <td>URL of the image shown inside the badge when <code>showCounterStyle: 'image'</code>. Accepts any web-safe format including inline SVG data URIs. If omitted, the built-in flat SVG icon is used as fallback. Also set automatically by <code>addItems()</code> when an <code>icon</code> field is provided.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:2.5rem">CSS classes reference</h2>
+    <table>
+      <thead>
+        <tr><th>Class</th><th>Applied to</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>mo-timeline</code></td><td>container <code>&lt;ul&gt;</code></td><td>Core layout class. Added automatically on init; safe to add in HTML before init.</td></tr>
+        <tr><td><code>mo-twocol</code></td><td>container</td><td>Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning.</td></tr>
+        <tr><td><code>mo-theme</code></td><td>container</td><td>Activates the built-in card theme styles. Added by <code>theme: true</code> or set manually.</td></tr>
+        <tr><td><code>mo-item</code></td><td><code>&lt;li&gt;</code></td><td>Applied to every timeline item. Controls 50 % width and float direction.</td></tr>
+        <tr><td><code>mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>Added to right-column items. Flips float, badge, arrow, and avatar positions.</td></tr>
+        <tr><td><code>mo-offset</code></td><td><code>&lt;li&gt;</code></td><td>Added when a badge would overlap the previous item's badge on the center line — nudges badge and arrow down to avoid collision.</td></tr>
+        <tr><td><code>mo-badge</code></td><td><code>&lt;span&gt;</code></td><td>Badge circle on the center line. Style via CSS custom properties.</td></tr>
+        <tr><td><code>mo-badge-icon</code></td><td><code>&lt;img&gt;</code> inside badge</td><td>Image inside the badge when <code>showCounterStyle: 'image'</code>.</td></tr>
+        <tr><td><code>mo-arrow</code></td><td><code>&lt;span&gt;</code></td><td>Triangle arrow pointing from the card toward the center line.</td></tr>
+        <tr><td><code>mo-card</code></td><td><code>&lt;div&gt;</code></td><td>Card wrapper. Receives shadow, border-radius, and margins when <code>mo-theme</code> is active.</td></tr>
+        <tr><td><code>mo-card-image</code></td><td><code>&lt;div&gt;</code></td><td>Optional image container inside a card. Required for the avatar-over-banner overlap effect.</td></tr>
+        <tr><td><code>mo-banner</code></td><td><code>&lt;img&gt;</code></td><td>Full-width banner image at the top of a themed card.</td></tr>
+        <tr><td><code>mo-avatar</code></td><td><code>&lt;img&gt;</code></td><td>Circular avatar that overlaps the bottom edge of the banner. Mirrors to the opposite side on <code>mo-inverted</code> items.</td></tr>
+        <tr><td><code>mo-card-body</code></td><td><code>&lt;div&gt;</code></td><td>Text content area. Receives padding and typography when <code>mo-theme</code> is active.</td></tr>
+        <tr><td><code>mo-meta</code></td><td><code>&lt;p&gt;</code></td><td>Date / subtitle line inside a card body. Muted colour, smaller font.</td></tr>
+        <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>
       </tbody>
     </table>
   </div>

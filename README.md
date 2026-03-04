@@ -98,12 +98,43 @@ import 'motimeline/dist/moTimeline.css';
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `columnCount` | object | `{xs:1, sm:2, md:2, lg:2}` | Columns at each breakpoint (xs <600 px, sm <992 px, md <1200 px, lg ≥1200 px) |
-| `badgeShow` | boolean | `false` | Show numbered badges on the center line |
-| `arrowShow` | boolean | `false` | Show triangle arrows pointing from each card toward the center line |
-| `theme` | boolean | `false` | Enable the built-in card theme (banners, avatars, styled badges) |
-| `showCounter` | boolean | `true` | Render the badge number. `false` keeps the badge for layout but sets it transparent |
-| `showCounterStyle` | string | `'counter'` | `'counter'` shows the item number; `'image'` shows the icon from `data-mo-icon` on the `<li>`, or a built-in SVG fallback |
+| `columnCount` | object | `{xs:1, sm:2, md:2, lg:2}` | Columns at each responsive breakpoint: `xs` < 600 px · `sm` < 992 px · `md` < 1 200 px · `lg` ≥ 1 200 px. Set any key to `1` to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode. |
+| `badgeShow` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
+| `arrowShow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
+| `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
+| `showCounter` | boolean | `true` | Controls badge content visibility in two-column mode. `false` sets `opacity: 0` — the badge stays in the DOM to preserve center-line spacing without displaying a number or icon. |
+| `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. |
+
+---
+
+## Data attributes
+
+| Attribute | Element | Description |
+|---|---|---|
+| `data-mo-icon` | `<li>` | URL of the image shown inside the badge when `showCounterStyle: 'image'`. Accepts any web-safe format including inline SVG data URIs. Falls back to a built-in SVG icon if absent. Also set automatically by `addItems()` when an `icon` field is provided. |
+
+---
+
+## CSS classes reference
+
+| Class | Applied to | Description |
+|---|---|---|
+| `mo-timeline` | container `<ul>` | Core layout class. Added automatically on init; safe to add in HTML before init. |
+| `mo-twocol` | container | Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning. |
+| `mo-theme` | container | Activates the built-in card theme. Added by `theme: true` or set manually. |
+| `mo-item` | `<li>` | Applied to every timeline item. Controls 50 % width and float direction. |
+| `mo-inverted` | `<li>` | Added to right-column items. Flips float, badge, arrow, and avatar positions. |
+| `mo-offset` | `<li>` | Added when a badge would overlap the previous badge — nudges badge and arrow down to avoid collision. |
+| `mo-badge` | `<span>` | Badge circle on the center line. Style via CSS custom properties. |
+| `mo-badge-icon` | `<img>` inside badge | Image inside the badge when `showCounterStyle: 'image'`. |
+| `mo-arrow` | `<span>` | Triangle arrow pointing from the card toward the center line. |
+| `mo-card` | `<div>` | Card wrapper. Shadow, border-radius, and margins when `mo-theme` is active. |
+| `mo-card-image` | `<div>` | Optional image container inside a card. Required for the avatar-over-banner overlap. |
+| `mo-banner` | `<img>` | Full-width banner image at the top of a themed card. |
+| `mo-avatar` | `<img>` | Circular avatar overlapping the bottom of the banner. Mirrors position on right-column items. |
+| `mo-card-body` | `<div>` | Text content area. Padding and typography when `mo-theme` is active. |
+| `mo-meta` | `<p>` | Date / subtitle line inside a card body. Muted colour, smaller font. |
+| `js-mo-item` · `js-mo-inverted` | `<li>` | JS-only selector mirrors of `mo-item` / `mo-inverted`. Use in your own JS queries to avoid coupling to styling class names. |
 
 ---
 
