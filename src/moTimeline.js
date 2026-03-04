@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.1.0
+ * moTimeline v2.2.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -124,10 +124,10 @@ export class MoTimeline {
     window.removeEventListener('resize', this._resizeHandler);
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
-    this.element.classList.remove('mo-timeline', 'mo-theme', 'twocol');
+    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol');
     Array.from(this.element.children).forEach((child) => {
-      child.classList.remove('moitem', 'mo-inverted', 'offset');
-      child.querySelectorAll('.js-badge-mo, .js-badge-arrow').forEach((b) => b.remove());
+      child.classList.remove('mo-item', 'mo-inverted', 'mo-offset');
+      child.querySelectorAll('.mo-badge, .mo-arrow').forEach((b) => b.remove());
     });
   }
 
@@ -141,11 +141,7 @@ export class MoTimeline {
     const data = this._getData();
     if (!data) return;
     data.col = data.columnCount[getBreakpoint()];
-    if (data.col === 1) {
-      this.element.classList.remove('twocol');
-    } else {
-      this.element.classList.add('twocol');
-    }
+    this.element.classList.toggle('mo-twocol', data.col > 1);
   }
 
   _initItems() {
@@ -159,12 +155,12 @@ export class MoTimeline {
 
     if (newItems.length === 0) return;
 
-    // Assign IDs
+    // Assign IDs and base class
     newItems.forEach((item, i) => {
       if (!item.id) {
         item.id = 'moT' + crypto.randomUUID() + '_' + (i + lastItemIdx);
       }
-      item.classList.add('moitem');
+      item.classList.add('mo-item');
     });
 
     this._setDivider();
@@ -189,17 +185,8 @@ export class MoTimeline {
     const result = this._getLeftOrRight(el);
     if (!result) return;
 
-    if (result.lr > 0) {
-      el.classList.add('mo-inverted');
-    } else {
-      el.classList.remove('mo-inverted');
-    }
-
-    if (result.badge_offset > 0) {
-      el.classList.add('offset');
-    } else {
-      el.classList.remove('offset');
-    }
+    el.classList.toggle('mo-inverted', result.lr > 0);
+    el.classList.toggle('mo-offset', result.badge_offset > 0);
   }
 
   _getLeftOrRight(el) {
@@ -211,7 +198,7 @@ export class MoTimeline {
     const col = data.col;
 
     const prevInverted = prevAll(el, '.mo-inverted')[0] || null;
-    const prevLeft = prevAll(el, '.moitem:not(.mo-inverted)')[0] || null;
+    const prevLeft = prevAll(el, '.mo-item:not(.mo-inverted)')[0] || null;
 
     const l = getPosition(prevLeft);
     const r = getPosition(prevInverted);
@@ -236,14 +223,14 @@ export class MoTimeline {
 
   _createBadge(el, idx) {
     const span = document.createElement('span');
-    span.className = 'js-badge-mo badge-mo';
+    span.className = 'mo-badge';
     span.textContent = idx;
     el.prepend(span);
   }
 
   _createArrow(el) {
     const span = document.createElement('span');
-    span.className = 'js-badge-arrow badge-arrow';
+    span.className = 'mo-arrow';
     el.prepend(span);
   }
 }

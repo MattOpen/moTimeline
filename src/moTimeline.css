@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.1.0 — CSS
+ * moTimeline v2.2.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -31,7 +31,7 @@
 }
 
 /* Center vertical line — only in two-column mode */
-.mo-timeline.twocol::before {
+.mo-timeline.mo-twocol::before {
   background-color: var(--mo-line-color);
   bottom: 0;
   content: '';
@@ -45,7 +45,7 @@
 
 /* ── Items ──────────────────────────────────────────────────── */
 
-.mo-timeline > .moitem {
+.mo-timeline > .mo-item {
   box-sizing: border-box;
   display: block;
   float: left;
@@ -54,19 +54,19 @@
 }
 
 /* Single column */
-.mo-timeline:not(.twocol) > .moitem {
+.mo-timeline:not(.mo-twocol) > .mo-item {
   float: none;
   width: 100%;
 }
 
 /* Right-column item */
-.mo-timeline > .moitem.mo-inverted {
+.mo-timeline > .mo-item.mo-inverted {
   float: right;
 }
 
 /* ── Badge — circle sitting ON the center line ──────────────── */
 
-.badge-mo {
+.mo-badge {
   align-items: center;
   background: var(--mo-badge-bg);
   border-radius: 50%;
@@ -83,29 +83,29 @@
 }
 
 /* Left item → badge pokes out to the RIGHT (= center line) */
-.mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-mo {
+.mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-badge {
   left: auto;
   right: calc(var(--mo-badge-size) / -2);
 }
 
 /* Right item → badge pokes out to the LEFT (= center line) */
-.mo-timeline.twocol > .moitem.mo-inverted .badge-mo {
+.mo-timeline.mo-twocol > .mo-item.mo-inverted .mo-badge {
   left: calc(var(--mo-badge-size) / -2);
   right: auto;
 }
 
 /* Either item starts near the opposite column's badge →
    push the badge & arrow down so they don't overlap on the center line */
-.mo-timeline.twocol > .moitem.offset .badge-mo {
+.mo-timeline.mo-twocol > .mo-item.mo-offset .mo-badge {
   top: calc(18px + var(--mo-badge-size) + 10px);
 }
 
-.mo-timeline.twocol > .moitem.offset .badge-arrow {
+.mo-timeline.mo-twocol > .mo-item.mo-offset .mo-arrow {
   top: calc(26px + var(--mo-badge-size) + 10px);
 }
 
 /* Single column: badge in top-right of item */
-.mo-timeline:not(.twocol) > .moitem .badge-mo {
+.mo-timeline:not(.mo-twocol) > .mo-item .mo-badge {
   right: 12px;
   left: auto;
   top: 12px;
@@ -113,7 +113,7 @@
 
 /* ── Arrow — triangle pointing FROM card TOWARD center line ─── */
 
-.badge-arrow {
+.mo-arrow {
   border: 8px solid transparent;
   display: block;
   height: 0;
@@ -124,7 +124,7 @@
 }
 
 /* Left item → tip at right edge (center line), pointing right → */
-.mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-arrow {
+.mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow {
   border-left: 8px solid var(--mo-arrow-color);
   border-right: none;
   left: auto;
@@ -132,7 +132,7 @@
 }
 
 /* Right item → tip at left edge (center line), pointing left ← */
-.mo-timeline.twocol > .moitem.mo-inverted .badge-arrow {
+.mo-timeline.mo-twocol > .mo-item.mo-inverted .mo-arrow {
   border-right: 8px solid var(--mo-arrow-color);
   border-left: none;
   left: 0;
@@ -140,7 +140,7 @@
 }
 
 /* Hide arrow in single-column mode */
-.mo-timeline:not(.twocol) > .moitem .badge-arrow {
+.mo-timeline:not(.mo-twocol) > .mo-item .mo-arrow {
   display: none;
 }
 
@@ -150,7 +150,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* Themed card shell */
-.mo-theme > .moitem .mo-card {
+.mo-theme > .mo-item .mo-card {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 14px rgba(0, 0, 0, .10);
@@ -159,12 +159,12 @@
   position: relative;
 }
 
-.mo-theme > .moitem.mo-inverted .mo-card {
+.mo-theme > .mo-item.mo-inverted .mo-card {
   margin: 0.5rem 0.5rem 0.5rem 1.25rem;
 }
 
 /* Banner image */
-.mo-theme > .moitem .mo-banner {
+.mo-theme > .mo-item .mo-banner {
   display: block;
   height: 160px;
   object-fit: cover;
@@ -172,13 +172,13 @@
 }
 
 /* Image wrapper (needed for avatar overlap) */
-.mo-theme > .moitem .mo-card-image {
+.mo-theme > .mo-item .mo-card-image {
   overflow: visible;
   position: relative;
 }
 
 /* Avatar — overlaps bottom of banner image */
-.mo-theme > .moitem .mo-avatar {
+.mo-theme > .mo-item .mo-avatar {
   border: 3px solid #fff;
   border-radius: 50%;
   bottom: -22px;
@@ -192,29 +192,29 @@
 }
 
 /* Mirror: right-column items → avatar on left side (toward center) */
-.mo-theme > .moitem.mo-inverted .mo-avatar {
+.mo-theme > .mo-item.mo-inverted .mo-avatar {
   left: 14px;
   right: auto;
 }
 
 /* Card body text area */
-.mo-theme > .moitem .mo-card-body {
+.mo-theme > .mo-item .mo-card-body {
   padding: 1.75rem 1rem 1rem;
 }
 
-.mo-theme > .moitem .mo-card-body h3 {
+.mo-theme > .mo-item .mo-card-body h3 {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 0.3rem;
 }
 
-.mo-theme > .moitem .mo-card-body .mo-meta {
+.mo-theme > .mo-item .mo-card-body .mo-meta {
   color: #9ca3af;
   font-size: 0.75rem;
   margin-bottom: 0.5rem;
 }
 
-.mo-theme > .moitem .mo-card-body p {
+.mo-theme > .mo-item .mo-card-body p {
   color: #6b7280;
   font-size: 0.875rem;
   line-height: 1.55;
@@ -222,18 +222,18 @@
 }
 
 /* Theme: arrow color matches card shadow edge */
-.mo-theme.twocol > .moitem:not(.mo-inverted) .badge-arrow {
+.mo-theme.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow {
   border-left-color: #e5e7eb;
-  right: 10px; /* = gap between card and center line */
+  right: 10px;
 }
 
-.mo-theme.twocol > .moitem.mo-inverted .badge-arrow {
+.mo-theme.mo-twocol > .mo-item.mo-inverted .mo-arrow {
   border-right-color: #e5e7eb;
   left: 10px;
 }
 
 /* Theme: badge styled to match card aesthetic */
-.mo-theme .badge-mo {
+.mo-theme .mo-badge {
   background: #fff;
   border: 2px solid var(--mo-line-color);
   box-shadow: 0 2px 6px rgba(0, 0, 0, .10);
