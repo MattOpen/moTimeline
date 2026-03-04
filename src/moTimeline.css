@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.2.0 — CSS
+ * moTimeline v2.3.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -77,9 +77,18 @@
   height: var(--mo-badge-size);
   justify-content: center;
   min-width: var(--mo-badge-size);
+  overflow: hidden;
   position: absolute;
   top: 18px;
   z-index: 2;
+}
+
+/* Badge image mode */
+.mo-badge .mo-badge-icon {
+  border-radius: 50%;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 /* Left item → badge pokes out to the RIGHT (= center line) */

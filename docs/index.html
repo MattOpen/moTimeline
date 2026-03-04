@@ -63,7 +63,8 @@
     .mo-timeline:not(.mo-twocol) > .mo-item { float: none; width: 100%; }
     .mo-timeline > .mo-item.mo-inverted { float: right; }
 
-    .mo-badge { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); position: absolute; top: 18px; z-index: 2; }
+    .mo-badge { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); overflow: hidden; position: absolute; top: 18px; z-index: 2; }
+    .mo-badge .mo-badge-icon { border-radius: 50%; height: 100%; object-fit: cover; width: 100%; }
     .mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-badge { left: auto; right: calc(var(--mo-badge-size) / -2); }
     .mo-timeline.mo-twocol > .mo-item.mo-inverted        .mo-badge { left: calc(var(--mo-badge-size) / -2); right: auto; }
     .mo-timeline.mo-twocol > .mo-item.mo-offset .mo-badge { top: calc(18px + var(--mo-badge-size) + 10px); }
@@ -261,7 +262,8 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false, showCounter:true, showCounterStyle:'counter' };
+  const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
   function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
@@ -306,7 +308,7 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
       items.forEach((item,i)=>{
         if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
         item.classList.add('mo-item','js-mo-item');
-        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; s.textContent=i+d.lastItemIdx+1; item.prepend(s); }
+        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(!d.showCounter) s.style.opacity='0'; if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.arrowShow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
