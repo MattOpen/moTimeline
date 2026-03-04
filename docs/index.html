@@ -66,6 +66,8 @@
     .badge-mo { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); position: absolute; top: 18px; z-index: 2; }
     .mo-timeline.twocol > .moitem:not(.mo-inverted) .badge-mo { left: auto; right: calc(var(--mo-badge-size) / -2); }
     .mo-timeline.twocol > .moitem.mo-inverted        .badge-mo { left: calc(var(--mo-badge-size) / -2); right: auto; }
+    .mo-timeline.twocol > .moitem.mo-inverted.offset .badge-mo { top: calc(18px + var(--mo-badge-size) + 10px); }
+    .mo-timeline.twocol > .moitem.mo-inverted.offset .badge-arrow { top: calc(26px + var(--mo-badge-size) + 10px); }
     .mo-timeline:not(.twocol) > .moitem .badge-mo    { right: 12px; left: auto; top: 12px; }
 
     .badge-arrow { border: 8px solid transparent; display: block; height: 0; position: absolute; top: 26px; width: 0; z-index: 1; }
