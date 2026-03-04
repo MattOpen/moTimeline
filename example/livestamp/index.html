@@ -9,8 +9,14 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { background: #f3f4f6; color: #1f2937; }
-    .mo-timestamp { color: #6b7280; font-size: 0.78rem; }
-    .mo-timestamp i { margin-right: 0.3em; }
+    .mo-timestamp {
+      align-items: center;
+      color: #6b7280;
+      display: flex;
+      font-size: 0.78rem;
+      gap: 0.3em;
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -35,12 +41,158 @@
     <h1 class="h3 mb-1">Livestamp Integration</h1>
     <p class="text-muted mb-0">
       Timestamps are rendered by <strong>livestamp.js</strong> + <strong>moment.js</strong> —
-      they display as <em>"3 hours ago"</em> and auto-update every minute.
+      they display as <em>"3 months ago"</em> and auto-update every minute.
       Add <code>data-livestamp="&lt;ISO date&gt;"</code> to any element.
     </p>
   </div>
 
-  <ul id="timeline"></ul>
+  <ul id="timeline">
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner1.svg" alt="">
+          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>API goes live</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-12-01T09:15:00">2025-12-01</span>
+          </p>
+          <p>The public REST API is now live. Rate limits and OpenAPI docs published at /api/v1/docs.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Performance milestone</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-10-20T14:00:00">2025-10-20</span>
+          </p>
+          <p>P95 response time dropped below 120 ms after the caching layer rolled out to all regions.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner2.svg" alt="">
+          <img class="mo-avatar" src="../../images/eva.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>Beta program opens</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-08-15T08:30:00">2025-08-15</span>
+          </p>
+          <p>300 early adopters onboarded. First structured feedback sessions completed this week.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Design system shipped</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-06-10T11:45:00">2025-06-10</span>
+          </p>
+          <p>Shared component library published. Tokens for color, spacing, and typography now live in CSS custom properties.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner3.svg" alt="">
+          <img class="mo-avatar" src="../../images/avatar.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>Infrastructure migration</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-04-03T07:00:00">2025-04-03</span>
+          </p>
+          <p>Moved from bare-metal to Kubernetes. Zero-downtime migration, costs reduced by 40%.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Team doubles</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2025-02-17T10:00:00">2025-02-17</span>
+          </p>
+          <p>Six new engineers joined across frontend, backend, and DevOps. Remote-first onboarding playbook published.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner4.svg" alt="">
+          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>Seed round closed</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2024-11-05T15:30:00">2024-11-05</span>
+          </p>
+          <p>$2.4 M raised. Runway extended to 24 months. First enterprise pilots begin Q1.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>First commit</h3>
+          <p class="mo-timestamp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span data-livestamp="2024-08-01T09:00:00">2024-08-01</span>
+          </p>
+          <p>Repository created. Initial architecture decision records written. Let's build something great.</p>
+        </div>
+      </div>
+    </li>
+
+  </ul>
 </div>
 
 <!-- jQuery required by livestamp.js -->
@@ -52,100 +204,7 @@
 <script type="module">
   import MoTimeline from '../../src/moTimeline.js';
 
-  // Timestamps placed in the past so livestamp shows relative strings like
-  // "3 months ago", "6 months ago", etc. Adjust to taste.
-  const ITEMS = [
-    {
-      title: 'API goes live',
-      ts: '2025-12-01T09:15:00',
-      text: 'The public REST API is now live. Rate limits and OpenAPI docs published at /api/v1/docs.',
-      banner: '../../images/banner1.svg',
-      avatar: '../../images/ryan.jpg',
-    },
-    {
-      title: 'Performance milestone',
-      ts: '2025-10-20T14:00:00',
-      text: 'P95 response time dropped below 120 ms after the caching layer was rolled out to all regions.',
-    },
-    {
-      title: 'Beta program opens',
-      ts: '2025-08-15T08:30:00',
-      text: '300 early adopters onboarded. First structured feedback sessions completed this week.',
-      banner: '../../images/banner2.svg',
-      avatar: '../../images/eva.jpg',
-    },
-    {
-      title: 'Design system shipped',
-      ts: '2025-06-10T11:45:00',
-      text: 'Shared component library published internally. Tokens for color, spacing, and typography now live in CSS custom properties.',
-    },
-    {
-      title: 'Infrastructure migration',
-      ts: '2025-04-03T07:00:00',
-      text: 'Moved from bare-metal to Kubernetes. Zero downtime migration, costs reduced by 40%.',
-      banner: '../../images/banner3.svg',
-      avatar: '../../images/avatar.jpg',
-    },
-    {
-      title: 'Team doubles',
-      ts: '2025-02-17T10:00:00',
-      text: 'Six new engineers joined across frontend, backend, and DevOps. Remote-first onboarding playbook published.',
-    },
-    {
-      title: 'Seed round closed',
-      ts: '2024-11-05T15:30:00',
-      text: '$2.4 M raised. Runway extended to 24 months. First enterprise pilots begin Q1.',
-      banner: '../../images/banner4.svg',
-      avatar: '../../images/ryan.jpg',
-    },
-    {
-      title: 'First commit',
-      ts: '2024-08-01T09:00:00',
-      text: 'Repository created. Initial architecture decision records written. Let\'s build something great.',
-    },
-  ];
-
-  function makeItem(d) {
-    const li = document.createElement('li');
-    const tsHtml = `<p class="mo-timestamp">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           style="vertical-align:-.1em">
-        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-      </svg>
-      <span data-livestamp="${d.ts}">${d.ts}</span>
-    </p>`;
-
-    if (d.banner) {
-      li.innerHTML = `
-        <div class="mo-card">
-          <div class="mo-card-image">
-            <img class="mo-banner" src="${d.banner}" alt="">
-            ${d.avatar ? `<img class="mo-avatar" src="${d.avatar}" alt="">` : ''}
-          </div>
-          <div class="mo-card-body">
-            <h3>${d.title}</h3>
-            ${tsHtml}
-            <p>${d.text}</p>
-          </div>
-        </div>`;
-    } else {
-      li.innerHTML = `
-        <div class="mo-card">
-          <div class="mo-card-body">
-            <h3>${d.title}</h3>
-            ${tsHtml}
-            <p>${d.text}</p>
-          </div>
-        </div>`;
-    }
-    return li;
-  }
-
-  const tlEl = document.getElementById('timeline');
-  ITEMS.forEach(d => tlEl.appendChild(makeItem(d)));
-
-  new MoTimeline(tlEl, {
+  new MoTimeline(document.getElementById('timeline'), {
     badgeShow: true,
     arrowShow: true,
     theme: true,

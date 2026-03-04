@@ -37,96 +37,112 @@
     </p>
   </div>
 
-  <ul id="timeline"></ul>
+  <ul id="timeline">
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner1.svg" alt="">
+          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>Project kickoff</h3>
+          <p class="mo-meta">January 2024</p>
+          <p>Kicked off the new product roadmap. Team aligned on goals, milestones, and chosen tech stack.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Design system</h3>
+          <p class="mo-meta">February 2024</p>
+          <p>Built a shared component library. Design tokens for color, spacing, and typography exported to CSS custom properties.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner2.svg" alt="">
+          <img class="mo-avatar" src="../../images/eva.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>API development</h3>
+          <p class="mo-meta">March 2024</p>
+          <p>Core REST endpoints shipped. Authentication, rate limiting, and OpenAPI documentation all live.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Beta launch</h3>
+          <p class="mo-meta">April 2024</p>
+          <p>Invited 200 early users. Collected structured feedback via in-app surveys and recorded user interviews.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner3.svg" alt="">
+          <img class="mo-avatar" src="../../images/avatar.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>User testing</h3>
+          <p class="mo-meta">May 2024</p>
+          <p>Five rounds of usability testing. Identified and resolved 12 critical UX issues before general availability.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Performance pass</h3>
+          <p class="mo-meta">June 2024</p>
+          <p>Lighthouse score up from 62 → 96. Bundle size halved through code splitting, tree shaking, and image optimisation.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-image">
+          <img class="mo-banner" src="../../images/banner4.svg" alt="">
+          <img class="mo-avatar" src="../../images/ryan.jpg" alt="">
+        </div>
+        <div class="mo-card-body">
+          <h3>v1.0 released</h3>
+          <p class="mo-meta">July 2024</p>
+          <p>General availability. 1 200 signups in the first week. Featured on Product Hunt front page.</p>
+        </div>
+      </div>
+    </li>
+
+    <li>
+      <div class="mo-card">
+        <div class="mo-card-body">
+          <h3>Roadmap planning</h3>
+          <p class="mo-meta">August 2024</p>
+          <p>Q3 / Q4 roadmap published. Community voting open — top three requests already scoped for the next release.</p>
+        </div>
+      </div>
+    </li>
+
+  </ul>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
   import MoTimeline from '../../src/moTimeline.js';
 
-  const ITEMS = [
-    {
-      title: 'Project kickoff',
-      meta: 'January 2024',
-      text: 'Kicked off the new product roadmap. Team aligned on goals, milestones, and chosen tech stack.',
-      banner: '../../images/banner1.svg',
-      avatar: '../../images/ryan.jpg',
-    },
-    {
-      title: 'Design system',
-      meta: 'February 2024',
-      text: 'Built a shared component library. Design tokens for color, spacing, and typography exported to CSS custom properties.',
-    },
-    {
-      title: 'API development',
-      meta: 'March 2024',
-      text: 'Core REST endpoints shipped. Authentication, rate limiting, and OpenAPI documentation all live.',
-      banner: '../../images/banner2.svg',
-      avatar: '../../images/eva.jpg',
-    },
-    {
-      title: 'Beta launch',
-      meta: 'April 2024',
-      text: 'Invited 200 early users. Collected structured feedback via in-app surveys and recorded user interviews.',
-    },
-    {
-      title: 'User testing',
-      meta: 'May 2024',
-      text: 'Five rounds of usability testing. Identified and resolved 12 critical UX issues before general availability.',
-      banner: '../../images/banner3.svg',
-      avatar: '../../images/avatar.jpg',
-    },
-    {
-      title: 'Performance pass',
-      meta: 'June 2024',
-      text: 'Lighthouse score up from 62 → 96. Bundle size halved through code splitting, tree shaking, and image optimisation.',
-    },
-    {
-      title: 'v1.0 released',
-      meta: 'July 2024',
-      text: 'General availability. 1 200 signups in the first week. Featured on Product Hunt front page.',
-      banner: '../../images/banner4.svg',
-      avatar: '../../images/ryan.jpg',
-    },
-    {
-      title: 'Roadmap planning',
-      meta: 'August 2024',
-      text: 'Q3 / Q4 roadmap published. Community voting open — top three requests already scoped for the next release.',
-    },
-  ];
-
-  function makeItem(d) {
-    const li = document.createElement('li');
-    if (d.banner) {
-      li.innerHTML = `
-        <div class="mo-card">
-          <div class="mo-card-image">
-            <img class="mo-banner" src="${d.banner}" alt="">
-            ${d.avatar ? `<img class="mo-avatar" src="${d.avatar}" alt="">` : ''}
-          </div>
-          <div class="mo-card-body">
-            <h3>${d.title}</h3>
-            <p class="mo-meta">${d.meta}</p>
-            <p>${d.text}</p>
-          </div>
-        </div>`;
-    } else {
-      li.innerHTML = `
-        <div class="mo-card">
-          <div class="mo-card-body">
-            <h3>${d.title}</h3>
-            <p class="mo-meta">${d.meta}</p>
-            <p>${d.text}</p>
-          </div>
-        </div>`;
-    }
-    return li;
-  }
-
-  const tlEl = document.getElementById('timeline');
-  ITEMS.forEach(d => tlEl.appendChild(makeItem(d)));
-
-  new MoTimeline(tlEl, {
+  new MoTimeline(document.getElementById('timeline'), {
     badgeShow: true,
     arrowShow: true,
     theme: true,
