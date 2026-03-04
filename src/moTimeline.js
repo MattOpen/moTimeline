@@ -126,8 +126,8 @@ export class MoTimeline {
     MoTimeline.instances.delete(this);
     this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol');
     Array.from(this.element.children).forEach((child) => {
-      child.classList.remove('mo-item', 'mo-inverted', 'mo-offset');
-      child.querySelectorAll('.mo-badge, .mo-arrow').forEach((b) => b.remove());
+      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset');
+      child.querySelectorAll('.js-mo-badge, .js-mo-arrow').forEach((b) => b.remove());
     });
   }
 
@@ -160,7 +160,7 @@ export class MoTimeline {
       if (!item.id) {
         item.id = 'moT' + crypto.randomUUID() + '_' + (i + lastItemIdx);
       }
-      item.classList.add('mo-item');
+      item.classList.add('mo-item', 'js-mo-item');
     });
 
     this._setDivider();
@@ -186,6 +186,7 @@ export class MoTimeline {
     if (!result) return;
 
     el.classList.toggle('mo-inverted', result.lr > 0);
+    el.classList.toggle('js-mo-inverted', result.lr > 0);
     el.classList.toggle('mo-offset', result.badge_offset > 0);
   }
 
@@ -197,8 +198,8 @@ export class MoTimeline {
 
     const col = data.col;
 
-    const prevInverted = prevAll(el, '.mo-inverted')[0] || null;
-    const prevLeft = prevAll(el, '.mo-item:not(.mo-inverted)')[0] || null;
+    const prevInverted = prevAll(el, '.js-mo-inverted')[0] || null;
+    const prevLeft = prevAll(el, '.js-mo-item:not(.js-mo-inverted)')[0] || null;
 
     const l = getPosition(prevLeft);
     const r = getPosition(prevInverted);
@@ -223,14 +224,14 @@ export class MoTimeline {
 
   _createBadge(el, idx) {
     const span = document.createElement('span');
-    span.className = 'mo-badge';
+    span.className = 'mo-badge js-mo-badge';
     span.textContent = idx;
     el.prepend(span);
   }
 
   _createArrow(el) {
     const span = document.createElement('span');
-    span.className = 'mo-arrow';
+    span.className = 'mo-arrow js-mo-arrow';
     el.prepend(span);
   }
 }

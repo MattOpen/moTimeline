@@ -305,16 +305,16 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
       if(!items.length) return;
       items.forEach((item,i)=>{
         if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
-        item.classList.add('mo-item');
-        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge'; s.textContent=i+d.lastItemIdx+1; item.prepend(s); }
-        if(d.arrowShow){ const s=document.createElement('span'); s.className='mo-arrow'; item.prepend(s); }
+        item.classList.add('mo-item','js-mo-item');
+        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; s.textContent=i+d.lastItemIdx+1; item.prepend(s); }
+        if(d.arrowShow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
     }
-    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
+    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
     _lr(el){
       const d=this._d(); if(!d) return null;
-      const prevR=prevAll(el,'.mo-inverted')[0]||null, prevL=prevAll(el,'.mo-item:not(.mo-inverted)')[0]||null;
+      const prevR=prevAll(el,'.js-mo-inverted')[0]||null, prevL=prevAll(el,'.js-mo-item:not(.js-mo-inverted)')[0]||null;
       const l=pos(prevL),r=pos(prevR),e=pos(el);
       let p=0,bo=0;
       if(d.col>1){ if(l.gppu>e.o) p=1; if(r.gppu>l.gppu) p=0; const prev=el.previousElementSibling; if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1; }
