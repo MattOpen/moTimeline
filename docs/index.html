@@ -317,7 +317,7 @@ tl.<span class="fn">destroy</span>();      <span class="cm">// remove listeners,
       const prevR=prevAll(el,'.mo-inverted')[0]||null, prevL=prevAll(el,'.moitem:not(.mo-inverted)')[0]||null;
       const l=pos(prevL),r=pos(prevR),e=pos(el);
       let p=0,bo=0;
-      if(d.col>1){ const OG=e.o-l.o,AA=l.gppu-r.gppu,BB=r.gppu-l.gppu; if(l.gppu>e.o) p=1; if(r.gppu>l.gppu) p=0; if(p>0&&((OG<40&&OG>=0)||(AA<40&&BB<40))) bo=1; else if(p===0&&prevR&&Math.abs(e.o-r.o)<40) bo=1; }
+      if(d.col>1){ if(l.gppu>e.o) p=1; if(r.gppu>l.gppu) p=0; const prev=el.previousElementSibling; if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1; }
       return{lr:p,bo};
     }
   }

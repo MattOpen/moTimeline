@@ -221,26 +221,14 @@ export class MoTimeline {
     let bo = 0;
 
     if (col > 1) {
-      const OG = e.o - l.o;
-      const AA = l.gppu - r.gppu;
-      const BB = r.gppu - l.gppu;
+      if (l.gppu > e.o) pos = 1;
+      if (r.gppu > l.gppu) pos = 0;
 
-      if (l.gppu > e.o) {
-        pos = 1;
-      }
-      if (r.gppu > l.gppu) {
-        pos = 0;
-      }
-
-      if (pos > 0) {
-        // Right item: badge overlap with previous left item's badge
-        if (OG < 40 && OG >= 0) bo = 1;
-        if (AA < 40 && BB < 40) bo = 1;
-      } else {
-        // Left item: badge overlap with previous right item's badge
-        // (left item can start above the right item when columns re-balance)
-        if (prevInverted && Math.abs(e.o - r.o) < 40) bo = 1;
-      }
+      // Badge collision: the LATER item (current, higher DOM index) gets the
+      // offset — never the earlier one. Compare against the immediately
+      // preceding sibling regardless of which column it is in.
+      const prev = el.previousElementSibling;
+      if (prev && Math.abs(e.o - getPosition(prev).o) < 40) bo = 1;
     }
 
     return { lr: pos, badge_offset: bo };
