@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>moTimeline — Example</title>
+  <link rel="stylesheet" href="../src/moTimeline.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 0.5rem; font-size: 2rem; }
+    header p  { margin: 0; opacity: 0.7; }
+
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+
+    /* Timeline item card */
+    .tl-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      margin: 0.75rem;
+      padding: 1rem 1.25rem;
+    }
+    .tl-card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+    .tl-card .meta { font-size: 0.8rem; color: #888; margin-bottom: 0.75rem; }
+    .tl-card p   { margin: 0; font-size: 0.9rem; line-height: 1.5; }
+
+    /* Add item button */
+    .controls { text-align: center; margin: 1.5rem 0; }
+    button {
+      background: #1a1a2e;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0.6rem 1.4rem;
+    }
+    button:hover { background: #2a2a4e; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>moTimeline</h1>
+  <p>Responsive two-column timeline — plain JavaScript, no dependencies</p>
+</header>
+
+<main>
+  <ul id="timeline" class="mo-timeline">
+    <li>
+      <div class="tl-card">
+        <h3>Project kickoff</h3>
+        <div class="meta">January 2024</div>
+        <p>Kicked off the new moTimeline rewrite. Removed jQuery, migrated to plain JavaScript with a class-based API.</p>
+      </div>
+    </li>
+    <li>
+      <div class="tl-card">
+        <h3>Vite build pipeline</h3>
+        <div class="meta">February 2024</div>
+        <p>Set up Vite in library mode. Now ships ESM, CJS and UMD bundles so any project can import it.</p>
+      </div>
+    </li>
+    <li>
+      <div class="tl-card">
+        <h3>Two-column layout</h3>
+        <div class="meta">March 2024</div>
+        <p>The core layout algorithm places items in left and right columns automatically based on available height.</p>
+      </div>
+    </li>
+    <li>
+      <div class="tl-card">
+        <h3>Responsive design</h3>
+        <div class="meta">April 2024</div>
+        <p>Collapses to a single column on mobile. Breakpoints are fully configurable via <code>columnCount</code>.</p>
+      </div>
+    </li>
+    <li>
+      <div class="tl-card">
+        <h3>Badge support</h3>
+        <div class="meta">May 2024</div>
+        <p>Optional numbered badges appear on the center line. Enable with <code>badgeShow: true</code>.</p>
+      </div>
+    </li>
+    <li>
+      <div class="tl-card">
+        <h3>GitHub Pages</h3>
+        <div class="meta">June 2024</div>
+        <p>Published a live demo and documentation page using GitHub Pages. This is that page!</p>
+      </div>
+    </li>
+  </ul>
+
+  <div class="controls">
+    <button id="addBtn">+ Add item</button>
+  </div>
+</main>
+
+<script type="module">
+  import MoTimeline from '../src/moTimeline.js';
+
+  const tl = new MoTimeline('#timeline', { badgeShow: true });
+
+  let count = 7;
+  document.getElementById('addBtn').addEventListener('click', () => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="tl-card">
+        <h3>New item ${count}</h3>
+        <div class="meta">Dynamically added</div>
+        <p>This item was added via <code>initNewItems()</code> after the initial render.</p>
+      </div>`;
+    document.getElementById('timeline').appendChild(li);
+    tl.initNewItems();
+    count++;
+  });
+</script>
+
+</body>
+</html>

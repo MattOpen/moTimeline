@@ -29,6 +29,7 @@ $RECYCLE.BIN/
 .vscode
 fonts
 node_modules
+dist/
 
 
 # Icon must ends with two \r.
