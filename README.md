@@ -268,6 +268,53 @@ export default function App() {
 
 ---
 
+## Infinite scroll recipe
+
+moTimeline handles the layout — you own the data fetching. Wire an `IntersectionObserver` to a sentinel element below the list and call `addItems()` when it comes into view.
+
+```html
+<!-- Place a sentinel element right after the <ul> -->
+<ul id="my-timeline"></ul>
+<div id="sentinel"></div>
+```
+
+```js
+const tl       = new MoTimeline('#my-timeline', { theme: true, badgeShow: true });
+const sentinel  = document.getElementById('sentinel');
+let   loading   = false;
+let   page      = 1;
+let   exhausted = false;
+
+const observer = new IntersectionObserver(async (entries) => {
+  if (!entries[0].isIntersecting || loading || exhausted) return;
+
+  loading = true;
+  const items = await fetchPage(page); // your own async data fetch
+
+  if (items.length === 0) {
+    exhausted = true;
+    observer.disconnect();
+  } else {
+    tl.addItems(items);                // moTimeline creates <li> and lays out
+    page++;
+  }
+  loading = false;
+});
+
+observer.observe(sentinel);
+
+// Example fetch — replace with your real API call
+async function fetchPage(page) {
+  const res  = await fetch(`/api/events?page=${page}`);
+  const data = await res.json();
+  return data.items; // [{ title, meta, text, banner, avatar }, …]
+}
+```
+
+> `IntersectionObserver` is supported in all modern browsers with no polyfill needed. The `loading` flag prevents duplicate requests if the sentinel stays visible while a fetch is in flight. Set `exhausted = true` and disconnect when your API returns an empty page.
+
+---
+
 ## CSS custom properties
 
 ```css

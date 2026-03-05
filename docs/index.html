@@ -545,6 +545,43 @@ tl.<span class="fn">addItems</span>([
 <span class="cm">// JSON string is also accepted:</span>
 tl.<span class="fn">addItems</span>(<span class="str">'[{"title":"From JSON","meta":"Today","text":"Parsed automatically."}]'</span>);</code></pre>
 
+    <h3>Infinite scroll recipe</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">moTimeline handles the layout — wire up an <code>IntersectionObserver</code> on a sentinel element to trigger your own data fetch, then call <code>addItems()</code>.</p>
+    <pre><code><span class="cm">&lt;!-- Place a sentinel element right after the &lt;ul&gt; --&gt;</span>
+&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;&lt;/<span class="fn">ul</span>&gt;
+&lt;<span class="fn">div</span> id=<span class="str">"sentinel"</span>&gt;&lt;/<span class="fn">div</span>&gt;</code></pre>
+
+    <pre><code><span class="kw">const</span> tl       = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span>, badgeShow: <span class="kw">true</span> });
+<span class="kw">const</span> sentinel  = document.<span class="fn">getElementById</span>(<span class="str">'sentinel'</span>);
+<span class="kw">let</span>   loading   = <span class="kw">false</span>;
+<span class="kw">let</span>   page      = <span class="kw">1</span>;
+<span class="kw">let</span>   exhausted = <span class="kw">false</span>;
+
+<span class="kw">const</span> observer = <span class="kw">new</span> <span class="fn">IntersectionObserver</span>(<span class="kw">async</span> (entries) =&gt; {
+  <span class="kw">if</span> (!entries[<span class="kw">0</span>].isIntersecting || loading || exhausted) <span class="kw">return</span>;
+
+  loading = <span class="kw">true</span>;
+  <span class="kw">const</span> items = <span class="kw">await</span> <span class="fn">fetchPage</span>(page); <span class="cm">// your own async data fetch</span>
+
+  <span class="kw">if</span> (items.length === <span class="kw">0</span>) {
+    exhausted = <span class="kw">true</span>;
+    observer.<span class="fn">disconnect</span>();
+  } <span class="kw">else</span> {
+    tl.<span class="fn">addItems</span>(items);              <span class="cm">// moTimeline creates &lt;li&gt; and lays out</span>
+    page++;
+  }
+  loading = <span class="kw">false</span>;
+});
+
+observer.<span class="fn">observe</span>(sentinel);
+
+<span class="cm">// Example fetch — replace with your real API call</span>
+<span class="kw">async function</span> <span class="fn">fetchPage</span>(page) {
+  <span class="kw">const</span> res  = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/events?page=</span>${page}<span class="str">`</span>);
+  <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+  <span class="kw">return</span> data.items; <span class="cm">// [{ title, meta, text, banner, avatar }, …]</span>
+}</code></pre>
+
     <h3>CSS custom properties</h3>
     <pre><code><span class="fn">#my-timeline</span> {
   <span class="str">--mo-line-color</span>:      <span class="str">#c7d2fe</span>;
