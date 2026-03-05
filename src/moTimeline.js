@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.5.0
+ * moTimeline v2.6.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -18,8 +18,8 @@ const BREAKPOINTS = {
 
 const DEFAULTS = {
   columnCount: { xs: 1, sm: 2, md: 2, lg: 2 },
-  badgeShow: false,
-  arrowShow: false,
+  showBadge: false,
+  showArrow: false,
   theme: false,
   showCounterStyle: 'counter', // 'counter' | 'image' | 'none'
 };
@@ -185,10 +185,10 @@ export class MoTimeline {
 
     // Badges / arrows
     newItems.forEach((item, i) => {
-      if (data.badgeShow) {
+      if (data.showBadge) {
         this._createBadge(item, i + lastItemIdx + 1);
       }
-      if (data.arrowShow) {
+      if (data.showArrow) {
         this._createArrow(item);
       }
     });

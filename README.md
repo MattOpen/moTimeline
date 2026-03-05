@@ -67,8 +67,8 @@ import 'motimeline/dist/moTimeline.css';
   import MoTimeline from 'motimeline';
 
   const tl = new MoTimeline('#my-timeline', {
-    badgeShow: true,
-    arrowShow: true,
+    showBadge: true,
+    showArrow: true,
     theme:     true,
   });
 </script>
@@ -99,8 +99,8 @@ import 'motimeline/dist/moTimeline.css';
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `columnCount` | object | `{xs:1, sm:2, md:2, lg:2}` | Columns at each responsive breakpoint: `xs` < 600 px · `sm` < 992 px · `md` < 1 200 px · `lg` ≥ 1 200 px. Set any key to `1` to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode. |
-| `badgeShow` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
-| `arrowShow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
+| `showBadge` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
+| `showArrow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
 | `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
 | `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. `'none'` — badge element is created (preserving center-line spacing) but rendered with `opacity: 0`. |
 
@@ -255,7 +255,7 @@ export default function App() {
     <>
       <Timeline
         items={items}
-        options={{ badgeShow: true, arrowShow: true, theme: true }}
+        options={{ showBadge: true, showArrow: true, theme: true }}
       />
       <button onClick={addItem}>Add item</button>
     </>
@@ -278,7 +278,7 @@ moTimeline handles the layout — you own the data fetching. Wire an `Intersecti
 ```
 
 ```js
-const tl       = new MoTimeline('#my-timeline', { theme: true, badgeShow: true });
+const tl       = new MoTimeline('#my-timeline', { theme: true, showBadge: true });
 const sentinel  = document.getElementById('sentinel');
 let   loading   = false;
 let   page      = 1;
@@ -352,6 +352,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.6.0
+- **Breaking:** `badgeShow` renamed to `showBadge`; `arrowShow` renamed to `showArrow` — consistent `show*` naming alongside `showCounterStyle`
 
 ### v2.5.0
 - **Breaking:** `showCounter` (boolean) removed — replaced by `showCounterStyle: 'none'`, which preserves center-line spacing with an invisible badge

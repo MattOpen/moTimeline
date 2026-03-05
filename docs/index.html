@@ -393,8 +393,8 @@
 <span class="kw">import</span> <span class="str">'motimeline/dist/moTimeline.css'</span>;
 
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
-  badgeShow: <span class="kw">true</span>,
-  arrowShow: <span class="kw">true</span>,
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
   theme:     <span class="kw">true</span>,
 });</code></pre>
 
@@ -505,7 +505,7 @@
     &lt;&gt;
       &lt;<span class="fn">Timeline</span>
         items={items}
-        options={{ badgeShow: <span class="kw">true</span>, arrowShow: <span class="kw">true</span>, theme: <span class="kw">true</span> }}
+        options={{ showBadge: <span class="kw">true</span>, showArrow: <span class="kw">true</span>, theme: <span class="kw">true</span> }}
       /&gt;
       &lt;<span class="fn">button</span> onClick={addItem}&gt;Add item&lt;/<span class="fn">button</span>&gt;
     &lt;/&gt;
@@ -551,7 +551,7 @@ tl.<span class="fn">addItems</span>(<span class="str">'[{"title":"From JSON","me
 &lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;&lt;/<span class="fn">ul</span>&gt;
 &lt;<span class="fn">div</span> id=<span class="str">"sentinel"</span>&gt;&lt;/<span class="fn">div</span>&gt;</code></pre>
 
-    <pre><code><span class="kw">const</span> tl       = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span>, badgeShow: <span class="kw">true</span> });
+    <pre><code><span class="kw">const</span> tl       = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span>, showBadge: <span class="kw">true</span> });
 <span class="kw">const</span> sentinel  = document.<span class="fn">getElementById</span>(<span class="str">'sentinel'</span>);
 <span class="kw">let</span>   loading   = <span class="kw">false</span>;
 <span class="kw">let</span>   page      = <span class="kw">1</span>;
@@ -608,11 +608,11 @@ observer.<span class="fn">observe</span>(sentinel);
           <td>Columns at each responsive breakpoint: <code>xs</code> &lt; 600 px · <code>sm</code> &lt; 992 px · <code>md</code> &lt; 1 200 px · <code>lg</code> ≥ 1 200 px. Set any key to <code>1</code> to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode.</td>
         </tr>
         <tr>
-          <td><code>badgeShow</code></td><td>boolean</td><td><code>false</code></td>
+          <td><code>showBadge</code></td><td>boolean</td><td><code>false</code></td>
           <td>Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active (no center line to attach to).</td>
         </tr>
         <tr>
-          <td><code>arrowShow</code></td><td>boolean</td><td><code>false</code></td>
+          <td><code>showArrow</code></td><td>boolean</td><td><code>false</code></td>
           <td>Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode.</td>
         </tr>
         <tr>
@@ -680,7 +680,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false, showCounterStyle:'counter' };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter' };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -747,8 +747,8 @@ observer.<span class="fn">observe</span>(sentinel);
       items.forEach((item,i)=>{
         if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
         item.classList.add('mo-item','js-mo-item');
-        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
-        if(d.arrowShow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
+        if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
+        if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
     }
@@ -787,7 +787,7 @@ observer.<span class="fn">observe</span>(sentinel);
       : `<div class="mo-card"><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`;
     tlEl.appendChild(li);
   });
-  const tl1 = new MoTimeline(tlEl, { badgeShow:true, arrowShow:true, theme:true });
+  const tl1 = new MoTimeline(tlEl, { showBadge:true, showArrow:true, theme:true });
   let addCount = ITEMS.length + 1;
   document.getElementById('addBtn').addEventListener('click', () => {
     const li = document.createElement('li');
@@ -830,10 +830,10 @@ observer.<span class="fn">observe</span>(sentinel);
   updateTimestamps();
   setInterval(updateTimestamps, 60000);
 
-  const tl2 = new MoTimeline(document.getElementById('tl-timestamp'), { badgeShow:true, arrowShow:true, theme:true });
+  const tl2 = new MoTimeline(document.getElementById('tl-timestamp'), { showBadge:true, showArrow:true, theme:true });
 
   // ── Tab 3: Bootstrap demo ───────────────────────────────────────────────────
-  const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { badgeShow:true, arrowShow:true, theme:false });
+  const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { showBadge:true, showArrow:true, theme:false });
 
   // ── Tab switching ───────────────────────────────────────────────────────────
   const instances = { 'tab-motimeline': tl1, 'tab-timestamp': tl2, 'tab-bootstrap': tl3 };
