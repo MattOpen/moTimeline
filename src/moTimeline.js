@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.4.0
+ * moTimeline v2.5.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -21,8 +21,7 @@ const DEFAULTS = {
   badgeShow: false,
   arrowShow: false,
   theme: false,
-  showCounter: true,
-  showCounterStyle: 'counter', // 'counter' | 'image'
+  showCounterStyle: 'counter', // 'counter' | 'image' | 'none'
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -246,11 +245,9 @@ export class MoTimeline {
     const span = document.createElement('span');
     span.className = 'mo-badge js-mo-badge';
 
-    if (!data.showCounter) {
+    if (data.showCounterStyle === 'none') {
       span.style.opacity = '0';
-    }
-
-    if (data.showCounterStyle === 'image') {
+    } else if (data.showCounterStyle === 'image') {
       const img = document.createElement('img');
       img.className = 'mo-badge-icon';
       img.alt = '';

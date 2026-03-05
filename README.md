@@ -102,8 +102,7 @@ import 'motimeline/dist/moTimeline.css';
 | `badgeShow` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
 | `arrowShow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
 | `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
-| `showCounter` | boolean | `true` | Controls badge content visibility in two-column mode. `false` sets `opacity: 0` — the badge stays in the DOM to preserve center-line spacing without displaying a number or icon. |
-| `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. |
+| `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. `'none'` — badge element is created (preserving center-line spacing) but rendered with `opacity: 0`. |
 
 ---
 
@@ -354,12 +353,16 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.5.0
+- **Breaking:** `showCounter` (boolean) removed — replaced by `showCounterStyle: 'none'`, which preserves center-line spacing with an invisible badge
+- `showCounterStyle` now accepts three values: `'counter'` · `'image'` · `'none'`
+
 ### v2.4.0
 - Added `addItems(items)` — creates and appends `<li>` elements from an array of item objects or a JSON string, then initializes them in one batch
 - Badges and arrows now hidden in single-column mode (center-line elements have no meaning without a center line)
 
 ### v2.3.0
-- Added `showCounter` (opacity toggle) and `showCounterStyle` (`'counter'` | `'image'`) badge options
+- Added `showCounterStyle` (`'counter'` | `'image'`) and `showCounter` opacity toggle (consolidated into `showCounterStyle: 'none'` in v2.5.0)
 - `data-mo-icon` attribute on `<li>` sets a custom icon in image mode; built-in flat SVG used as fallback
 
 ### v2.2.0

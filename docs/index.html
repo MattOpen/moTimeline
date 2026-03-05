@@ -620,12 +620,12 @@ observer.<span class="fn">observe</span>(sentinel);
           <td>Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds the <code>mo-theme</code> class to the container — can also be set manually in HTML.</td>
         </tr>
         <tr>
-          <td><code>showCounter</code></td><td>boolean</td><td><code>true</code></td>
-          <td>Controls badge content visibility in two-column mode. <code>false</code> sets <code>opacity: 0</code> on the badge — the element stays in the DOM to preserve center-line spacing without displaying a number or icon.</td>
-        </tr>
-        <tr>
           <td><code>showCounterStyle</code></td><td>string</td><td><code>'counter'</code></td>
-          <td><code>'counter'</code> — sequential item number (1, 2, 3…). <code>'image'</code> — image from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>; falls back to a built-in flat SVG dot if the attribute is absent.</td>
+          <td>
+            <code>'counter'</code> — sequential item number (1, 2, 3…).<br>
+            <code>'image'</code> — image from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>; falls back to a built-in flat SVG dot if the attribute is absent.<br>
+            <code>'none'</code> — badge element is created (preserving center-line spacing) but rendered with <code>opacity: 0</code>.
+          </td>
         </tr>
       </tbody>
     </table>
@@ -680,7 +680,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false, showCounter:true, showCounterStyle:'counter' };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, badgeShow:false, arrowShow:false, theme:false, showCounterStyle:'counter' };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -747,7 +747,7 @@ observer.<span class="fn">observe</span>(sentinel);
       items.forEach((item,i)=>{
         if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
         item.classList.add('mo-item','js-mo-item');
-        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(!d.showCounter) s.style.opacity='0'; if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
+        if(d.badgeShow){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.arrowShow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
