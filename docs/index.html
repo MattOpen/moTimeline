@@ -776,13 +776,14 @@ observer.<span class="fn">observe</span>(sentinel);
     { title:'CSS custom properties', meta:'Aug 2024', text:'Override --mo-badge-bg, --mo-line-color and others to match your brand in one line.', color: COLORS[1] },
   ];
   function svg(color){ return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='160'><rect width='700' height='160' fill='${encodeURIComponent(color)}'/></svg>`; }
+  function avatar(color, letter){ return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'><circle cx='25' cy='25' r='25' fill='${encodeURIComponent(color)}'/><text x='25' y='33' font-family='system-ui,sans-serif' font-size='22' font-weight='700' fill='white' text-anchor='middle'>${letter}</text></svg>`; }
 
   const tlEl = document.getElementById('tl-motimeline');
   ITEMS.forEach((d,i) => {
     const li = document.createElement('li');
     const hasImg = i % 2 === 0;
     li.innerHTML = hasImg
-      ? `<div class="mo-card"><div class="mo-card-image"><img class="mo-banner" src="${svg(d.color)}" alt=""><img class="mo-avatar" src="https://i.pravatar.cc/50?img=${i+10}" alt="" onerror="this.style.display='none'"></div><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`
+      ? `<div class="mo-card"><div class="mo-card-image"><img class="mo-banner" src="${svg(d.color)}" alt=""><img class="mo-avatar" src="${avatar(d.color, d.title[0])}" alt=""></div><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`
       : `<div class="mo-card"><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`;
     tlEl.appendChild(li);
   });
@@ -798,7 +799,7 @@ observer.<span class="fn">observe</span>(sentinel);
 
   const JSON_ITEMS = [
     { title: 'Loaded from JSON', meta: 'March 2025', text: 'This item was created by passing a JSON array to addItems().',
-      banner: svg(COLORS[2]), avatar: 'https://i.pravatar.cc/50?img=33' },
+      banner: svg(COLORS[2]), avatar: avatar(COLORS[2], 'L') },
     { title: 'Second JSON item',  meta: 'April 2025', text: 'Each object maps title, meta, text, banner, avatar and icon.' },
     { title: 'Third JSON item',   meta: 'May 2025',   text: 'All fields are optional — only provide what you need.',
       banner: svg(COLORS[4]) },
