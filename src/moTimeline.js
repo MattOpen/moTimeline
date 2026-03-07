@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.2
+ * moTimeline v2.7.3
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -9,12 +9,6 @@ import './moTimeline.css';
 
 const instanceData = new WeakMap();
 
-const BREAKPOINTS = {
-  xs: 0,
-  sm: 600,
-  md: 992,
-  lg: 1200,
-};
 
 const DEFAULTS = {
   columnCount: { xs: 1, sm: 2, md: 2, lg: 2 },
@@ -201,12 +195,17 @@ export class MoTimeline {
     data.lastItemIdx = allChildren.length;
     instanceData.set(el, data);
 
-    // Sync pass (best-effort) + corrective rAF pass after paint.
-    // Items appended just before this call may have offsetTop = 0 until the
-    // browser lays them out, causing the column-fill algorithm to misplace
-    // cards. The rAF ensures at least one correct layout after first paint.
     this.refresh();
-    requestAnimationFrame(() => this.refresh());
+
+    // Re-layout after any unloaded images finish, because offsetHeight is
+    // based on text-only height until images are ready.
+    newItems.forEach((item) => {
+      item.querySelectorAll('img').forEach((img) => {
+        if (!img.complete) {
+          img.addEventListener('load', this._resizeHandler, { once: true });
+        }
+      });
+    });
   }
 
   _setPostPosition(el) {
@@ -240,9 +239,6 @@ export class MoTimeline {
       if (l.gppu > e.o) pos = 1;
       if (r.gppu > l.gppu) pos = 0;
 
-      // Badge collision: the LATER item (current, higher DOM index) gets the
-      // offset — never the earlier one. Compare against the immediately
-      // preceding sibling regardless of which column it is in.
       const prev = el.previousElementSibling;
       if (prev && Math.abs(e.o - getPosition(prev).o) < 40) bo = 1;
     }

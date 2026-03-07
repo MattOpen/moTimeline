@@ -357,8 +357,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.7.3
+- Fix: cards misaligned on first load when items contain images ([#2](https://github.com/MattOpen/moTimeline/issues/2)) — layout now re-runs automatically after each unloaded image fires its `load` event, so column placement is correct once images are rendered
+
 ### v2.7.2
-- Fix: cards misaligned on first load ([#2](https://github.com/MattOpen/moTimeline/issues/2)) — newly-appended items have `offsetTop = 0` until the browser paints; a `requestAnimationFrame` corrective refresh ensures correct column placement after first paint
+- Fix: cards misaligned on first load ([#2](https://github.com/MattOpen/moTimeline/issues/2)) — reverted to sequential `offsetTop`-based column algorithm; the batch `offsetHeight` fill-shorter approach produced non-alternating columns
 
 ### v2.7.1
 - Fix: resize listener not attached when container is empty at init time ([#1](https://github.com/MattOpen/moTimeline/issues/1)) — `addItems()` on an empty timeline now correctly responds to window resize

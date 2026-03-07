@@ -722,10 +722,26 @@ observer.<span class="fn">observe</span>(sentinel);
     }
     refresh(){
       MoTimeline.instances.forEach(inst=>{
-        const d=instanceData.get(inst.element); if(!d) return;
+        const el=inst.element, d=instanceData.get(el); if(!d) return;
         d.col=d.columnCount[bp()]; inst._div();
-        Array.from(inst.element.children).forEach(c=>inst._spp(c));
+        Array.from(el.children).forEach(child=>inst._spp(child));
       });
+    }
+    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
+    _lr(el){
+      if(!el) return null;
+      const d=this._d(); if(!d) return null;
+      const pi=prevAll(el,'.js-mo-inverted')[0]||null;
+      const pl=prevAll(el,'.js-mo-item:not(.js-mo-inverted)')[0]||null;
+      const l=pos(pl), r=pos(pi), e=pos(el);
+      let lr=0, bo=0;
+      if(d.col>1){
+        if(l.gppu>e.o) lr=1;
+        if(r.gppu>l.gppu) lr=0;
+        const prev=el.previousElementSibling;
+        if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1;
+      }
+      return{lr,bo};
     }
     initNewItems(){ this._initItems(); }
     addItems(items){
@@ -762,16 +778,8 @@ observer.<span class="fn">observe</span>(sentinel);
         if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
-      d.lastItemIdx=all.length; this._div(); this.refresh(); requestAnimationFrame(()=>this.refresh());
-    }
-    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
-    _lr(el){
-      const d=this._d(); if(!d) return null;
-      const prevR=prevAll(el,'.js-mo-inverted')[0]||null, prevL=prevAll(el,'.js-mo-item:not(.js-mo-inverted)')[0]||null;
-      const l=pos(prevL),r=pos(prevR),e=pos(el);
-      let p=0,bo=0;
-      if(d.col>1){ if(l.gppu>e.o) p=1; if(r.gppu>l.gppu) p=0; const prev=el.previousElementSibling; if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1; }
-      return{lr:p,bo};
+      d.lastItemIdx=all.length; this._div(); this.refresh();
+      items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
     }
   }
   window.MoTimeline = MoTimeline;
