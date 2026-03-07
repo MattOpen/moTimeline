@@ -130,7 +130,7 @@ import 'motimeline/dist/moTimeline.css';
 | `mo-card` | `<div>` | Card wrapper. Shadow, border-radius, and margins when `mo-theme` is active. |
 | `mo-card-image` | `<div>` | Optional image container inside a card. Required for the avatar-over-banner overlap. |
 | `mo-banner` | `<img>` | Full-width banner image at the top of a themed card. |
-| `mo-avatar` | `<img>` | Circular avatar overlapping the bottom of the banner. Mirrors position on right-column items. |
+| `mo-avatar` | `<img>` | Circular avatar overlapping the bottom of the banner. Always positioned on the right side of the card. |
 | `mo-card-body` | `<div>` | Text content area. Padding and typography when `mo-theme` is active. |
 | `mo-meta` | `<p>` | Date / subtitle line inside a card body. Muted colour, smaller font. |
 | `js-mo-item` · `js-mo-inverted` | `<li>` | JS-only selector mirrors of `mo-item` / `mo-inverted`. Use in your own JS queries to avoid coupling to styling class names. |

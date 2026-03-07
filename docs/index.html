@@ -82,7 +82,6 @@
     .mo-theme > .mo-item .mo-banner  { display: block; height: 150px; object-fit: cover; width: 100%; }
     .mo-theme > .mo-item .mo-card-image { overflow: visible; position: relative; }
     .mo-theme > .mo-item .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: -22px; box-shadow: 0 2px 8px rgba(0,0,0,.18); height: 50px; object-fit: cover; position: absolute; right: 14px; width: 50px; z-index: 1; }
-    .mo-theme > .mo-item.mo-inverted .mo-avatar { left: 14px; right: auto; }
     .mo-theme > .mo-item .mo-card-body { padding: 1.75rem 1rem 1rem; }
     .mo-theme > .mo-item .mo-card-body h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.25rem; }
     .mo-theme > .mo-item .mo-card-body .mo-meta { color: #9ca3af; font-size: 0.75rem; margin-bottom: 0.4rem; }
@@ -661,7 +660,7 @@ observer.<span class="fn">observe</span>(sentinel);
         <tr><td><code>mo-card</code></td><td><code>&lt;div&gt;</code></td><td>Card wrapper. Receives shadow, border-radius, and margins when <code>mo-theme</code> is active.</td></tr>
         <tr><td><code>mo-card-image</code></td><td><code>&lt;div&gt;</code></td><td>Optional image container inside a card. Required for the avatar-over-banner overlap effect.</td></tr>
         <tr><td><code>mo-banner</code></td><td><code>&lt;img&gt;</code></td><td>Full-width banner image at the top of a themed card.</td></tr>
-        <tr><td><code>mo-avatar</code></td><td><code>&lt;img&gt;</code></td><td>Circular avatar that overlaps the bottom edge of the banner. Mirrors to the opposite side on <code>mo-inverted</code> items.</td></tr>
+        <tr><td><code>mo-avatar</code></td><td><code>&lt;img&gt;</code></td><td>Circular avatar that overlaps the bottom edge of the banner. Always positioned on the right side of the card.</td></tr>
         <tr><td><code>mo-card-body</code></td><td><code>&lt;div&gt;</code></td><td>Text content area. Receives padding and typography when <code>mo-theme</code> is active.</td></tr>
         <tr><td><code>mo-meta</code></td><td><code>&lt;p&gt;</code></td><td>Date / subtitle line inside a card body. Muted colour, smaller font.</td></tr>
         <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>

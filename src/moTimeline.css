@@ -198,11 +198,6 @@
   z-index: 1;
 }
 
-/* Mirror: right-column items → avatar on left side (toward center) */
-.mo-theme > .mo-item.mo-inverted .mo-avatar {
-  left: 14px;
-  right: auto;
-}
 
 /* Card body text area */
 .mo-theme > .mo-item .mo-card-body {
