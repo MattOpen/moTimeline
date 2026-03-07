@@ -762,7 +762,7 @@ observer.<span class="fn">observe</span>(sentinel);
         if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
-      d.lastItemIdx=all.length; this._div(); this.refresh();
+      d.lastItemIdx=all.length; this._div(); this.refresh(); requestAnimationFrame(()=>this.refresh());
     }
     _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
     _lr(el){

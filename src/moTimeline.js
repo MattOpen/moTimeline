@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.1
+ * moTimeline v2.7.2
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -201,7 +201,12 @@ export class MoTimeline {
     data.lastItemIdx = allChildren.length;
     instanceData.set(el, data);
 
+    // Sync pass (best-effort) + corrective rAF pass after paint.
+    // Items appended just before this call may have offsetTop = 0 until the
+    // browser lays them out, causing the column-fill algorithm to misplace
+    // cards. The rAF ensures at least one correct layout after first paint.
     this.refresh();
+    requestAnimationFrame(() => this.refresh());
   }
 
   _setPostPosition(el) {
