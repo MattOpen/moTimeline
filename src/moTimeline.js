@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.0
+ * moTimeline v2.7.1
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License

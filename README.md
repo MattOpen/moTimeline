@@ -357,6 +357,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.7.1
+- Fix: resize listener not attached when container is empty at init time ([#1](https://github.com/MattOpen/moTimeline/issues/1)) — `addItems()` on an empty timeline now correctly responds to window resize
+
 ### v2.7.0
 - New option `cardBorderRadius` (string, default `'8px'`) — controls card and banner border radius via `--mo-card-border-radius`
 - New option `avatarSize` (string, default `'50px'`) — controls avatar width/height via `--mo-avatar-size`
