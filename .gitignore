@@ -30,6 +30,7 @@ $RECYCLE.BIN/
 fonts
 node_modules
 dist/
+.claude/
 
 
 # Icon must ends with two \r.
