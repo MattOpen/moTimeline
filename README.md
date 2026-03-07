@@ -357,6 +357,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.7.4
+- Fix: wrong column placement when adjacent left and right items share the same bottom y-coordinate ([#3](https://github.com/MattOpen/moTimeline/issues/3)) — adds a 1 px tolerance to the column algorithm to absorb `offsetHeight`/`offsetTop` rounding mismatches
+
 ### v2.7.3
 - Fix: cards misaligned on first load when items contain images ([#2](https://github.com/MattOpen/moTimeline/issues/2)) — layout now re-runs automatically after each unloaded image fires its `load` event, so column placement is correct once images are rendered
 

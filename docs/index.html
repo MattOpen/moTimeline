@@ -736,7 +736,7 @@ observer.<span class="fn">observe</span>(sentinel);
       const l=pos(pl), r=pos(pi), e=pos(el);
       let lr=0, bo=0;
       if(d.col>1){
-        if(l.gppu>e.o) lr=1;
+        if(l.gppu>e.o+1) lr=1;
         if(r.gppu>l.gppu) lr=0;
         const prev=el.previousElementSibling;
         if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1;

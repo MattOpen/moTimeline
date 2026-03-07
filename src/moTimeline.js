@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.3
+ * moTimeline v2.7.4
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -236,7 +236,7 @@ export class MoTimeline {
     let bo = 0;
 
     if (col > 1) {
-      if (l.gppu > e.o) pos = 1;
+      if (l.gppu > e.o + 1) pos = 1; // +1px tolerance for offsetHeight/offsetTop rounding mismatch
       if (r.gppu > l.gppu) pos = 0;
 
       const prev = el.previousElementSibling;
