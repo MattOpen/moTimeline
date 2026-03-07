@@ -99,13 +99,12 @@ export class MoTimeline {
     el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
     el.style.setProperty('--mo-avatar-size', data.avatarSize);
 
-    const children = Array.from(el.children);
-    if (children.length === 0) return;
-
-    this._initItems();
     this._initialized = true;
-
     window.addEventListener('resize', this._resizeHandler);
+
+    if (Array.from(el.children).length > 0) {
+      this._initItems();
+    }
   }
 
   refresh() {
