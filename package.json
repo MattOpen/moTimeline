@@ -1,6 +1,6 @@
 {
   "name": "motimeline",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Responsive two-column timeline layout library. Plain JavaScript, no dependencies.",
   "main": "./dist/moTimeline.cjs",
   "module": "./dist/moTimeline.js",
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "build": "vite build",
-    "dev": "vite serve example"
+    "dev": "vite"
   },
   "devDependencies": {
     "vite": "^5.0.0"

@@ -103,6 +103,8 @@ import 'motimeline/dist/moTimeline.css';
 | `showArrow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
 | `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
 | `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. `'none'` — badge element is created (preserving center-line spacing) but rendered with `opacity: 0`. |
+| `cardBorderRadius` | string | `'8px'` | Border radius of the themed card and its banner image top corners. Sets `--mo-card-border-radius` on the container. Any valid CSS length is accepted (e.g. `'0'`, `'16px'`, `'1rem'`). |
+| `avatarSize` | string | `'50px'` | Width and height of the circular avatar image. Sets `--mo-avatar-size` on the container. Any valid CSS length is accepted (e.g. `'40px'`, `'4rem'`). |
 
 ---
 
@@ -324,6 +326,8 @@ async function fetchPage(page) {
   --mo-badge-size:      26px;
   --mo-badge-font-size: 12px;
   --mo-arrow-color:     #dde1e7;
+  --mo-card-border-radius: 8px;
+  --mo-avatar-size:     50px;
 }
 ```
 
@@ -352,6 +356,10 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.7.0
+- New option `cardBorderRadius` (string, default `'8px'`) — controls card and banner border radius via `--mo-card-border-radius`
+- New option `avatarSize` (string, default `'50px'`) — controls avatar width/height via `--mo-avatar-size`
 
 ### v2.6.0
 - **Breaking:** `badgeShow` renamed to `showBadge`; `arrowShow` renamed to `showArrow` — consistent `show*` naming alongside `showCounterStyle`

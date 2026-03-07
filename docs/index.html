@@ -77,17 +77,18 @@
     .mo-timeline:not(.mo-twocol) > .mo-item .mo-arrow { display: none; }
 
     /* ─ Theme ─ */
-    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: 9px; box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: 0.5rem 1.25rem 0.5rem 0.5rem; overflow: hidden; position: relative; }
+    .mo-theme { --mo-arrow-color: #fff; }
+    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: 0.5rem 1.25rem 0.5rem 0.5rem; position: relative; }
     .mo-theme > .mo-item.mo-inverted .mo-card { margin: 0.5rem 0.5rem 0.5rem 1.25rem; }
-    .mo-theme > .mo-item .mo-banner  { display: block; height: 150px; object-fit: cover; width: 100%; }
+    .mo-theme > .mo-item .mo-banner  { border-radius: var(--mo-card-border-radius, 8px) var(--mo-card-border-radius, 8px) 0 0; display: block; max-height: 240px; object-fit: cover; width: 100%; }
     .mo-theme > .mo-item .mo-card-image { overflow: visible; position: relative; }
-    .mo-theme > .mo-item .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: -22px; box-shadow: 0 2px 8px rgba(0,0,0,.18); height: 50px; object-fit: cover; position: absolute; right: 14px; width: 50px; z-index: 1; }
+    .mo-theme > .mo-item .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: calc(var(--mo-avatar-size, 50px) * -0.44); box-shadow: 0 2px 8px rgba(0,0,0,.18); height: var(--mo-avatar-size, 50px); object-fit: cover; position: absolute; right: 14px; width: var(--mo-avatar-size, 50px); z-index: 1; }
     .mo-theme > .mo-item .mo-card-body { padding: 1.75rem 1rem 1rem; }
     .mo-theme > .mo-item .mo-card-body h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.25rem; }
     .mo-theme > .mo-item .mo-card-body .mo-meta { color: #9ca3af; font-size: 0.75rem; margin-bottom: 0.4rem; }
     .mo-theme > .mo-item .mo-card-body p  { color: #6b7280; font-size: 0.875rem; line-height: 1.55; margin: 0; }
-    .mo-theme.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow { border-left-color: #e5e7eb; right: 10px; }
-    .mo-theme.mo-twocol > .mo-item.mo-inverted        .mo-arrow { border-right-color: #e5e7eb; left: 10px; }
+    .mo-theme.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow { border-left-color: var(--mo-arrow-color); right: 12px; }
+    .mo-theme.mo-twocol > .mo-item.mo-inverted        .mo-arrow { border-right-color: var(--mo-arrow-color); left: 12px; }
     .mo-theme .mo-badge { background: #fff; border: 2px solid var(--mo-line-color); box-shadow: 0 2px 6px rgba(0,0,0,.1); color: #374151; }
 
     /* demo controls */
@@ -589,6 +590,8 @@ observer.<span class="fn">observe</span>(sentinel);
   <span class="str">--mo-badge-size</span>:      <span class="str">26px</span>;
   <span class="str">--mo-badge-font-size</span>: <span class="str">12px</span>;
   <span class="str">--mo-arrow-color</span>:     <span class="str">#c7d2fe</span>;
+  <span class="str">--mo-card-border-radius</span>: <span class="str">8px</span>;
+  <span class="str">--mo-avatar-size</span>:     <span class="str">50px</span>;
 }</code></pre>
   </div>
 </section>
@@ -625,6 +628,14 @@ observer.<span class="fn">observe</span>(sentinel);
             <code>'image'</code> — image from <code>data-mo-icon</code> on the <code>&lt;li&gt;</code>; falls back to a built-in flat SVG dot if the attribute is absent.<br>
             <code>'none'</code> — badge element is created (preserving center-line spacing) but rendered with <code>opacity: 0</code>.
           </td>
+        </tr>
+        <tr>
+          <td><code>cardBorderRadius</code></td><td>string</td><td><code>'8px'</code></td>
+          <td>Border radius of the themed card and its banner image top corners. Sets the <code>--mo-card-border-radius</code> CSS custom property on the container. Any valid CSS length is accepted (e.g. <code>'0'</code>, <code>'16px'</code>, <code>'1rem'</code>).</td>
+        </tr>
+        <tr>
+          <td><code>avatarSize</code></td><td>string</td><td><code>'50px'</code></td>
+          <td>Width and height of the circular avatar image. Sets the <code>--mo-avatar-size</code> CSS custom property on the container. Any valid CSS length is accepted (e.g. <code>'40px'</code>, <code>'4rem'</code>).</td>
         </tr>
       </tbody>
     </table>
@@ -679,7 +690,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter' };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px' };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -704,6 +715,8 @@ observer.<span class="fn">observe</span>(sentinel);
       MoTimeline.instances.add(this);
       el.classList.add('mo-timeline');
       if(data.theme) el.classList.add('mo-theme');
+      el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
+      el.style.setProperty('--mo-avatar-size', data.avatarSize);
       this._initItems();
       window.addEventListener('resize',this._rh);
     }

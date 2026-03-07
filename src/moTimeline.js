@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.6.0
+ * moTimeline v2.7.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -22,6 +22,8 @@ const DEFAULTS = {
   showArrow: false,
   theme: false,
   showCounterStyle: 'counter', // 'counter' | 'image' | 'none'
+  cardBorderRadius: '8px',
+  avatarSize: '50px',
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -94,6 +96,8 @@ export class MoTimeline {
 
     el.classList.add('mo-timeline');
     if (data.theme) el.classList.add('mo-theme');
+    el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
+    el.style.setProperty('--mo-avatar-size', data.avatarSize);
 
     const children = Array.from(el.children);
     if (children.length === 0) return;
@@ -142,6 +146,8 @@ export class MoTimeline {
     window.removeEventListener('resize', this._resizeHandler);
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
+    this.element.style.removeProperty('--mo-card-border-radius');
+    this.element.style.removeProperty('--mo-avatar-size');
     this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset');
