@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(git add src/moTimeline.css docs/index.html README.md)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git add docs/index.html)"
+    ]
+  }
+}
