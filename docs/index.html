@@ -188,6 +188,9 @@
       <div class="demo-controls">
         <button id="addBtn">+ Add item</button>
         <button id="addJsonBtn" style="margin-left:0.5rem;background:#0ea5e9">+ Load via JSON</button>
+        <button id="insertRandomBtn" style="margin-left:0.5rem;background:#8b5cf6">Insert at random pos</button>
+        <button id="insertFullWidthBtn" style="margin-left:0.5rem;background:#10b981">Insert full-width at pos 2</button>
+        <button id="toggleFullWidthBtn" style="margin-left:0.5rem;background:#f59e0b">Toggle random full-width</button>
       </div>
     </div>
 
@@ -872,6 +875,28 @@ observer.<span class="fn">observe</span>(sentinel);
   document.getElementById('addJsonBtn').addEventListener('click', () => {
     tl1.addItems(JSON_ITEMS);
     addCount += JSON_ITEMS.length;
+  });
+
+  let insertCount = 1;
+  document.getElementById('insertRandomBtn').addEventListener('click', () => {
+    tl1.insertItem({ title: `Inserted #${insertCount} (random)`, meta: 'Just now', text: 'Inserted at a random position via insertItem().' });
+    insertCount++;
+  });
+
+  document.getElementById('insertFullWidthBtn').addEventListener('click', () => {
+    tl1.insertItem({ title: `Inserted #${insertCount} (full-width)`, meta: 'Just now', text: 'Inserted at index 2 as a full-width item via insertItem({ fullWidth: true }, 2).', fullWidth: true }, 2);
+    insertCount++;
+  });
+
+  document.getElementById('toggleFullWidthBtn').addEventListener('click', () => {
+    const items = Array.from(tlEl.querySelectorAll('.js-mo-item'));
+    const anyFW = items.some(i => i.classList.contains('mo-fullwidth'));
+    if (anyFW) {
+      items.forEach(i => i.classList.remove('mo-fullwidth', 'js-mo-fullwidth'));
+    } else {
+      items.forEach(i => { if (Math.random() < 0.33) i.classList.add('mo-fullwidth', 'js-mo-fullwidth'); });
+    }
+    tl1.refresh();
   });
 
   // ── Tab 2: Timestamp demo ───────────────────────────────────────────────────
