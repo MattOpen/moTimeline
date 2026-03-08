@@ -530,27 +530,32 @@
     <pre><code><span class="cm">// Initialize (also called automatically in constructor)</span>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(elementOrSelector, options);
 
-tl.<span class="fn">refresh</span>();          <span class="cm">// re-layout (after content changes)</span>
-tl.<span class="fn">initNewItems</span>();    <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
-tl.<span class="fn">addItems</span>(items);   <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
-tl.<span class="fn">destroy</span>();         <span class="cm">// remove listeners, reset DOM</span></code></pre>
+tl.<span class="fn">refresh</span>();                    <span class="cm">// re-layout (called automatically on resize)</span>
+tl.<span class="fn">initNewItems</span>();            <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
+tl.<span class="fn">addItems</span>(items);            <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
+tl.<span class="fn">insertItem</span>(item, index);   <span class="cm">// insert a single item at index (omit for random position)</span>
+tl.<span class="fn">destroy</span>();                   <span class="cm">// remove listeners, reset DOM</span></code></pre>
 
-    <h3>addItems — item schema</h3>
+    <h3>addItems / insertItem — item schema</h3>
     <pre><code><span class="cm">// All fields are optional except at least one of title / text</span>
 tl.<span class="fn">addItems</span>([
   {
-    <span class="str">title</span>:  <span class="str">"Project kickoff"</span>,        <span class="cm">// &lt;h3&gt; heading</span>
-    <span class="str">meta</span>:   <span class="str">"January 2024"</span>,           <span class="cm">// date / subtitle line</span>
-    <span class="str">text</span>:   <span class="str">"Kicked off the roadmap."</span>, <span class="cm">// body paragraph</span>
-    <span class="str">banner</span>: <span class="str">"images/banner.jpg"</span>,       <span class="cm">// img.mo-banner (optional)</span>
-    <span class="str">avatar</span>: <span class="str">"images/avatar.jpg"</span>,       <span class="cm">// img.mo-avatar (optional)</span>
-    <span class="str">icon</span>:   <span class="str">"images/icon.svg"</span>          <span class="cm">// data-mo-icon on &lt;li&gt;, used by showCounterStyle:'image'</span>
+    <span class="str">title</span>:     <span class="str">"Project kickoff"</span>,        <span class="cm">// &lt;h3&gt; heading</span>
+    <span class="str">meta</span>:      <span class="str">"January 2024"</span>,           <span class="cm">// date / subtitle line</span>
+    <span class="str">text</span>:      <span class="str">"Kicked off the roadmap."</span>, <span class="cm">// body paragraph</span>
+    <span class="str">banner</span>:    <span class="str">"images/banner.jpg"</span>,       <span class="cm">// img.mo-banner (optional)</span>
+    <span class="str">avatar</span>:    <span class="str">"images/avatar.jpg"</span>,       <span class="cm">// img.mo-avatar (optional)</span>
+    <span class="str">icon</span>:      <span class="str">"images/icon.svg"</span>,         <span class="cm">// data-mo-icon on &lt;li&gt;, used by showCounterStyle:'image'</span>
+    <span class="str">fullWidth</span>: <span class="kw">true</span>                       <span class="cm">// span both columns (insertItem only)</span>
   },
-  <span class="cm">// … more items</span>
 ]);
 
-<span class="cm">// JSON string is also accepted:</span>
-tl.<span class="fn">addItems</span>(<span class="str">'[{"title":"From JSON","meta":"Today","text":"Parsed automatically."}]'</span>);</code></pre>
+<span class="cm">// Insert at a specific position (or random when index is omitted):</span>
+tl.<span class="fn">insertItem</span>({ <span class="str">title</span>: <span class="str">"Featured"</span>, <span class="str">text</span>: <span class="str">"..."</span>, <span class="str">fullWidth</span>: <span class="kw">true</span> }, <span class="kw">0</span>);
+
+<span class="cm">// Mark any &lt;li&gt; as full-width manually, then refresh:</span>
+document.<span class="fn">querySelector</span>(<span class="str">'li'</span>).classList.<span class="fn">add</span>(<span class="str">'mo-fullwidth'</span>);
+tl.<span class="fn">refresh</span>();</code></pre>
 
     <h3>Infinite scroll recipe</h3>
     <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">moTimeline handles the layout — wire up an <code>IntersectionObserver</code> on a sentinel element to trigger your own data fetch, then call <code>addItems()</code>.</p>
