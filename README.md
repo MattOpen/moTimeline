@@ -19,7 +19,7 @@ Responsive two-column timeline layout library — plain JavaScript, zero depende
 - **Badges & arrows** — numbered badges on the center line, directional arrows
 - **Optional theme** — built-in card theme with image banners and overlapping avatars
 - **CSS custom properties** — override colors and sizes with one line of CSS
-- **Dynamic items** — append new `<li>` elements at any time via `initNewItems()`
+- **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`
 - **Bootstrap compatible** — wrap the `<ul>` in a Bootstrap `.container`, no config needed
 - **ESM · CJS · UMD** — works with any bundler or as a plain `<script>` tag
 
@@ -148,11 +148,27 @@ import 'motimeline/dist/moTimeline.css';
 ```js
 const tl = new MoTimeline(elementOrSelector, options);
 
-tl.refresh();          // re-layout all items (called automatically on resize)
-tl.initNewItems();     // pick up manually appended <li> elements
-tl.addItems(items);    // create and append <li> from an array of item objects (or JSON string)
-tl.destroy();          // remove listeners and reset DOM classes
+tl.refresh();               // re-layout all items (called automatically on resize)
+tl.initNewItems();          // pick up manually appended <li> elements
+tl.addItems(items);         // create and append <li> from an array of item objects (or JSON string)
+tl.insertItem(item, index); // insert a single item at a specific index (or random if omitted)
+tl.destroy();               // remove listeners and reset DOM classes
 ```
+
+### insertItem
+
+```js
+// Insert at a specific 0-based index:
+tl.insertItem({ title: 'Breaking news', meta: 'Now', text: '...' }, 2);
+
+// Insert at a random position (omit the index):
+tl.insertItem({ title: 'Surprise!', meta: 'Now', text: '...' });
+
+// Insert as a full-width item:
+tl.insertItem({ title: 'Featured', meta: 'Now', text: '...', fullWidth: true }, 0);
+```
+
+Badge numbers are automatically re-sequenced after insertion. Returns the inserted `<li>` element.
 
 ### addItems — item schema
 
@@ -363,6 +379,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.8.1
+- New method `insertItem(item, index)` — inserts a single item at a specific 0-based index, or at a random position when index is omitted. Badge numbers are re-sequenced automatically.
 
 ### v2.8.0
 - New: full-width items — add `mo-fullwidth` class to any `<li>` to make it span both columns (two-column mode only). Badge and arrow are hidden automatically; card margin collapses to equal sides via `--mo-card-margin-fullwidth`

@@ -775,6 +775,23 @@ observer.<span class="fn">observe</span>(sentinel);
       items.forEach(item=>this.element.appendChild(this._cie(item)));
       this._initItems();
     }
+    insertItem(item, index){
+      const el=this.element, d=this._d(); if(!d) return;
+      const newEl=this._cie(item);
+      const items=Array.from(el.children).filter(c=>c.classList.contains('js-mo-item'));
+      const pos=(index===undefined||index===null)?Math.floor(Math.random()*(items.length+1)):Math.max(0,Math.min(index,items.length));
+      if(pos>=items.length) el.appendChild(newEl); else el.insertBefore(newEl,items[pos]);
+      if(!newEl.id) newEl.id='moT'+Math.random().toString(36).slice(2)+'_'+pos;
+      newEl.classList.add('mo-item','js-mo-item');
+      if(item.fullWidth){ newEl.classList.add('mo-fullwidth','js-mo-fullwidth'); } else if(d.randomFullWidth){ const prob=d.randomFullWidth===true?0.33:d.randomFullWidth; if(Math.random()<prob) newEl.classList.add('mo-fullwidth','js-mo-fullwidth'); }
+      if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=newEl.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=pos+1; } newEl.prepend(s); }
+      if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; newEl.prepend(s); }
+      if(d.showBadge&&d.showCounterStyle==='counter'){ Array.from(el.querySelectorAll('.js-mo-item')).forEach((it,i)=>{ const b=it.querySelector('.js-mo-badge'); if(b) b.textContent=i+1; }); }
+      d.lastItemIdx=Array.from(el.children).length; instanceData.set(el,d);
+      this.refresh();
+      newEl.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); });
+      return newEl;
+    }
     _cie(item){
       const li=document.createElement('li');
       if(item.icon) li.dataset.moIcon=item.icon;

@@ -64,6 +64,9 @@
     <button id="addBtn">+ Add item</button>
     <button id="toggleThemeBtn" class="secondary">Toggle theme</button>
     <button id="toggleBadgeBtn" class="secondary">Toggle badges</button>
+    <button id="toggleFullWidthBtn" class="secondary">Toggle random full-width</button>
+    <button id="insertRandomBtn" class="secondary">Insert at random pos</button>
+    <button id="insertAtBtn" class="secondary">Insert at pos 2</button>
   </div>
 
   <!-- mo-theme is added/removed by JS via the theme option.
@@ -224,6 +227,41 @@
   document.getElementById('toggleBadgeBtn').addEventListener('click', () => {
     const badges = tlEl.querySelectorAll('.js-mo-badge');
     badges.forEach(b => b.style.display = b.style.display === 'none' ? '' : 'none');
+  });
+
+  document.getElementById('toggleFullWidthBtn').addEventListener('click', () => {
+    const items = Array.from(tlEl.querySelectorAll('.js-mo-item'));
+    const anyFullWidth = items.some(i => i.classList.contains('mo-fullwidth'));
+    if (anyFullWidth) {
+      // Clear all full-width
+      items.forEach(i => i.classList.remove('mo-fullwidth', 'js-mo-fullwidth'));
+    } else {
+      // Randomly assign ~33% as full-width
+      items.forEach(i => {
+        if (Math.random() < 0.33) i.classList.add('mo-fullwidth', 'js-mo-fullwidth');
+      });
+    }
+    tl.refresh();
+  });
+
+  let insertCount = 1;
+  document.getElementById('insertRandomBtn').addEventListener('click', () => {
+    tl.insertItem({
+      title: `Inserted #${insertCount} (random)`,
+      meta: 'Just now',
+      text: 'This item was inserted at a random position.',
+    });
+    insertCount++;
+  });
+
+  document.getElementById('insertAtBtn').addEventListener('click', () => {
+    tl.insertItem({
+      title: `Inserted #${insertCount} (pos 2, full-width)`,
+      meta: 'Just now',
+      text: 'This item was inserted at index 2 as a full-width item.',
+      fullWidth: true,
+    }, 2);
+    insertCount++;
   });
 </script>
 

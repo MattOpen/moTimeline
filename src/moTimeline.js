@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.8.0
+ * moTimeline v2.8.1
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -140,6 +140,67 @@ export class MoTimeline {
     if (typeof items === 'string') items = JSON.parse(items);
     items.forEach((item) => this.element.appendChild(this._createItemElement(item)));
     this._initItems();
+  }
+
+  /**
+   * Insert a single item at a specific position or at a random position.
+   *
+   * @param {Object} item  — same shape as addItems(): { title, meta, text, banner, avatar, icon }
+   * @param {number} [index] — 0-based insertion index. Omit (or pass undefined) for a random position.
+   * @returns {HTMLElement} the inserted <li> element
+   */
+  insertItem(item, index) {
+    const el = this.element;
+    const data = this._getData();
+    if (!data) return;
+
+    const newEl = this._createItemElement(item);
+
+    // All currently initialised items (to determine valid range)
+    const items = Array.from(el.children).filter((c) => c.classList.contains('js-mo-item'));
+    const pos = (index === undefined || index === null)
+      ? Math.floor(Math.random() * (items.length + 1))
+      : Math.max(0, Math.min(index, items.length));
+
+    // Insert into DOM (append when pos is at end)
+    if (pos >= items.length) {
+      el.appendChild(newEl);
+    } else {
+      el.insertBefore(newEl, items[pos]);
+    }
+
+    // Initialise the new element
+    if (!newEl.id) newEl.id = 'moT' + crypto.randomUUID() + '_' + pos;
+    newEl.classList.add('mo-item', 'js-mo-item');
+
+    // Explicit fullWidth on item data takes priority, then fall back to randomFullWidth
+    if (item.fullWidth) {
+      newEl.classList.add('mo-fullwidth', 'js-mo-fullwidth');
+    } else if (data.randomFullWidth) {
+      const prob = data.randomFullWidth === true ? 0.33 : data.randomFullWidth;
+      if (Math.random() < prob) newEl.classList.add('mo-fullwidth', 'js-mo-fullwidth');
+    }
+    if (data.showBadge) this._createBadge(newEl, pos + 1);
+    if (data.showArrow) this._createArrow(newEl);
+
+    // Re-number all counter badges so sequence stays correct after insertion
+    if (data.showBadge && data.showCounterStyle === 'counter') {
+      Array.from(el.querySelectorAll('.js-mo-item')).forEach((it, i) => {
+        const badge = it.querySelector('.js-mo-badge');
+        if (badge) badge.textContent = i + 1;
+      });
+    }
+
+    data.lastItemIdx = Array.from(el.children).length;
+    instanceData.set(el, data);
+
+    this.refresh();
+
+    newEl.querySelectorAll('img').forEach((img) => {
+      if (!img.complete) img.addEventListener('load', this._resizeHandler, { once: true });
+    });
+
+    return newEl;
   }
 
   destroy() {
