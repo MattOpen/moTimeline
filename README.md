@@ -107,6 +107,8 @@ import 'motimeline/dist/moTimeline.css';
 | `avatarSize` | string | `'50px'` | Width and height of the circular avatar image. Sets `--mo-avatar-size` on the container. Any valid CSS length is accepted (e.g. `'40px'`, `'4rem'`). |
 | `cardMargin` | string | `'0.5rem 1.25rem 0.5rem 0.5rem'` | Margin of left-column themed cards. The larger right value creates space toward the center line. Sets `--mo-card-margin` on the container. |
 | `cardMarginInverted` | string | `'0.5rem 0.5rem 0.5rem 1.25rem'` | Margin of right-column (inverted) themed cards. The larger left value creates space toward the center line. Sets `--mo-card-margin-inverted` on the container. |
+| `cardMarginFullWidth` | string | `'0.5rem'` | Margin of full-width themed cards. Sets `--mo-card-margin-fullwidth` on the container. |
+| `randomFullWidth` | number \| boolean | `0` | `0`/`false` = off. A number `0–1` sets the probability that each item is randomly promoted to full-width during init. `true` = 33% chance. Items can also be set manually by adding the `mo-fullwidth` class to the `<li>`. |
 
 ---
 
@@ -330,8 +332,9 @@ async function fetchPage(page) {
   --mo-arrow-color:     #dde1e7;
   --mo-card-border-radius: 8px;
   --mo-avatar-size:          50px;
-  --mo-card-margin:          0.5rem 1.25rem 0.5rem 0.5rem;
-  --mo-card-margin-inverted: 0.5rem 0.5rem 0.5rem 1.25rem;
+  --mo-card-margin:            0.5rem 1.25rem 0.5rem 0.5rem;
+  --mo-card-margin-inverted:   0.5rem 0.5rem 0.5rem 1.25rem;
+  --mo-card-margin-fullwidth:  0.5rem;
 }
 ```
 
@@ -360,6 +363,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.8.0
+- New: full-width items — add `mo-fullwidth` class to any `<li>` to make it span both columns (two-column mode only). Badge and arrow are hidden automatically; card margin collapses to equal sides via `--mo-card-margin-fullwidth`
+- New option `randomFullWidth` (number 0–1 or boolean) — randomly promotes items to full-width during init (`true` = 33% probability)
+- New option `cardMarginFullWidth` (string, default `'0.5rem'`) — controls the themed card margin for full-width items
 
 ### v2.7.5
 - New options `cardMargin` (default `'0.5rem 1.25rem 0.5rem 0.5rem'`) and `cardMarginInverted` (default `'0.5rem 0.5rem 0.5rem 1.25rem'`) — control themed card margins via `--mo-card-margin` and `--mo-card-margin-inverted`

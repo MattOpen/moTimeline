@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.5 — CSS
+ * moTimeline v2.8.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -62,6 +62,24 @@
 /* Right-column item */
 .mo-timeline > .mo-item.mo-inverted {
   float: right;
+}
+
+/* Full-width item — spans both columns (two-column mode only) */
+.mo-timeline.mo-twocol > .mo-item.mo-fullwidth {
+  clear: both;
+  float: none;
+  width: 100%;
+}
+
+/* Full-width card: equal margin on both sides (no center-line gap) */
+.mo-theme > .mo-item.mo-fullwidth .mo-card {
+  margin: var(--mo-card-margin-fullwidth, 0.5rem);
+}
+
+/* Hide badge & arrow for full-width items — no center-line interaction */
+.mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-badge,
+.mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow {
+  display: none;
 }
 
 /* ── Badge — circle sitting ON the center line ──────────────── */

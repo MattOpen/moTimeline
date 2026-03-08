@@ -62,6 +62,10 @@
     .mo-timeline > .mo-item { box-sizing: border-box; display: block; float: left; position: relative; width: 50%; }
     .mo-timeline:not(.mo-twocol) > .mo-item { float: none; width: 100%; }
     .mo-timeline > .mo-item.mo-inverted { float: right; }
+    .mo-timeline.mo-twocol > .mo-item.mo-fullwidth { clear: both; float: none; width: 100%; }
+    .mo-theme > .mo-item.mo-fullwidth .mo-card { margin: var(--mo-card-margin-fullwidth, 0.5rem); }
+    .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-badge,
+    .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow { display: none; }
 
     .mo-badge { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); overflow: hidden; position: absolute; top: 18px; z-index: 2; }
     .mo-badge .mo-badge-icon { border-radius: 50%; height: 100%; object-fit: cover; width: 100%; }
@@ -592,8 +596,9 @@ observer.<span class="fn">observe</span>(sentinel);
   <span class="str">--mo-arrow-color</span>:     <span class="str">#c7d2fe</span>;
   <span class="str">--mo-card-border-radius</span>: <span class="str">8px</span>;
   <span class="str">--mo-avatar-size</span>:     <span class="str">50px</span>;
-  <span class="str">--mo-card-margin</span>:          <span class="str">0.5rem 1.25rem 0.5rem 0.5rem</span>;
-  <span class="str">--mo-card-margin-inverted</span>: <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
+  <span class="str">--mo-card-margin</span>:            <span class="str">0.5rem 1.25rem 0.5rem 0.5rem</span>;
+  <span class="str">--mo-card-margin-inverted</span>:   <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
+  <span class="str">--mo-card-margin-fullwidth</span>:  <span class="str">0.5rem</span>;
 }</code></pre>
   </div>
 </section>
@@ -646,6 +651,14 @@ observer.<span class="fn">observe</span>(sentinel);
         <tr>
           <td><code>cardMarginInverted</code></td><td>string</td><td><code>'0.5rem 0.5rem 0.5rem 1.25rem'</code></td>
           <td>Margin of right-column (inverted) themed cards (the larger left value creates space toward the center line). Sets <code>--mo-card-margin-inverted</code> on the container.</td>
+        </tr>
+        <tr>
+          <td><code>cardMarginFullWidth</code></td><td>string</td><td><code>'0.5rem'</code></td>
+          <td>Margin of full-width themed cards. Sets <code>--mo-card-margin-fullwidth</code> on the container.</td>
+        </tr>
+        <tr>
+          <td><code>randomFullWidth</code></td><td>number&nbsp;|&nbsp;boolean</td><td><code>0</code></td>
+          <td><code>0</code> / <code>false</code> = off. A number <code>0–1</code> sets the probability that each item is randomly promoted to full-width during init. <code>true</code> = 33% chance. Items can also be set manually by adding the <code>mo-fullwidth</code> class to the <code>&lt;li&gt;</code>.</td>
         </tr>
       </tbody>
     </table>
@@ -700,7 +713,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem' };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0 };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -729,6 +742,7 @@ observer.<span class="fn">observe</span>(sentinel);
       el.style.setProperty('--mo-avatar-size', data.avatarSize);
       el.style.setProperty('--mo-card-margin', data.cardMargin);
       el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
+      el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
       this._initItems();
       window.addEventListener('resize',this._rh);
     }
@@ -739,7 +753,7 @@ observer.<span class="fn">observe</span>(sentinel);
         Array.from(el.children).forEach(child=>inst._spp(child));
       });
     }
-    _spp(el){ const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
+    _spp(el){ if(el.classList.contains('mo-fullwidth')){ el.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); return; } const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
     _lr(el){
       if(!el) return null;
       const d=this._d(); if(!d) return null;
@@ -777,7 +791,7 @@ observer.<span class="fn">observe</span>(sentinel);
       if(item.text){ const p=document.createElement('p'); p.textContent=item.text; body.appendChild(p); }
       card.appendChild(body); li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); instanceData.delete(this.element); MoTimeline.instances.delete(this); }
+    destroy(){ window.removeEventListener('resize',this._rh); instanceData.delete(this.element); MoTimeline.instances.delete(this); Array.from(this.element.children).forEach(c=>c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth')); }
     _d(){ return instanceData.get(this.element); }
     _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('mo-twocol',d.col>1); }
     _initItems(){
@@ -787,6 +801,7 @@ observer.<span class="fn">observe</span>(sentinel);
       items.forEach((item,i)=>{
         if(!item.id) item.id='moT'+Math.random().toString(36).slice(2)+'_'+(i+d.lastItemIdx);
         item.classList.add('mo-item','js-mo-item');
+        if(d.randomFullWidth){ const prob=d.randomFullWidth===true?0.33:d.randomFullWidth; if(!item.classList.contains('mo-fullwidth')&&Math.random()<prob) item.classList.add('mo-fullwidth','js-mo-fullwidth'); }
         if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
