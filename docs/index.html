@@ -78,8 +78,8 @@
 
     /* ─ Theme ─ */
     .mo-theme { --mo-arrow-color: #fff; }
-    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: 0.5rem 1.25rem 0.5rem 0.5rem; position: relative; }
-    .mo-theme > .mo-item.mo-inverted .mo-card { margin: 0.5rem 0.5rem 0.5rem 1.25rem; }
+    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem); position: relative; }
+    .mo-theme > .mo-item.mo-inverted .mo-card { margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem); }
     .mo-theme > .mo-item .mo-banner  { border-radius: var(--mo-card-border-radius, 8px) var(--mo-card-border-radius, 8px) 0 0; display: block; max-height: 240px; object-fit: cover; width: 100%; }
     .mo-theme > .mo-item .mo-card-image { overflow: visible; position: relative; }
     .mo-theme > .mo-item .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: calc(var(--mo-avatar-size, 50px) * -0.44); box-shadow: 0 2px 8px rgba(0,0,0,.18); height: var(--mo-avatar-size, 50px); object-fit: cover; position: absolute; right: 14px; width: var(--mo-avatar-size, 50px); z-index: 1; }
@@ -592,6 +592,8 @@ observer.<span class="fn">observe</span>(sentinel);
   <span class="str">--mo-arrow-color</span>:     <span class="str">#c7d2fe</span>;
   <span class="str">--mo-card-border-radius</span>: <span class="str">8px</span>;
   <span class="str">--mo-avatar-size</span>:     <span class="str">50px</span>;
+  <span class="str">--mo-card-margin</span>:          <span class="str">0.5rem 1.25rem 0.5rem 0.5rem</span>;
+  <span class="str">--mo-card-margin-inverted</span>: <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
 }</code></pre>
   </div>
 </section>
@@ -636,6 +638,14 @@ observer.<span class="fn">observe</span>(sentinel);
         <tr>
           <td><code>avatarSize</code></td><td>string</td><td><code>'50px'</code></td>
           <td>Width and height of the circular avatar image. Sets the <code>--mo-avatar-size</code> CSS custom property on the container. Any valid CSS length is accepted (e.g. <code>'40px'</code>, <code>'4rem'</code>).</td>
+        </tr>
+        <tr>
+          <td><code>cardMargin</code></td><td>string</td><td><code>'0.5rem 1.25rem 0.5rem 0.5rem'</code></td>
+          <td>Margin of left-column themed cards (the larger right value creates space toward the center line). Sets <code>--mo-card-margin</code> on the container.</td>
+        </tr>
+        <tr>
+          <td><code>cardMarginInverted</code></td><td>string</td><td><code>'0.5rem 0.5rem 0.5rem 1.25rem'</code></td>
+          <td>Margin of right-column (inverted) themed cards (the larger left value creates space toward the center line). Sets <code>--mo-card-margin-inverted</code> on the container.</td>
         </tr>
       </tbody>
     </table>
@@ -690,7 +700,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px' };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem' };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -717,6 +727,8 @@ observer.<span class="fn">observe</span>(sentinel);
       if(data.theme) el.classList.add('mo-theme');
       el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
       el.style.setProperty('--mo-avatar-size', data.avatarSize);
+      el.style.setProperty('--mo-card-margin', data.cardMargin);
+      el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
       this._initItems();
       window.addEventListener('resize',this._rh);
     }

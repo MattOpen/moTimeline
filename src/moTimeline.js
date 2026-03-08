@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.4
+ * moTimeline v2.7.5
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -18,6 +18,8 @@ const DEFAULTS = {
   showCounterStyle: 'counter', // 'counter' | 'image' | 'none'
   cardBorderRadius: '8px',
   avatarSize: '50px',
+  cardMargin: '0.5rem 1.25rem 0.5rem 0.5rem',
+  cardMarginInverted: '0.5rem 0.5rem 0.5rem 1.25rem',
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -92,6 +94,8 @@ export class MoTimeline {
     if (data.theme) el.classList.add('mo-theme');
     el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
     el.style.setProperty('--mo-avatar-size', data.avatarSize);
+    el.style.setProperty('--mo-card-margin', data.cardMargin);
+    el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
 
     this._initialized = true;
     window.addEventListener('resize', this._resizeHandler);
@@ -141,6 +145,8 @@ export class MoTimeline {
     MoTimeline.instances.delete(this);
     this.element.style.removeProperty('--mo-card-border-radius');
     this.element.style.removeProperty('--mo-avatar-size');
+    this.element.style.removeProperty('--mo-card-margin');
+    this.element.style.removeProperty('--mo-card-margin-inverted');
     this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset');

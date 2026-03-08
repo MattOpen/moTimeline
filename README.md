@@ -105,6 +105,8 @@ import 'motimeline/dist/moTimeline.css';
 | `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. `'none'` — badge element is created (preserving center-line spacing) but rendered with `opacity: 0`. |
 | `cardBorderRadius` | string | `'8px'` | Border radius of the themed card and its banner image top corners. Sets `--mo-card-border-radius` on the container. Any valid CSS length is accepted (e.g. `'0'`, `'16px'`, `'1rem'`). |
 | `avatarSize` | string | `'50px'` | Width and height of the circular avatar image. Sets `--mo-avatar-size` on the container. Any valid CSS length is accepted (e.g. `'40px'`, `'4rem'`). |
+| `cardMargin` | string | `'0.5rem 1.25rem 0.5rem 0.5rem'` | Margin of left-column themed cards. The larger right value creates space toward the center line. Sets `--mo-card-margin` on the container. |
+| `cardMarginInverted` | string | `'0.5rem 0.5rem 0.5rem 1.25rem'` | Margin of right-column (inverted) themed cards. The larger left value creates space toward the center line. Sets `--mo-card-margin-inverted` on the container. |
 
 ---
 
@@ -327,7 +329,9 @@ async function fetchPage(page) {
   --mo-badge-font-size: 12px;
   --mo-arrow-color:     #dde1e7;
   --mo-card-border-radius: 8px;
-  --mo-avatar-size:     50px;
+  --mo-avatar-size:          50px;
+  --mo-card-margin:          0.5rem 1.25rem 0.5rem 0.5rem;
+  --mo-card-margin-inverted: 0.5rem 0.5rem 0.5rem 1.25rem;
 }
 ```
 
@@ -356,6 +360,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.7.5
+- New options `cardMargin` (default `'0.5rem 1.25rem 0.5rem 0.5rem'`) and `cardMarginInverted` (default `'0.5rem 0.5rem 0.5rem 1.25rem'`) — control themed card margins via `--mo-card-margin` and `--mo-card-margin-inverted`
 
 ### v2.7.4
 - Fix: wrong column placement when adjacent left and right items share the same bottom y-coordinate ([#3](https://github.com/MattOpen/moTimeline/issues/3)) — adds a 1 px tolerance to the column algorithm to absorb `offsetHeight`/`offsetTop` rounding mismatches

@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.7.4 — CSS
+ * moTimeline v2.7.5 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -165,12 +165,12 @@
   background: #fff;
   border-radius: var(--mo-card-border-radius, 8px);
   box-shadow: 0 2px 14px rgba(0, 0, 0, .10);
-  margin: 0.5rem 1.25rem 0.5rem 0.5rem;
+  margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem);
   position: relative;
 }
 
 .mo-theme > .mo-item.mo-inverted .mo-card {
-  margin: 0.5rem 0.5rem 0.5rem 1.25rem;
+  margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem);
 }
 
 /* Banner image — top corners rounded to match card, no overflow:hidden needed on card */
