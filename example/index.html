@@ -67,6 +67,7 @@
     <button id="toggleFullWidthBtn" class="secondary">Toggle random full-width</button>
     <button id="insertRandomBtn" class="secondary">Insert at random pos</button>
     <button id="insertAtBtn" class="secondary">Insert at pos 2</button>
+    <button id="toggleAnimateBtn" class="secondary">Toggle animate</button>
   </div>
 
   <!-- mo-theme is added/removed by JS via the theme option.
@@ -205,6 +206,7 @@
     showBadge: true,
     showArrow: true,
     theme: true,
+    animate: 'slide',
   });
   window.tl = tl; // expose for console debugging
 
@@ -262,6 +264,21 @@
       fullWidth: true,
     }, 2);
     insertCount++;
+  });
+
+  document.getElementById('toggleAnimateBtn').addEventListener('click', () => {
+    const hasAnimate = tlEl.classList.contains('mo-animate');
+    if (hasAnimate) {
+      tlEl.classList.remove('mo-animate', 'mo-animate-fade', 'mo-animate-slide');
+      tlEl.querySelectorAll('.mo-visible').forEach(i => i.classList.remove('mo-visible'));
+    } else {
+      tlEl.classList.add('mo-animate', 'mo-animate-slide');
+      // Re-observe all items that don't yet have mo-visible
+      tlEl.querySelectorAll('.js-mo-item').forEach(i => {
+        i.classList.remove('mo-visible');
+        tl._observer && tl._observer.observe(i);
+      });
+    }
   });
 </script>
 

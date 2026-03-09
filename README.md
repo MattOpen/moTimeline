@@ -109,6 +109,7 @@ import 'motimeline/dist/moTimeline.css';
 | `cardMarginInverted` | string | `'0.5rem 0.5rem 0.5rem 1.25rem'` | Margin of right-column (inverted) themed cards. The larger left value creates space toward the center line. Sets `--mo-card-margin-inverted` on the container. |
 | `cardMarginFullWidth` | string | `'0.5rem'` | Margin of full-width themed cards. Sets `--mo-card-margin-fullwidth` on the container. |
 | `randomFullWidth` | number \| boolean | `0` | `0`/`false` = off. A number `0–1` sets the probability that each item is randomly promoted to full-width during init. `true` = 33% chance. Items can also be set manually by adding the `mo-fullwidth` class to the `<li>`. |
+| `animate` | string \| boolean | `false` | Animate items as they scroll into view using `IntersectionObserver`. `'fade'` — items fade in. `'slide'` — left-column items slide in from the left, right-column items from the right. `true` = `'fade'`. Disable for individual items by adding `mo-visible` manually. Control speed via `--mo-animate-duration`. |
 
 ---
 
@@ -351,6 +352,7 @@ async function fetchPage(page) {
   --mo-card-margin:            0.5rem 1.25rem 0.5rem 0.5rem;
   --mo-card-margin-inverted:   0.5rem 0.5rem 0.5rem 1.25rem;
   --mo-card-margin-fullwidth:  0.5rem;
+  --mo-animate-duration:       0.5s;
 }
 ```
 
@@ -379,6 +381,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.9.0
+- New option `animate` — scroll-triggered animations via `IntersectionObserver`. `'fade'` fades items in as they enter the viewport; `'slide'` slides left-column items from the left and right-column items from the right. `true` defaults to `'fade'`. Speed controlled via `--mo-animate-duration` (default `0.5s`). Works for initial load, `addItems()`, and `insertItem()`.
 
 ### v2.8.1
 - New method `insertItem(item, index)` — inserts a single item at a specific 0-based index, or at a random position when index is omitted. Badge numbers are re-sequenced automatically.

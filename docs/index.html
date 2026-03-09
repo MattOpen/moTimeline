@@ -95,6 +95,14 @@
     .mo-theme.mo-twocol > .mo-item.mo-inverted        .mo-arrow { border-right-color: var(--mo-arrow-color); left: 12px; }
     .mo-theme .mo-badge { background: #fff; border: 2px solid var(--mo-line-color); box-shadow: 0 2px 6px rgba(0,0,0,.1); color: #374151; }
 
+    /* animate */
+    .mo-timeline.mo-animate > .mo-item { transition: opacity var(--mo-animate-duration, 0.5s) ease, transform var(--mo-animate-duration, 0.5s) ease; }
+    .mo-timeline.mo-animate-fade > .mo-item { opacity: 0; }
+    .mo-timeline.mo-animate-slide > .mo-item:not(.mo-inverted) { opacity: 0; transform: translateX(-40px); }
+    .mo-timeline.mo-animate-slide > .mo-item.mo-inverted { opacity: 0; transform: translateX(40px); }
+    .mo-timeline:not(.mo-twocol).mo-animate-slide > .mo-item { transform: translateX(-40px); }
+    .mo-timeline.mo-animate > .mo-item.mo-visible { opacity: 1; transform: translateX(0); }
+
     /* demo controls */
     .demo-controls { text-align: center; margin-top: 1.5rem; }
     .demo-controls button { background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.875rem; font-weight: 600; padding: 0.55rem 1.3rem; }
@@ -191,6 +199,7 @@
         <button id="insertRandomBtn" style="margin-left:0.5rem;background:#8b5cf6">Insert at random pos</button>
         <button id="insertFullWidthBtn" style="margin-left:0.5rem;background:#10b981">Insert full-width at pos 2</button>
         <button id="toggleFullWidthBtn" style="margin-left:0.5rem;background:#f59e0b">Toggle random full-width</button>
+        <button id="toggleAnimateBtn" style="margin-left:0.5rem;background:#6366f1">Toggle animate</button>
       </div>
     </div>
 
@@ -607,6 +616,7 @@ observer.<span class="fn">observe</span>(sentinel);
   <span class="str">--mo-card-margin</span>:            <span class="str">0.5rem 1.25rem 0.5rem 0.5rem</span>;
   <span class="str">--mo-card-margin-inverted</span>:   <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
   <span class="str">--mo-card-margin-fullwidth</span>:  <span class="str">0.5rem</span>;
+  <span class="str">--mo-animate-duration</span>:        <span class="str">0.5s</span>;
 }</code></pre>
   </div>
 </section>
@@ -668,6 +678,10 @@ observer.<span class="fn">observe</span>(sentinel);
           <td><code>randomFullWidth</code></td><td>number&nbsp;|&nbsp;boolean</td><td><code>0</code></td>
           <td><code>0</code> / <code>false</code> = off. A number <code>0–1</code> sets the probability that each item is randomly promoted to full-width during init. <code>true</code> = 33% chance. Items can also be set manually by adding the <code>mo-fullwidth</code> class to the <code>&lt;li&gt;</code>.</td>
         </tr>
+        <tr>
+          <td><code>animate</code></td><td>string&nbsp;|&nbsp;boolean</td><td><code>false</code></td>
+          <td>Animate items as they scroll into view using <code>IntersectionObserver</code>. <code>'fade'</code> — fade in. <code>'slide'</code> — slide in from left/right column direction. <code>true</code> = <code>'fade'</code>. Speed via <code>--mo-animate-duration</code>.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -721,7 +735,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0 };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -751,6 +765,7 @@ observer.<span class="fn">observe</span>(sentinel);
       el.style.setProperty('--mo-card-margin', data.cardMargin);
       el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
       el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
+      if(data.animate){ const type=data.animate===true?'fade':data.animate; el.classList.add('mo-animate','mo-animate-'+type); this._observer=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('mo-visible'); this._observer.unobserve(e.target); } }); },{threshold:0.1}); }
       this._initItems();
       window.addEventListener('resize',this._rh);
     }
@@ -797,6 +812,7 @@ observer.<span class="fn">observe</span>(sentinel);
       if(d.showBadge&&d.showCounterStyle==='counter'){ Array.from(el.querySelectorAll('.js-mo-item')).forEach((it,i)=>{ const b=it.querySelector('.js-mo-badge'); if(b) b.textContent=i+1; }); }
       d.lastItemIdx=Array.from(el.children).length; instanceData.set(el,d);
       this.refresh();
+      this._obs([newEl]);
       newEl.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); });
       return newEl;
     }
@@ -816,7 +832,7 @@ observer.<span class="fn">observe</span>(sentinel);
       if(item.text){ const p=document.createElement('p'); p.textContent=item.text; body.appendChild(p); }
       card.appendChild(body); li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); instanceData.delete(this.element); MoTimeline.instances.delete(this); Array.from(this.element.children).forEach(c=>c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth')); }
+    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
     _d(){ return instanceData.get(this.element); }
     _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('mo-twocol',d.col>1); }
     _initItems(){
@@ -831,8 +847,10 @@ observer.<span class="fn">observe</span>(sentinel);
         if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
+      this._obs(items);
       items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
     }
+    _obs(items){ if(!this._observer) return; items.forEach(item=>{ if(!item.classList.contains('mo-visible')) this._observer.observe(item); }); }
   }
   window.MoTimeline = MoTimeline;
 
@@ -902,6 +920,20 @@ observer.<span class="fn">observe</span>(sentinel);
       items.forEach(i => { if (Math.random() < 0.33) i.classList.add('mo-fullwidth', 'js-mo-fullwidth'); });
     }
     tl1.refresh();
+  });
+
+  document.getElementById('toggleAnimateBtn').addEventListener('click', () => {
+    const hasAnimate = tlEl.classList.contains('mo-animate');
+    if (hasAnimate) {
+      tlEl.classList.remove('mo-animate', 'mo-animate-fade', 'mo-animate-slide');
+      tlEl.querySelectorAll('.mo-visible').forEach(i => i.classList.remove('mo-visible'));
+    } else {
+      tlEl.classList.add('mo-animate', 'mo-animate-slide');
+      tlEl.querySelectorAll('.js-mo-item').forEach(i => {
+        i.classList.remove('mo-visible');
+        tl1._observer && tl1._observer.observe(i);
+      });
+    }
   });
 
   // ── Tab 2: Timestamp demo ───────────────────────────────────────────────────

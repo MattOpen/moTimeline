@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.8.1
+ * moTimeline v2.9.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -22,6 +22,7 @@ const DEFAULTS = {
   cardMarginInverted: '0.5rem 0.5rem 0.5rem 1.25rem',
   cardMarginFullWidth: '0.5rem',
   randomFullWidth: 0, // 0 = off; 0–1 = probability per item; true = 0.33
+  animate: false,     // false | 'fade' | 'slide'
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -99,6 +100,19 @@ export class MoTimeline {
     el.style.setProperty('--mo-card-margin', data.cardMargin);
     el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
     el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
+
+    if (data.animate) {
+      const type = data.animate === true ? 'fade' : data.animate;
+      el.classList.add('mo-animate', `mo-animate-${type}`);
+      this._observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('mo-visible');
+            this._observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+    }
 
     this._initialized = true;
     window.addEventListener('resize', this._resizeHandler);
@@ -196,6 +210,8 @@ export class MoTimeline {
 
     this.refresh();
 
+    this._observeItems([newEl]);
+
     newEl.querySelectorAll('img').forEach((img) => {
       if (!img.complete) img.addEventListener('load', this._resizeHandler, { once: true });
     });
@@ -205,6 +221,10 @@ export class MoTimeline {
 
   destroy() {
     window.removeEventListener('resize', this._resizeHandler);
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
     this.element.style.removeProperty('--mo-card-border-radius');
@@ -212,9 +232,9 @@ export class MoTimeline {
     this.element.style.removeProperty('--mo-card-margin');
     this.element.style.removeProperty('--mo-card-margin-inverted');
     this.element.style.removeProperty('--mo-card-margin-fullwidth');
-    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol');
+    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide');
     Array.from(this.element.children).forEach((child) => {
-      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth');
+      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible');
       child.querySelectorAll('.js-mo-badge, .js-mo-arrow').forEach((b) => b.remove());
     });
   }
@@ -277,6 +297,8 @@ export class MoTimeline {
     instanceData.set(el, data);
 
     this.refresh();
+
+    this._observeItems(newItems);
 
     // Re-layout after any unloaded images finish, because offsetHeight is
     // based on text-only height until images are ready.
@@ -405,6 +427,15 @@ export class MoTimeline {
     const span = document.createElement('span');
     span.className = 'mo-arrow js-mo-arrow';
     el.prepend(span);
+  }
+
+  _observeItems(items) {
+    if (!this._observer) return;
+    items.forEach((item) => {
+      if (!item.classList.contains('mo-visible')) {
+        this._observer.observe(item);
+      }
+    });
   }
 }
 
