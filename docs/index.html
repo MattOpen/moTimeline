@@ -568,6 +568,7 @@ tl.<span class="fn">refresh</span>();                    <span class="cm">// re-
 tl.<span class="fn">initNewItems</span>();            <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
 tl.<span class="fn">addItems</span>(items);            <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
 tl.<span class="fn">insertItem</span>(item, index);   <span class="cm">// insert a single item at index (omit for random position)</span>
+tl.<span class="fn">clear</span>();                      <span class="cm">// remove all items and ad slots, reset counters — instance stays alive</span>
 tl.<span class="fn">destroy</span>();                   <span class="cm">// remove listeners, reset DOM</span></code></pre>
 
     <h3>addItems / insertItem — item schema</h3>
@@ -834,6 +835,14 @@ observer.<span class="fn">observe</span>(sentinel);
       return{lr,bo};
     }
     initNewItems(){ this._initItems(); }
+    clear(){
+      const d=this._d(); if(!d) return;
+      if(this._observer) this._observer.disconnect();
+      if(this._adObserver) this._adObserver.disconnect();
+      Array.from(this.element.children).forEach(c=>{ if(c.classList.contains('js-mo-item')||c.classList.contains('mo-ad-slot')) c.remove(); });
+      d.lastItemIdx=0;
+      if(d.adSlots) d._adRealCount=0;
+    }
     addItems(items){
       if(typeof items==='string') items=JSON.parse(items);
       items.forEach(item=>this.element.appendChild(this._cie(item)));

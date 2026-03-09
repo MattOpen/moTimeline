@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.11.0
+ * moTimeline v2.12.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -233,6 +233,26 @@ export class MoTimeline {
     });
 
     return newEl;
+  }
+
+  clear() {
+    const data = this._getData();
+    if (!data) return;
+
+    // Disconnect observers — they remain alive and will re-observe new items
+    if (this._observer) this._observer.disconnect();
+    if (this._adObserver) this._adObserver.disconnect();
+
+    // Remove all library-managed elements (real items + ad slots)
+    Array.from(this.element.children).forEach((child) => {
+      if (child.classList.contains('js-mo-item') || child.classList.contains('mo-ad-slot')) {
+        child.remove();
+      }
+    });
+
+    // Reset counters — ready for a fresh addItems() call
+    data.lastItemIdx = 0;
+    if (data.adSlots) data._adRealCount = 0;
   }
 
   destroy() {

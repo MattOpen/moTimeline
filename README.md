@@ -192,6 +192,7 @@ tl.refresh();               // re-layout all items (called automatically on resi
 tl.initNewItems();          // pick up manually appended <li> elements
 tl.addItems(items);         // create and append <li> from an array of item objects (or JSON string)
 tl.insertItem(item, index); // insert a single item at a specific index (or random if omitted)
+tl.clear();                 // remove all items and ad slots, reset counters — instance stays alive
 tl.destroy();               // remove listeners and reset DOM classes
 ```
 
@@ -466,6 +467,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.12.0
+- New method `clear()` — removes all `.mo-item` and `.mo-ad-slot` elements from the container and resets internal counters (`lastItemIdx`, `_adRealCount`) without destroying the instance. Active `IntersectionObserver`s are disconnected but kept alive so they re-observe items added by the next `addItems()` call. Use this in React wrappers to reinitialize timeline content when props change without recreating the instance.
 
 ### v2.11.0
 - New option `adSlots` — inject ad slot `<li>` placeholders at configurable positions (`every_n` or `random` mode) and receive an `onEnterViewport(slotEl, position)` callback exactly once per slot when ≥ 50% of it is visible. Works with `addItems()` and infinite scroll. Slots are removed on `tl.destroy()`. See **Ad slots** section.
