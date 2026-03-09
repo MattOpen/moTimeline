@@ -146,6 +146,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `randomFullWidth` | number \| boolean | `0` | `0`/`false` = off. A number `0–1` sets the probability that each item is randomly promoted to full-width during init. `true` = 33% chance. Items can also be set manually by adding the `mo-fullwidth` class to the `<li>`. |
 | `animate` | string \| boolean | `false` | Animate items as they scroll into view using `IntersectionObserver`. `'fade'` — items fade in. `'slide'` — left-column items slide in from the left, right-column items from the right. `true` = `'fade'`. Disable for individual items by adding `mo-visible` manually. Control speed via `--mo-animate-duration`. |
 | `renderCard` | function \| null | `null` | `(item, cardEl) => void`. When set, called for every item instead of the built-in HTML renderer. `cardEl` is the `.mo-card` div already placed inside the `<li>`. Populate it via `innerHTML` or DOM methods. The library still owns the `<li>`, column placement, spine, badge, arrow, `addItems()`, and scroll pagination. |
+| `adSlots` | object \| null | `null` | Inject ad slot placeholders into the timeline and observe them. See **Ad slots** below. |
 
 ---
 
@@ -326,6 +327,52 @@ export default function App() {
 
 ---
 
+## Ad slots
+
+Inject ad placeholder `<li>` elements at configurable positions, observe them with `IntersectionObserver`, and fire a callback exactly once when each slot reaches 50% visibility. The library owns the slot element — you own what goes inside it.
+
+```js
+const tl = new MoTimeline('#my-timeline', {
+  adSlots: {
+    mode:     'every_n', // 'every_n' | 'random'
+    interval: 10,        // every_n: inject after every N real items
+                         // random:  inject once at a random position per N-item page
+    style:    'card',    // 'card' | 'fullwidth'
+    onEnterViewport: (slotEl, position) => {
+      // slotEl   = the <li class="mo-ad-slot"> element
+      // position = its 0-based index in the container at injection time
+      const ins = document.createElement('ins');
+      ins.className        = 'adsbygoogle';
+      ins.style.display    = 'block';
+      ins.dataset.adClient = 'ca-pub-XXXXXXXXXXXXXXXX';
+      ins.dataset.adSlot   = '1234567890';
+      ins.dataset.adFormat = 'auto';
+      slotEl.appendChild(ins);
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    },
+  },
+});
+```
+
+### `adSlots` option shape
+
+| Property | Type | Description |
+|---|---|---|
+| `mode` | `'every_n' \| 'random'` | `'every_n'` — inject after every `interval` real items. `'random'` — inject one slot at a random position within each `interval`-item page. |
+| `interval` | number | Cadence for slot injection (see `mode`). |
+| `style` | `'card' \| 'fullwidth'` | `'card'` — slot sits in the normal left/right column flow. `'fullwidth'` — slot spans both columns (adds `mo-fullwidth`). |
+| `onEnterViewport` | `(slotEl: HTMLElement, position: number) => void` | Called once per slot when ≥ 50% of it enters the viewport. `position` is the 0-based child index of the slot in the container at injection time. |
+
+**What the library provides:**
+- A `<li class="mo-ad-slot">` element with `min-height: 100px` (so the observer can detect it before content loads)
+- `fullwidth` layout via the existing `mo-fullwidth` mechanism when `style: 'fullwidth'`
+- Exactly-once `IntersectionObserver` (threshold 0.5) per slot
+- Automatic slot cleanup on `tl.destroy()`
+
+**What you provide:** everything inside the slot — the ad creative, network scripts, markup.
+
+Slots are injected after each `addItems()` call, so they work seamlessly with infinite scroll.
+
 ## Infinite scroll recipe
 
 moTimeline handles the layout — you own the data fetching. Wire an `IntersectionObserver` to a sentinel element below the list and call `addItems()` when it comes into view.
@@ -417,6 +464,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.11.0
+- New option `adSlots` — inject ad slot `<li>` placeholders at configurable positions (`every_n` or `random` mode) and receive an `onEnterViewport(slotEl, position)` callback exactly once per slot when ≥ 50% of it is visible. Works with `addItems()` and infinite scroll. Slots are removed on `tl.destroy()`. See **Ad slots** section.
 
 ### v2.10.0
 - New option `renderCard(item, cardEl)` — custom card renderer. When provided, the library skips its built-in card HTML and calls this function instead, passing the item data object and the `.mo-card` div already inserted into the DOM. The library continues to own column placement, spine, badge, arrow, `addItems()`, and scroll pagination. Enables full React component injection via `createRoot(cardEl).render(...)`.

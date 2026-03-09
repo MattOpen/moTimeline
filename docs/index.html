@@ -709,6 +709,17 @@ observer.<span class="fn">observe</span>(sentinel);
           <td><code>renderCard</code></td><td>function&nbsp;|&nbsp;null</td><td><code>null</code></td>
           <td><code>(item, cardEl) =&gt; void</code>. When set, called for every item instead of the built-in HTML renderer. <code>cardEl</code> is the <code>.mo-card</code> div already placed inside the <code>&lt;li&gt;</code>. Populate it via <code>innerHTML</code> or DOM methods. The library still owns column placement, spine, badge, arrow, <code>addItems()</code>, and scroll pagination.</td>
         </tr>
+        <tr>
+          <td><code>adSlots</code></td><td>object&nbsp;|&nbsp;null</td><td><code>null</code></td>
+          <td>
+            Inject ad slot <code>&lt;li class="mo-ad-slot"&gt;</code> placeholders and observe them. Shape:
+            <code>{ mode: 'every_n'|'random', interval: number, style: 'card'|'fullwidth', onEnterViewport: (slotEl, position) =&gt; void }</code>.
+            <code>mode:'every_n'</code> — inject after every <code>interval</code> real items.
+            <code>mode:'random'</code> — inject one slot at a random position within each <code>interval</code>-item page.
+            <code>style:'fullwidth'</code> — slot spans both columns.
+            <code>onEnterViewport</code> fires once per slot when ≥ 50% is visible; <code>position</code> is the slot's 0-based child index at injection time. Slots are removed on <code>destroy()</code>.
+          </td>
+        </tr>
       </tbody>
     </table>
 
@@ -762,7 +773,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null, adSlots:null };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -793,6 +804,7 @@ observer.<span class="fn">observe</span>(sentinel);
       el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
       el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
       if(data.animate){ const type=data.animate===true?'fade':data.animate; el.classList.add('mo-animate','mo-animate-'+type); this._observer=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('mo-visible'); this._observer.unobserve(e.target); } }); },{threshold:0.1}); }
+      if(data.adSlots){ data._adRealCount=0; if(typeof data.adSlots.onEnterViewport==='function'){ this._adObserver=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ this._adObserver.unobserve(e.target); data.adSlots.onEnterViewport(e.target,Number(e.target.dataset.moAdPosition)); } }); },{threshold:0.5}); } }
       this._initItems();
       window.addEventListener('resize',this._rh);
     }
@@ -865,7 +877,7 @@ observer.<span class="fn">observe</span>(sentinel);
       }
       li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
+    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
     _d(){ return instanceData.get(this.element); }
     _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('mo-twocol',d.col>1); }
     _initItems(){
@@ -881,9 +893,22 @@ observer.<span class="fn">observe</span>(sentinel);
       });
       d.lastItemIdx=all.length; this._div(); this.refresh();
       this._obs(items);
+      this._injectAdSlots(items);
       items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
     }
     _obs(items){ if(!this._observer) return; items.forEach(item=>{ if(!item.classList.contains('mo-visible')) this._observer.observe(item); }); }
+    _injectAdSlots(newItems){
+      const d=this._d(); if(!d||!d.adSlots||!newItems.length) return;
+      const {mode,interval,style}=d.adSlots; const fw=style==='fullwidth'; const el=this.element; let needsRefresh=false;
+      if(mode==='every_n'){
+        newItems.forEach((item,i)=>{ if((d._adRealCount+i+1)%interval===0){ const slot=this._cas(fw); item.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); if(fw) needsRefresh=true; } });
+      } else if(mode==='random'){
+        let po=d._adRealCount%interval,i=0;
+        while(i<newItems.length){ const rem=interval-po; const chunk=newItems.slice(i,i+rem); if(chunk.length===rem){ const anchor=chunk[Math.floor(Math.random()*chunk.length)]; const slot=this._cas(fw); anchor.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); if(fw) needsRefresh=true; po=0; } else { po+=chunk.length; } i+=rem; }
+      }
+      d._adRealCount+=newItems.length; if(needsRefresh) this.refresh();
+    }
+    _cas(fw){ const s=document.createElement('li'); s.className='mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); return s; }
   }
   window.MoTimeline = MoTimeline;
 

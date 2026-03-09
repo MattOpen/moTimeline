@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.10.0 — CSS
+ * moTimeline v2.11.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -298,4 +298,13 @@
 .mo-timeline.mo-animate > .mo-item.mo-visible {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AD SLOTS  —  injected by adSlots option
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Minimum height so IntersectionObserver can fire before content loads */
+.mo-timeline > .mo-item.mo-ad-slot {
+  min-height: 100px;
 }

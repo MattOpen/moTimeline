@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.10.0
+ * moTimeline v2.11.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -24,6 +24,7 @@ const DEFAULTS = {
   randomFullWidth: 0, // 0 = off; 0–1 = probability per item; true = 0.33
   animate: false,     // false | 'fade' | 'slide'
   renderCard: null,   // (item, cardEl) => void — custom card renderer; skips built-in HTML
+  adSlots: null,      // { mode, interval, style, onEnterViewport } — see docs
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -113,6 +114,20 @@ export class MoTimeline {
           }
         });
       }, { threshold: 0.1 });
+    }
+
+    if (data.adSlots) {
+      data._adRealCount = 0;
+      if (typeof data.adSlots.onEnterViewport === 'function') {
+        this._adObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this._adObserver.unobserve(entry.target);
+              data.adSlots.onEnterViewport(entry.target, Number(entry.target.dataset.moAdPosition));
+            }
+          });
+        }, { threshold: 0.5 });
+      }
     }
 
     this._initialized = true;
@@ -226,6 +241,11 @@ export class MoTimeline {
       this._observer.disconnect();
       this._observer = null;
     }
+    if (this._adObserver) {
+      this._adObserver.disconnect();
+      this._adObserver = null;
+    }
+    Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach((s) => s.remove());
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
     this.element.style.removeProperty('--mo-card-border-radius');
@@ -300,6 +320,7 @@ export class MoTimeline {
     this.refresh();
 
     this._observeItems(newItems);
+    this._injectAdSlots(newItems);
 
     // Re-layout after any unloaded images finish, because offsetHeight is
     // based on text-only height until images are ready.
@@ -434,6 +455,57 @@ export class MoTimeline {
     const span = document.createElement('span');
     span.className = 'mo-arrow js-mo-arrow';
     el.prepend(span);
+  }
+
+  _injectAdSlots(newItems) {
+    const data = this._getData();
+    if (!data || !data.adSlots || !newItems.length) return;
+
+    const { mode, interval, style } = data.adSlots;
+    const fullWidth = style === 'fullwidth';
+    const el = this.element;
+    let needsRefresh = false;
+
+    if (mode === 'every_n') {
+      newItems.forEach((item, i) => {
+        if ((data._adRealCount + i + 1) % interval === 0) {
+          const slot = this._createAdSlot(fullWidth);
+          item.after(slot);
+          slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
+          if (this._adObserver) this._adObserver.observe(slot);
+          if (fullWidth) needsRefresh = true;
+        }
+      });
+    } else if (mode === 'random') {
+      let pageOffset = data._adRealCount % interval;
+      let i = 0;
+      while (i < newItems.length) {
+        const remaining = interval - pageOffset;
+        const chunk = newItems.slice(i, i + remaining);
+        if (chunk.length === remaining) {
+          const anchor = chunk[Math.floor(Math.random() * chunk.length)];
+          const slot = this._createAdSlot(fullWidth);
+          anchor.after(slot);
+          slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
+          if (this._adObserver) this._adObserver.observe(slot);
+          if (fullWidth) needsRefresh = true;
+          pageOffset = 0;
+        } else {
+          pageOffset += chunk.length;
+        }
+        i += remaining;
+      }
+    }
+
+    data._adRealCount += newItems.length;
+    if (needsRefresh) this.refresh();
+  }
+
+  _createAdSlot(fullWidth) {
+    const slot = document.createElement('li');
+    slot.className = 'mo-ad-slot';
+    if (fullWidth) slot.classList.add('mo-fullwidth');
+    return slot;
   }
 
   _observeItems(items) {
