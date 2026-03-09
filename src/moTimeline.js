@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.9.0
+ * moTimeline v2.10.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -23,6 +23,7 @@ const DEFAULTS = {
   cardMarginFullWidth: '0.5rem',
   randomFullWidth: 0, // 0 = off; 0–1 = probability per item; true = 0.33
   animate: false,     // false | 'fade' | 'slide'
+  renderCard: null,   // (item, cardEl) => void — custom card renderer; skips built-in HTML
 };
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -382,43 +383,49 @@ export class MoTimeline {
     const card = document.createElement('div');
     card.className = 'mo-card';
 
-    if (item.banner) {
-      const wrap = document.createElement('div');
-      wrap.className = 'mo-card-image';
-      const banner = document.createElement('img');
-      banner.className = 'mo-banner';
-      banner.src = item.banner;
-      banner.alt = '';
-      wrap.appendChild(banner);
-      if (item.avatar) {
-        const avatar = document.createElement('img');
-        avatar.className = 'mo-avatar';
-        avatar.src = item.avatar;
-        avatar.alt = '';
-        wrap.appendChild(avatar);
+    const data = this._getData();
+    if (data && typeof data.renderCard === 'function') {
+      data.renderCard(item, card);
+    } else {
+      if (item.banner) {
+        const wrap = document.createElement('div');
+        wrap.className = 'mo-card-image';
+        const banner = document.createElement('img');
+        banner.className = 'mo-banner';
+        banner.src = item.banner;
+        banner.alt = '';
+        wrap.appendChild(banner);
+        if (item.avatar) {
+          const avatar = document.createElement('img');
+          avatar.className = 'mo-avatar';
+          avatar.src = item.avatar;
+          avatar.alt = '';
+          wrap.appendChild(avatar);
+        }
+        card.appendChild(wrap);
       }
-      card.appendChild(wrap);
+
+      const body = document.createElement('div');
+      body.className = 'mo-card-body';
+      if (item.title) {
+        const h = document.createElement('h3');
+        h.textContent = item.title;
+        body.appendChild(h);
+      }
+      if (item.meta) {
+        const m = document.createElement('p');
+        m.className = 'mo-meta';
+        m.textContent = item.meta;
+        body.appendChild(m);
+      }
+      if (item.text) {
+        const p = document.createElement('p');
+        p.textContent = item.text;
+        body.appendChild(p);
+      }
+      card.appendChild(body);
     }
 
-    const body = document.createElement('div');
-    body.className = 'mo-card-body';
-    if (item.title) {
-      const h = document.createElement('h3');
-      h.textContent = item.title;
-      body.appendChild(h);
-    }
-    if (item.meta) {
-      const m = document.createElement('p');
-      m.className = 'mo-meta';
-      m.textContent = item.meta;
-      body.appendChild(m);
-    }
-    if (item.text) {
-      const p = document.createElement('p');
-      p.textContent = item.text;
-      body.appendChild(p);
-    }
-    card.appendChild(body);
     li.appendChild(card);
     return li;
   }

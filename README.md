@@ -145,6 +145,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `cardMarginFullWidth` | string | `'0.5rem'` | Margin of full-width themed cards. Sets `--mo-card-margin-fullwidth` on the container. |
 | `randomFullWidth` | number \| boolean | `0` | `0`/`false` = off. A number `0–1` sets the probability that each item is randomly promoted to full-width during init. `true` = 33% chance. Items can also be set manually by adding the `mo-fullwidth` class to the `<li>`. |
 | `animate` | string \| boolean | `false` | Animate items as they scroll into view using `IntersectionObserver`. `'fade'` — items fade in. `'slide'` — left-column items slide in from the left, right-column items from the right. `true` = `'fade'`. Disable for individual items by adding `mo-visible` manually. Control speed via `--mo-animate-duration`. |
+| `renderCard` | function \| null | `null` | `(item, cardEl) => void`. When set, called for every item instead of the built-in HTML renderer. `cardEl` is the `.mo-card` div already placed inside the `<li>`. Populate it via `innerHTML` or DOM methods. The library still owns the `<li>`, column placement, spine, badge, arrow, `addItems()`, and scroll pagination. |
 
 ---
 
@@ -416,6 +417,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.10.0
+- New option `renderCard(item, cardEl)` — custom card renderer. When provided, the library skips its built-in card HTML and calls this function instead, passing the item data object and the `.mo-card` div already inserted into the DOM. The library continues to own column placement, spine, badge, arrow, `addItems()`, and scroll pagination. Enables full React component injection via `createRoot(cardEl).render(...)`.
 
 ### v2.9.0
 - New option `animate` — scroll-triggered animations via `IntersectionObserver`. `'fade'` fades items in as they enter the viewport; `'slide'` slides left-column items from the left and right-column items from the right. `true` defaults to `'fade'`. Speed controlled via `--mo-animate-duration` (default `0.5s`). Works for initial load, `addItems()`, and `insertItem()`.

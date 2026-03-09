@@ -705,6 +705,10 @@ observer.<span class="fn">observe</span>(sentinel);
           <td><code>animate</code></td><td>string&nbsp;|&nbsp;boolean</td><td><code>false</code></td>
           <td>Animate items as they scroll into view using <code>IntersectionObserver</code>. <code>'fade'</code> — fade in. <code>'slide'</code> — slide in from left/right column direction. <code>true</code> = <code>'fade'</code>. Speed via <code>--mo-animate-duration</code>.</td>
         </tr>
+        <tr>
+          <td><code>renderCard</code></td><td>function&nbsp;|&nbsp;null</td><td><code>null</code></td>
+          <td><code>(item, cardEl) =&gt; void</code>. When set, called for every item instead of the built-in HTML renderer. <code>cardEl</code> is the <code>.mo-card</code> div already placed inside the <code>&lt;li&gt;</code>. Populate it via <code>innerHTML</code> or DOM methods. The library still owns column placement, spine, badge, arrow, <code>addItems()</code>, and scroll pagination.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -758,7 +762,7 @@ observer.<span class="fn">observe</span>(sentinel);
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
@@ -843,17 +847,23 @@ observer.<span class="fn">observe</span>(sentinel);
       const li=document.createElement('li');
       if(item.icon) li.dataset.moIcon=item.icon;
       const card=document.createElement('div'); card.className='mo-card';
-      if(item.banner){
-        const wrap=document.createElement('div'); wrap.className='mo-card-image';
-        const b=document.createElement('img'); b.className='mo-banner'; b.src=item.banner; b.alt=''; wrap.appendChild(b);
-        if(item.avatar){ const a=document.createElement('img'); a.className='mo-avatar'; a.src=item.avatar; a.alt=''; wrap.appendChild(a); }
-        card.appendChild(wrap);
+      const d=this._d();
+      if(d && typeof d.renderCard==='function'){
+        d.renderCard(item,card);
+      } else {
+        if(item.banner){
+          const wrap=document.createElement('div'); wrap.className='mo-card-image';
+          const b=document.createElement('img'); b.className='mo-banner'; b.src=item.banner; b.alt=''; wrap.appendChild(b);
+          if(item.avatar){ const a=document.createElement('img'); a.className='mo-avatar'; a.src=item.avatar; a.alt=''; wrap.appendChild(a); }
+          card.appendChild(wrap);
+        }
+        const body=document.createElement('div'); body.className='mo-card-body';
+        if(item.title){ const h=document.createElement('h3'); h.textContent=item.title; body.appendChild(h); }
+        if(item.meta){ const m=document.createElement('p'); m.className='mo-meta'; m.textContent=item.meta; body.appendChild(m); }
+        if(item.text){ const p=document.createElement('p'); p.textContent=item.text; body.appendChild(p); }
+        card.appendChild(body);
       }
-      const body=document.createElement('div'); body.className='mo-card-body';
-      if(item.title){ const h=document.createElement('h3'); h.textContent=item.title; body.appendChild(h); }
-      if(item.meta){ const m=document.createElement('p'); m.className='mo-meta'; m.textContent=item.meta; body.appendChild(m); }
-      if(item.text){ const p=document.createElement('p'); p.textContent=item.text; body.appendChild(p); }
-      card.appendChild(body); li.appendChild(card); return li;
+      li.appendChild(card); return li;
     }
     destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
     _d(){ return instanceData.get(this.element); }
