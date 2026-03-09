@@ -20,6 +20,8 @@ Responsive two-column timeline layout library — plain JavaScript, zero depende
 - **Optional theme** — built-in card theme with image banners and overlapping avatars
 - **CSS custom properties** — override colors and sizes with one line of CSS
 - **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`
+- **Custom card renderer** — pass `renderCard(item, cardEl)` to inject any HTML, vanilla JS, or full React components into each card slot; the library handles everything else
+- **Publisher-ready ad slots** — the most publisher-friendly timeline on npm: `adSlots` injects viewport-triggered `<li>` placeholders at configurable cadences (`every_n` or `random`), fires `onEnterViewport` exactly once per slot at ≥ 50% visibility, works seamlessly with infinite scroll, and cleans up on `destroy()`. Drop in AdSense, house ads, or any network with three lines of code.
 - **Bootstrap compatible** — wrap the `<ul>` in a Bootstrap `.container`, no config needed
 - **ESM · CJS · UMD** — works with any bundler or as a plain `<script>` tag
 
