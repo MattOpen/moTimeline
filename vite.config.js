@@ -6,7 +6,7 @@ export default defineConfig({
   root: '.',
   publicDir: false,
   server: {
-    open: '/example/index.html',
+    open: '/docs/index.html',
     fs: { allow: ['.'] },
   },
   build: {

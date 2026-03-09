@@ -92,6 +92,41 @@ import 'motimeline/dist/moTimeline.css';
 </li>
 ```
 
+### Rendered DOM (after init)
+
+The library injects classes and elements into your markup. Here is what a fully rendered item looks like:
+
+```html
+<!-- Container gets mo-timeline, mo-theme, mo-twocol added -->
+<ul class="mo-timeline mo-theme mo-twocol">
+
+  <!-- Left-column item: mo-item + js-mo-item added to every <li> -->
+  <li class="mo-item js-mo-item">
+    <span class="mo-arrow js-mo-arrow"></span>   <!-- injected when showArrow: true -->
+    <span class="mo-badge js-mo-badge">1</span>  <!-- injected when showBadge: true -->
+    <div class="mo-card">
+      <div class="mo-card-image">
+        <img class="mo-banner" src="banner.jpg" alt="">
+        <img class="mo-avatar" src="avatar.jpg" alt="">
+      </div>
+      <div class="mo-card-body">
+        <h3>Title</h3>
+        <p class="mo-meta">Date</p>
+        <p>Text…</p>
+      </div>
+    </div>
+  </li>
+
+  <!-- Right-column item: also gets mo-inverted + js-mo-inverted -->
+  <li class="mo-item js-mo-item mo-inverted js-mo-inverted">
+    ...
+  </li>
+
+</ul>
+```
+
+> `js-mo-*` classes are JS-only selector mirrors of their `mo-*` counterparts — use them in your own scripts to avoid coupling to styling class names.
+
 ---
 
 ## Options

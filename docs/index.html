@@ -421,7 +421,7 @@
   <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span> });
 &lt;/<span class="fn">script</span>&gt;</code></pre>
 
-    <h3>HTML structure (with theme)</h3>
+    <h3>HTML structure (with theme) — what you write</h3>
     <pre><code>&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
   &lt;<span class="fn">li</span>&gt;
     &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
@@ -435,6 +435,29 @@
         &lt;<span class="fn">p</span>&gt;Text...&lt;/<span class="fn">p</span>&gt;
       &lt;/<span class="fn">div</span>&gt;
     &lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
+&lt;/<span class="fn">ul</span>&gt;</code></pre>
+
+    <h3>Rendered DOM (after init) — what the library produces</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">Classes and elements added automatically by the library are highlighted. Right-column items also get <code>mo-inverted js-mo-inverted</code> on the <code>&lt;li&gt;</code>.</p>
+    <pre><code>&lt;<span class="fn">ul</span> class=<span class="str">"mo-timeline mo-theme mo-twocol"</span>&gt;
+  &lt;<span class="fn">li</span> class=<span class="str">"<span style="background:rgba(99,102,241,.15);border-radius:3px;padding:0 2px">mo-item js-mo-item</span>"</span>&gt;          <span class="cm">&lt;!-- added by library --&gt;</span>
+    &lt;<span class="fn">span</span> class=<span class="str">"<span style="background:rgba(99,102,241,.15);border-radius:3px;padding:0 2px">mo-arrow js-mo-arrow</span>"</span>&gt;&lt;/<span class="fn">span</span>&gt;  <span class="cm">&lt;!-- injected if showArrow --&gt;</span>
+    &lt;<span class="fn">span</span> class=<span class="str">"<span style="background:rgba(99,102,241,.15);border-radius:3px;padding:0 2px">mo-badge js-mo-badge</span>"</span>&gt;1&lt;/<span class="fn">span</span>&gt;   <span class="cm">&lt;!-- injected if showBadge --&gt;</span>
+    &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-image"</span>&gt;
+        &lt;<span class="fn">img</span> class=<span class="str">"mo-banner"</span> src=<span class="str">"..."</span>&gt;
+        &lt;<span class="fn">img</span> class=<span class="str">"mo-avatar"</span> src=<span class="str">"..."</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
+        &lt;<span class="fn">h3</span>&gt;Title&lt;/<span class="fn">h3</span>&gt;
+        &lt;<span class="fn">p</span> class=<span class="str">"mo-meta"</span>&gt;Date&lt;/<span class="fn">p</span>&gt;
+        &lt;<span class="fn">p</span>&gt;Text...&lt;/<span class="fn">p</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
+  &lt;<span class="fn">li</span> class=<span class="str">"<span style="background:rgba(99,102,241,.15);border-radius:3px;padding:0 2px">mo-item js-mo-item mo-inverted js-mo-inverted</span>"</span>&gt;  <span class="cm">&lt;!-- right-column item --&gt;</span>
+    ...
   &lt;/<span class="fn">li</span>&gt;
 &lt;/<span class="fn">ul</span>&gt;</code></pre>
 
