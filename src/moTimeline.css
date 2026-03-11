@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.12.0 — CSS
+ * moTimeline v2.12.1 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -94,7 +94,7 @@
   font-weight: 700;
   height: var(--mo-badge-size);
   justify-content: center;
-  min-width: var(--mo-badge-size);
+  width: var(--mo-badge-size);
   overflow: hidden;
   position: absolute;
   top: 18px;
