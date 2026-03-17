@@ -19,6 +19,7 @@ Responsive two-column timeline layout library — plain JavaScript, zero depende
 - **Badges & arrows** — numbered badges on the center line, directional arrows
 - **Optional theme** — built-in card theme with image banners and overlapping avatars
 - **CSS custom properties** — override colors and sizes with one line of CSS
+- **Category filtering** — tag items with `categories` and call `filterByCategory()` to show/hide by category; active filter persists automatically through lazy-loaded batches
 - **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`
 - **Custom card renderer** — pass `renderCard(item, cardEl)` to inject any HTML, vanilla JS, or full React components into each card slot; the library handles everything else
 - **Publisher-ready ad slots** — the most publisher-friendly timeline on npm: `adSlots` injects viewport-triggered `<li>` placeholders at configurable cadences (`every_n` or `random`), fires `onEnterViewport` exactly once per slot at ≥ 50% visibility, works seamlessly with infinite scroll, and cleans up on `destroy()`. Drop in AdSense, house ads, or any network with three lines of code.
@@ -157,6 +158,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | Attribute | Element | Description |
 |---|---|---|
 | `data-mo-icon` | `<li>` | URL of the image shown inside the badge when `showCounterStyle: 'image'`. Accepts any web-safe format including inline SVG data URIs. Falls back to a built-in SVG icon if absent. Also set automatically by `addItems()` when an `icon` field is provided. |
+| `data-categories` | `<li>` | Space-separated list of category tokens this item belongs to (e.g. `"development architecture"`). Used by `filterByCategory()`. Set automatically by `addItems()` / `insertItem()` when a `categories` field is provided. Can also be set manually in HTML. |
 
 ---
 
@@ -180,6 +182,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `mo-card-body` | `<div>` | Text content area. Padding and typography when `mo-theme` is active. |
 | `mo-meta` | `<p>` | Date / subtitle line inside a card body. Muted colour, smaller font. |
 | `js-mo-item` · `js-mo-inverted` | `<li>` | JS-only selector mirrors of `mo-item` / `mo-inverted`. Use in your own JS queries to avoid coupling to styling class names. |
+| `mo-filtered-out` | `<li>` | Added by `filterByCategory()` to items that do not match the active filter. Sets `display: none` and excludes the item from column-placement calculations. Removed when the filter is cleared or the item's category is selected. |
 
 ---
 
@@ -188,12 +191,13 @@ The library injects classes and elements into your markup. Here is what a fully 
 ```js
 const tl = new MoTimeline(elementOrSelector, options);
 
-tl.refresh();               // re-layout all items (called automatically on resize)
-tl.initNewItems();          // pick up manually appended <li> elements
-tl.addItems(items);         // create and append <li> from an array of item objects (or JSON string)
-tl.insertItem(item, index); // insert a single item at a specific index (or random if omitted)
-tl.clear();                 // remove all items and ad slots, reset counters — instance stays alive
-tl.destroy();               // remove listeners and reset DOM classes
+tl.refresh();                      // re-layout all items (called automatically on resize)
+tl.initNewItems();                 // pick up manually appended <li> elements
+tl.addItems(items);                // create and append <li> from an array of item objects (or JSON string)
+tl.insertItem(item, index);        // insert a single item at a specific index (or random if omitted)
+tl.filterByCategory(category);    // show only items matching category; null / 'all' shows everything
+tl.clear();                        // remove all items and ad slots, reset counters — instance stays alive
+tl.destroy();                      // remove listeners and reset DOM classes
 ```
 
 ### insertItem
@@ -221,7 +225,8 @@ tl.addItems([
     text:   "Kicked off the roadmap.", // body paragraph
     banner: "images/banner.jpg",       // img.mo-banner (optional)
     avatar: "images/avatar.jpg",       // img.mo-avatar (optional)
-    icon:   "images/icon.svg"          // data-mo-icon on <li>, used by showCounterStyle:'image'
+    icon:       "images/icon.svg",        // data-mo-icon on <li>, used by showCounterStyle:'image'
+    categories: ["development", "architecture"] // used by filterByCategory() — array or space-separated string
   },
 ]);
 
@@ -376,6 +381,41 @@ const tl = new MoTimeline('#my-timeline', {
 
 Slots are injected after each `addItems()` call, so they work seamlessly with infinite scroll.
 
+## Category filter recipe
+
+Tag items with `categories` (array or space-separated string) and wire `filterByCategory()` to your own filter buttons. The active filter is stored on the instance — items added later via `addItems()` are filtered automatically, making it fully compatible with infinite scroll.
+
+```js
+const tl = new MoTimeline('#my-timeline', { theme: true, showBadge: true });
+
+// Load items with categories
+tl.addItems([
+  { title: 'API cleanup',   meta: 'Jan 2025', text: '...', categories: ['development', 'architecture'] },
+  { title: 'Sprint review', meta: 'Feb 2025', text: '...', categories: 'management' },
+]);
+
+// Wire filter buttons
+document.querySelectorAll('.filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    tl.filterByCategory(btn.dataset.cat); // pass null or 'all' to show everything
+  });
+});
+
+// Active filter persists through lazy-loaded batches
+tl.addItems(moreItemsFromServer); // auto-filtered to match current selection
+```
+
+Or set `data-categories` directly in HTML and use `initNewItems()`:
+
+```html
+<li data-categories="development architecture">...</li>
+<li data-categories="management">...</li>
+```
+
+---
+
 ## Infinite scroll recipe
 
 moTimeline handles the layout — you own the data fetching. Wire an `IntersectionObserver` to a sentinel element below the list and call `addItems()` when it comes into view.
@@ -467,6 +507,12 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.13.0
+- New: **category filtering** — tag items with `categories` (array or space-separated string) and call `filterByCategory(category)` to show only matching items. Pass `null` or `'all'` to clear the filter. The active filter is stored on the instance and applied automatically to items added via `addItems()` or `initNewItems()`, making it fully compatible with infinite scroll / server-side pagination. Column placement recalculates on every filter change so the two-column layout stays correct. New class `mo-filtered-out` is used internally (`display: none`) and new attribute `data-categories` is set on each `<li>`.
+
+### v2.12.1
+- Fix: badge width — use `width` instead of `min-width` to prevent oversized badges ([#8](https://github.com/MattOpen/moTimeline/issues/8))
 
 ### v2.12.0
 - New method `clear()` — removes all `.mo-item` and `.mo-ad-slot` elements from the container and resets internal counters (`lastItemIdx`, `_adRealCount`) without destroying the instance. Active `IntersectionObserver`s are disconnected but kept alive so they re-observe items added by the next `addItems()` call. Use this in React wrappers to reinitialize timeline content when props change without recreating the instance.

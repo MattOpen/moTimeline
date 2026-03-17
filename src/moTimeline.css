@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.12.1 — CSS
+ * moTimeline v2.13.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -307,4 +307,12 @@
 /* Minimum height so IntersectionObserver can fire before content loads */
 .mo-timeline > .mo-item.mo-ad-slot {
   min-height: 100px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CATEGORY FILTER  —  applied via filterByCategory(category)
+   ═══════════════════════════════════════════════════════════════ */
+
+.mo-timeline > .mo-item.mo-filtered-out {
+  display: none;
 }

@@ -108,6 +108,7 @@
     .mo-timeline.mo-animate-slide > .mo-item:not(.mo-inverted) { opacity: 0; transform: translateX(-40px); }
     .mo-timeline.mo-animate-slide > .mo-item.mo-inverted { opacity: 0; transform: translateX(40px); }
     .mo-timeline:not(.mo-twocol).mo-animate-slide > .mo-item { transform: translateX(-40px); }
+    .mo-timeline > .mo-item.mo-filtered-out { display: none; }
     .mo-timeline.mo-animate > .mo-item.mo-visible { opacity: 1; transform: translateX(0); }
 
     /* demo controls */
@@ -116,10 +117,16 @@
     .demo-controls button:hover { background: var(--accent2); }
 
     /* ── DEMO TABS ── */
-    .demo-tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.75rem; }
+    .demo-tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.75rem; flex-wrap: wrap; }
     .demo-tab { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-bottom: -2px; padding: 0.65rem 1.3rem; transition: color .15s, border-color .15s; }
     .demo-tab:hover { color: var(--text); }
     .demo-tab.active { border-bottom-color: var(--accent); color: var(--accent); }
+
+    /* ── Category filter pills ── */
+    .cat-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .cat-btn { background: #fff; border: 1.5px solid var(--border); border-radius: 999px; color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
+    .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cat-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .demo-panel { display: none; }
     .demo-panel.active { display: block; }
 
@@ -197,6 +204,7 @@
       <button class="demo-tab active" data-tab="tab-motimeline">moTimeline</button>
       <button class="demo-tab" data-tab="tab-timestamp">Timestamp</button>
       <button class="demo-tab" data-tab="tab-bootstrap">Bootstrap</button>
+      <button class="demo-tab" data-tab="tab-filter">Category Filter</button>
     </div>
 
     <!-- ── Tab 1: moTimeline ── -->
@@ -402,6 +410,18 @@
       </ul>
     </div>
 
+    <!-- ── Tab 4: Category Filter ── -->
+    <div class="demo-panel" id="tab-filter">
+      <div class="cat-filters">
+        <button class="cat-btn active" data-cat="all">All</button>
+        <button class="cat-btn" data-cat="development">Development</button>
+        <button class="cat-btn" data-cat="management">Management</button>
+        <button class="cat-btn" data-cat="architecture">Architecture</button>
+        <button class="cat-btn" data-cat="database">Database &amp; BI</button>
+      </div>
+      <ul id="tl-filter"></ul>
+    </div>
+
   </div>
 </section>
 
@@ -571,12 +591,13 @@
     <pre><code><span class="cm">// Initialize (also called automatically in constructor)</span>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(elementOrSelector, options);
 
-tl.<span class="fn">refresh</span>();                    <span class="cm">// re-layout (called automatically on resize)</span>
-tl.<span class="fn">initNewItems</span>();            <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
-tl.<span class="fn">addItems</span>(items);            <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
-tl.<span class="fn">insertItem</span>(item, index);   <span class="cm">// insert a single item at index (omit for random position)</span>
-tl.<span class="fn">clear</span>();                      <span class="cm">// remove all items and ad slots, reset counters — instance stays alive</span>
-tl.<span class="fn">destroy</span>();                   <span class="cm">// remove listeners, reset DOM</span></code></pre>
+tl.<span class="fn">refresh</span>();                         <span class="cm">// re-layout (called automatically on resize)</span>
+tl.<span class="fn">initNewItems</span>();                 <span class="cm">// pick up manually appended &lt;li&gt; elements</span>
+tl.<span class="fn">addItems</span>(items);                 <span class="cm">// create &lt;li&gt; from an array of objects (or JSON string) and append</span>
+tl.<span class="fn">insertItem</span>(item, index);        <span class="cm">// insert a single item at index (omit for random position)</span>
+tl.<span class="fn">filterByCategory</span>(category);    <span class="cm">// show only items whose data-categories includes category; null/'all' shows all</span>
+tl.<span class="fn">clear</span>();                           <span class="cm">// remove all items and ad slots, reset counters — instance stays alive</span>
+tl.<span class="fn">destroy</span>();                        <span class="cm">// remove listeners, reset DOM</span></code></pre>
 
     <h3>addItems / insertItem — item schema</h3>
     <pre><code><span class="cm">// All fields are optional except at least one of title / text</span>
@@ -588,7 +609,8 @@ tl.<span class="fn">addItems</span>([
     <span class="str">banner</span>:    <span class="str">"images/banner.jpg"</span>,       <span class="cm">// img.mo-banner (optional)</span>
     <span class="str">avatar</span>:    <span class="str">"images/avatar.jpg"</span>,       <span class="cm">// img.mo-avatar (optional)</span>
     <span class="str">icon</span>:      <span class="str">"images/icon.svg"</span>,         <span class="cm">// data-mo-icon on &lt;li&gt;, used by showCounterStyle:'image'</span>
-    <span class="str">fullWidth</span>: <span class="kw">true</span>                       <span class="cm">// span both columns (insertItem only)</span>
+    <span class="str">fullWidth</span>:  <span class="kw">true</span>,                      <span class="cm">// span both columns (insertItem only)</span>
+    <span class="str">categories</span>: [<span class="str">"development"</span>, <span class="str">"architecture"</span>] <span class="cm">// used by filterByCategory() — also accepts a space-separated string</span>
   },
 ]);
 
@@ -635,6 +657,38 @@ observer.<span class="fn">observe</span>(sentinel);
   <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
   <span class="kw">return</span> data.items; <span class="cm">// [{ title, meta, text, banner, avatar }, …]</span>
 }</code></pre>
+
+    <h3>Category filter recipe</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">Tag items with <code>data-categories</code>, then call <code>filterByCategory()</code> from your own filter buttons. The active filter is remembered — items added later via <code>addItems()</code> are filtered automatically.</p>
+    <pre><code><span class="cm">&lt;!-- Filter buttons (your own markup) --&gt;</span>
+&lt;<span class="fn">div</span> class=<span class="str">"filters"</span>&gt;
+  &lt;<span class="fn">button</span> data-cat=<span class="str">"all"</span>&gt;All&lt;/<span class="fn">button</span>&gt;
+  &lt;<span class="fn">button</span> data-cat=<span class="str">"development"</span>&gt;Development&lt;/<span class="fn">button</span>&gt;
+  &lt;<span class="fn">button</span> data-cat=<span class="str">"architecture"</span>&gt;Architecture&lt;/<span class="fn">button</span>&gt;
+&lt;/<span class="fn">div</span>&gt;
+
+<span class="cm">&lt;!-- Items tagged with categories --&gt;</span>
+&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;&lt;/<span class="fn">ul</span>&gt;</code></pre>
+
+    <pre><code><span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="kw">true</span>, showBadge: <span class="kw">true</span> });
+
+<span class="cm">// Load items with categories (array or space-separated string)</span>
+tl.<span class="fn">addItems</span>([
+  { title: <span class="str">'API cleanup'</span>,  meta: <span class="str">'Jan 2025'</span>, text: <span class="str">'...'</span>, categories: [<span class="str">'development'</span>, <span class="str">'architecture'</span>] },
+  { title: <span class="str">'Sprint review'</span>, meta: <span class="str">'Feb 2025'</span>, text: <span class="str">'...'</span>, categories: <span class="str">'management'</span> },
+]);
+
+<span class="cm">// Wire filter buttons</span>
+document.<span class="fn">querySelectorAll</span>(<span class="str">'.filters button'</span>).<span class="fn">forEach</span>(btn =&gt; {
+  btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () =&gt; {
+    document.<span class="fn">querySelectorAll</span>(<span class="str">'.filters button'</span>).<span class="fn">forEach</span>(b =&gt; b.classList.<span class="fn">remove</span>(<span class="str">'active'</span>));
+    btn.classList.<span class="fn">add</span>(<span class="str">'active'</span>);
+    tl.<span class="fn">filterByCategory</span>(btn.dataset.cat); <span class="cm">// 'all' → show everything</span>
+  });
+});
+
+<span class="cm">// Active filter persists through lazy-loaded batches</span>
+tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// new items auto-filtered to match current selection</span></code></pre>
 
     <h3>CSS custom properties</h3>
     <pre><code><span class="fn">#my-timeline</span> {
@@ -743,6 +797,10 @@ observer.<span class="fn">observe</span>(sentinel);
           <td><code>data-mo-icon</code></td><td><code>&lt;li&gt;</code></td>
           <td>URL of the image shown inside the badge when <code>showCounterStyle: 'image'</code>. Accepts any web-safe format including inline SVG data URIs. If omitted, the built-in flat SVG icon is used as fallback. Also set automatically by <code>addItems()</code> when an <code>icon</code> field is provided.</td>
         </tr>
+        <tr>
+          <td><code>data-categories</code></td><td><code>&lt;li&gt;</code></td>
+          <td>Space-separated list of category tokens this item belongs to (e.g. <code>"development architecture"</code>). Used by <code>filterByCategory()</code> to show or hide items. Set automatically by <code>addItems()</code> / <code>insertItem()</code> when a <code>categories</code> field is provided (array or string). Can also be set manually in HTML.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -768,6 +826,7 @@ observer.<span class="fn">observe</span>(sentinel);
         <tr><td><code>mo-card-body</code></td><td><code>&lt;div&gt;</code></td><td>Text content area. Receives padding and typography when <code>mo-theme</code> is active.</td></tr>
         <tr><td><code>mo-meta</code></td><td><code>&lt;p&gt;</code></td><td>Date / subtitle line inside a card body. Muted colour, smaller font.</td></tr>
         <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>
+        <tr><td><code>mo-filtered-out</code></td><td><code>&lt;li&gt;</code></td><td>Added by <code>filterByCategory()</code> to items that do not match the active filter. Sets <code>display: none</code> and excludes the item from column-placement calculations. Removed automatically when the filter is cleared or the item's category is selected.</td></tr>
       </tbody>
     </table>
   </div>
@@ -825,12 +884,12 @@ observer.<span class="fn">observe</span>(sentinel);
         Array.from(el.children).forEach(child=>inst._spp(child));
       });
     }
-    _spp(el){ if(el.classList.contains('mo-fullwidth')){ el.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); return; } const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
+    _spp(el){ if(el.classList.contains('mo-filtered-out')) return; if(el.classList.contains('mo-fullwidth')){ el.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); return; } const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
     _lr(el){
       if(!el) return null;
       const d=this._d(); if(!d) return null;
-      const pi=prevAll(el,'.js-mo-inverted')[0]||null;
-      const pl=prevAll(el,'.js-mo-item:not(.js-mo-inverted)')[0]||null;
+      const pi=prevAll(el,'.js-mo-inverted:not(.mo-filtered-out)')[0]||null;
+      const pl=prevAll(el,'.js-mo-item:not(.js-mo-inverted):not(.mo-filtered-out)')[0]||null;
       const l=pos(pl), r=pos(pi), e=pos(el);
       let lr=0, bo=0;
       if(d.col>1){
@@ -873,9 +932,25 @@ observer.<span class="fn">observe</span>(sentinel);
       newEl.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); });
       return newEl;
     }
+    filterByCategory(category){
+      const d=this._d(); if(!d) return;
+      d._activeFilter=(category==null||category===''||category==='all')?null:String(category);
+      instanceData.set(this.element,d);
+      this._af(Array.from(this.element.querySelectorAll('.js-mo-item')));
+      this.refresh();
+    }
+    _af(items){
+      const d=this._d(); if(!d) return;
+      const active=d._activeFilter||null;
+      items.forEach(item=>{
+        if(!active){ item.classList.remove('mo-filtered-out'); }
+        else { const cats=(item.dataset.categories||'').split(/\s+/).filter(Boolean); item.classList.toggle('mo-filtered-out',!cats.includes(active)); }
+      });
+    }
     _cie(item){
       const li=document.createElement('li');
       if(item.icon) li.dataset.moIcon=item.icon;
+      if(item.categories){ li.dataset.categories=Array.isArray(item.categories)?item.categories.join(' '):String(item.categories); }
       const card=document.createElement('div'); card.className='mo-card';
       const d=this._d();
       if(d && typeof d.renderCard==='function'){
@@ -909,7 +984,7 @@ observer.<span class="fn">observe</span>(sentinel);
         if(d.showBadge){ const s=document.createElement('span'); s.className='mo-badge js-mo-badge'; if(d.showCounterStyle==='none') s.style.opacity='0'; else if(d.showCounterStyle==='image'){ const img=document.createElement('img'); img.className='mo-badge-icon'; img.alt=''; img.src=item.dataset.moIcon||DEFAULT_BADGE_ICON; s.appendChild(img); } else { s.textContent=i+d.lastItemIdx+1; } item.prepend(s); }
         if(d.showArrow){ const s=document.createElement('span'); s.className='mo-arrow js-mo-arrow'; item.prepend(s); }
       });
-      d.lastItemIdx=all.length; this._div(); this.refresh();
+      d.lastItemIdx=all.length; this._div(); this._af(items); this.refresh();
       this._obs(items);
       this._injectAdSlots(items);
       items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
@@ -1046,8 +1121,32 @@ observer.<span class="fn">observe</span>(sentinel);
   // ── Tab 3: Bootstrap demo ───────────────────────────────────────────────────
   const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { showBadge:true, showArrow:true, theme:false });
 
+  // ── Tab 4: Category Filter demo ─────────────────────────────────────────────
+  const tl4 = new MoTimeline(document.getElementById('tl-filter'), { showBadge:true, showArrow:true, theme:true });
+  tl4.addItems([
+    { title:'DI & .NET Architectural Cleanup',  meta:'01/2026 – 02/2026 · Project Lead / Developer',  text:'Refactored service architecture — removed static patterns, fixed DI lifetime mismatches and eliminated tight coupling.',         categories:['architecture','development'] },
+    { title:'exponde – Web Platform',           meta:'07/2025 – 11/2025 · Project Lead / Developer',   text:'Full pre-launch of a web platform plus iOS & Android apps. Led international team, coordinated design agencies.',             categories:['development','management'] },
+    { title:'Barrier-Free Strengthening Act',   meta:'09/2024 – 06/2025 · Project Lead / Developer',   text:'WCAG 2.1 (AA) / EN 301 549 compliance across websites, mobile apps and digital documents.',                                  categories:['development','management'] },
+    { title:'Sales Controlling Dashboard',      meta:'01/2024 – 08/2024 · Software Developer',         text:'Power BI dashboard connecting ERP and CRM data. Automated weekly KPI reports across five regional sales teams.',             categories:['database','management'] },
+    { title:'Data Warehouse Migration',         meta:'01/2023 – 12/2023 · Software Developer',         text:'Migrated legacy on-premises DWH to Azure Synapse. Rebuilt ETL pipelines and cut nightly batch runtime by 60 %.',            categories:['database','architecture'] },
+    { title:'Microservices Decomposition',      meta:'03/2022 – 11/2022 · Software Architect',         text:'Broke a 400 k-line monolith into 12 bounded-context services. Defined inter-service contracts and deployment topology.',      categories:['architecture','development'] },
+    { title:'Customer Portal Relaunch',         meta:'06/2021 – 02/2022 · Project Lead / Developer',   text:'Rebuilt self-service portal from scratch — React frontend, .NET 6 BFF, Azure AD B2C authentication.',                        categories:['development','management'] },
+    { title:'BI Reporting Platform',            meta:'01/2020 – 05/2021 · Software Developer',         text:'Introduced a centralised reporting platform (SSRS → Power BI). Trained 40 business users and established a data catalogue.', categories:['database'] },
+    { title:'Cloud Migration Strategy',         meta:'08/2019 – 12/2019 · Software Architect',         text:'Assessed 60 on-premises applications and produced a cloud-readiness roadmap. Six apps lift-and-shifted in the first wave.',   categories:['architecture','management'] },
+    { title:'Legacy ERP Integration',           meta:'03/2018 – 07/2019 · Software Developer',         text:'Built adapter layer between legacy ERP and new e-commerce platform using MQ messaging and canonical data model.',             categories:['development','architecture'] },
+  ]);
+
+  // Filter pill wiring
+  document.querySelectorAll('#tab-filter .cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#tab-filter .cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tl4.filterByCategory(btn.dataset.cat);
+    });
+  });
+
   // ── Tab switching ───────────────────────────────────────────────────────────
-  const instances = { 'tab-motimeline': tl1, 'tab-timestamp': tl2, 'tab-bootstrap': tl3 };
+  const instances = { 'tab-motimeline': tl1, 'tab-timestamp': tl2, 'tab-bootstrap': tl3, 'tab-filter': tl4 };
   document.querySelectorAll('.demo-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.demo-tab').forEach(b => b.classList.remove('active'));

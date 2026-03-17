@@ -26,7 +26,11 @@
 
     main { max-width: 960px; margin: 2.5rem auto; padding: 0 1rem; }
 
-    .controls { display: flex; gap: 0.75rem; justify-content: center; margin: 1.5rem 0 2rem; flex-wrap: wrap; }
+    .controls { display: flex; gap: 0.75rem; justify-content: center; margin: 1.5rem 0 1rem; flex-wrap: wrap; }
+    .cat-filters { display: flex; gap: 0.5rem; justify-content: center; margin: 0 0 2rem; flex-wrap: wrap; }
+    .cat-btn { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 999px; color: #6b7280; cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
+    .cat-btn:hover { border-color: #4f46e5; color: #4f46e5; }
+    .cat-btn.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
     button {
       background: #4f46e5;
       border: none;
@@ -69,6 +73,12 @@
     <button id="insertAtBtn" class="secondary">Insert at pos 2</button>
     <button id="toggleAnimateBtn" class="secondary">Toggle animate</button>
   </div>
+  <div class="cat-filters">
+    <button class="cat-btn active" data-cat="all">All</button>
+    <button class="cat-btn" data-cat="frontend">Frontend</button>
+    <button class="cat-btn" data-cat="backend">Backend</button>
+    <button class="cat-btn" data-cat="devops">DevOps</button>
+  </div>
 
   <!-- mo-theme is added/removed by JS via the theme option.
        Card structure when using the theme:
@@ -100,11 +110,13 @@
       text: 'Started the moTimeline rewrite. Removed jQuery, migrated to plain JavaScript with a class-based API and zero dependencies.',
       banner: '../images/banner1.svg',
       avatar: '../images/ryan.jpg',
+      categories: ['frontend', 'backend'],
     },
     {
       title: 'Vite build pipeline',
       meta: 'February 2024',
       text: 'Set up Vite in library mode. Ships ESM, CJS and UMD bundles so any project can import it — bundled or via a plain script tag.',
+      categories: ['devops'],
     },
     {
       title: 'Two-column layout',
@@ -112,11 +124,13 @@
       text: 'Core algorithm places items left and right automatically, filling the shorter column first.',
       banner: '../images/banner2.svg',
       avatar: '../images/eva.jpg',
+      categories: ['frontend'],
     },
     {
       title: 'Responsive design',
       meta: 'April 2024',
       text: 'Collapses to a single column on mobile. Breakpoints configurable per instance via the columnCount option.',
+      categories: ['frontend'],
     },
     {
       title: 'Badge & arrow support',
@@ -124,11 +138,13 @@
       text: 'Numbered badges sit on the center line. Arrows point from each card toward the center — left or right automatically.',
       banner: '../images/banner3.svg',
       avatar: '../images/avatar.jpg',
+      categories: ['frontend'],
     },
     {
-      title: 'Bootstrap compatible',
+      title: 'REST API',
       meta: 'June 2024',
       text: 'No framework option needed. Wrap the <ul> inside a Bootstrap .container for page layout — the library handles its own column widths.',
+      categories: ['backend'],
     },
     {
       title: 'GitHub Pages',
@@ -136,11 +152,13 @@
       text: 'Published a live demo and documentation page. Set GH Pages source to /docs in repo settings.',
       banner: '../images/banner4.svg',
       avatar: '../images/ryan.jpg',
+      categories: ['devops'],
     },
     {
       title: 'Theme system',
       meta: 'August 2024',
       text: 'Opt-in visual theme with card images, overlapping avatars, and styled badges. Enable with theme: true.',
+      categories: ['frontend'],
     },
     {
       title: 'Dynamic items',
@@ -148,23 +166,27 @@
       text: 'Append new <li> elements at any time and call initNewItems() — the library picks them up and positions them correctly.',
       banner: '../images/sample-1.jpg',
       avatar: '../images/eva.jpg',
+      categories: ['backend'],
     },
     {
       title: 'CSS custom properties',
       meta: 'October 2024',
       text: 'Override --mo-badge-bg, --mo-line-color, --mo-arrow-color and others to match your brand in one line of CSS.',
+      categories: ['frontend'],
     },
     {
-      title: 'Resize handling',
+      title: 'CI/CD pipeline',
       meta: 'November 2024',
-      text: 'Debounced resize listener re-layouts on window resize. Smooth collapse from two columns to one on narrow screens.',
+      text: 'Automated build, test, and release pipeline. Deploys to GitHub Pages on every push to main.',
       banner: '../images/banner1.svg',
       avatar: '../images/avatar.jpg',
+      categories: ['devops'],
     },
     {
       title: 'v2.1.0 released',
       meta: 'December 2024',
       text: 'Badges, arrows, theme, CSS variables, zero dependencies, Vite build. The timeline library, done right.',
+      categories: ['frontend', 'backend', 'devops'],
     },
   ];
 
@@ -279,6 +301,14 @@
         tl._observer && tl._observer.observe(i);
       });
     }
+  });
+
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tl.filterByCategory(btn.dataset.cat);
+    });
   });
 </script>
 

@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.12.1
+ * moTimeline v2.13.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -275,12 +275,46 @@ export class MoTimeline {
     this.element.style.removeProperty('--mo-card-margin-fullwidth');
     this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide');
     Array.from(this.element.children).forEach((child) => {
-      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible');
+      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out');
       child.querySelectorAll('.js-mo-badge, .js-mo-arrow').forEach((b) => b.remove());
     });
   }
 
+  /**
+   * Filter visible items by category.
+   * Pass null / 'all' / '' to show everything.
+   * The active filter is remembered and applied automatically to items added later.
+   *
+   * @param {string|null} category — value to match against data-categories on each item
+   */
+  filterByCategory(category) {
+    const data = this._getData();
+    if (!data) return;
+
+    data._activeFilter = (category == null || category === '' || category === 'all')
+      ? null
+      : String(category);
+    instanceData.set(this.element, data);
+
+    this._applyFilter(Array.from(this.element.querySelectorAll('.js-mo-item')));
+    this.refresh();
+  }
+
   // ─── Private ────────────────────────────────────────────────────────────────
+
+  _applyFilter(items) {
+    const data = this._getData();
+    if (!data) return;
+    const active = data._activeFilter || null;
+    items.forEach((item) => {
+      if (!active) {
+        item.classList.remove('mo-filtered-out');
+      } else {
+        const cats = (item.dataset.categories || '').split(/\s+/).filter(Boolean);
+        item.classList.toggle('mo-filtered-out', !cats.includes(active));
+      }
+    });
+  }
 
   _getData() {
     return instanceData.get(this.element);
@@ -337,6 +371,7 @@ export class MoTimeline {
     data.lastItemIdx = allChildren.length;
     instanceData.set(el, data);
 
+    this._applyFilter(newItems);
     this.refresh();
 
     this._observeItems(newItems);
@@ -354,6 +389,8 @@ export class MoTimeline {
   }
 
   _setPostPosition(el) {
+    if (el.classList.contains('mo-filtered-out')) return;
+
     // Full-width items span both columns — skip column assignment
     if (el.classList.contains('mo-fullwidth')) {
       el.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
@@ -376,8 +413,8 @@ export class MoTimeline {
 
     const col = data.col;
 
-    const prevInverted = prevAll(el, '.js-mo-inverted')[0] || null;
-    const prevLeft = prevAll(el, '.js-mo-item:not(.js-mo-inverted)')[0] || null;
+    const prevInverted = prevAll(el, '.js-mo-inverted:not(.mo-filtered-out)')[0] || null;
+    const prevLeft = prevAll(el, '.js-mo-item:not(.js-mo-inverted):not(.mo-filtered-out)')[0] || null;
 
     const l = getPosition(prevLeft);
     const r = getPosition(prevInverted);
@@ -420,6 +457,11 @@ export class MoTimeline {
   _createItemElement(item) {
     const li = document.createElement('li');
     if (item.icon) li.dataset.moIcon = item.icon;
+    if (item.categories) {
+      li.dataset.categories = Array.isArray(item.categories)
+        ? item.categories.join(' ')
+        : String(item.categories);
+    }
 
     const card = document.createElement('div');
     card.className = 'mo-card';
