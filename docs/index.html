@@ -37,6 +37,7 @@
     nav { background: var(--text); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; position: sticky; top: 0; z-index: 100; }
     nav .logo { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
     nav .logo img { height: 28px; width: auto; display: block; border-radius: 18%; }
+    nav .logo .version { font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,.45); letter-spacing: .02em; align-self: flex-end; margin-bottom: 1px; }
     nav a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 0.875rem; margin-left: 1.5rem; }
     nav a:hover { color: #fff; }
 
@@ -166,7 +167,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline</span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.0</span></span>
   <div>
     <a href="#demo">Demo</a>
     <a href="#install">Install</a>
