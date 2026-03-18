@@ -40,6 +40,14 @@
     nav .logo .version { font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,.45); letter-spacing: .02em; align-self: flex-end; margin-bottom: 1px; }
     nav a { color: rgba(255,255,255,.7); text-decoration: none; font-size: 0.875rem; margin-left: 1.5rem; }
     nav a:hover { color: #fff; }
+    .nav-hamburger { display: none; background: none; border: none; color: #fff; cursor: pointer; font-size: 1.6rem; line-height: 1; padding: 0.1rem 0.25rem; }
+    @media (max-width: 640px) {
+      nav { padding: 0.9rem 1.25rem; }
+      .nav-hamburger { display: block; }
+      .nav-links { background: var(--text); display: none; flex-direction: column; gap: 0.1rem; padding: 0.75rem 1.25rem 1rem; position: absolute; right: 0; top: 100%; width: 100%; }
+      .nav-links.open { display: flex; }
+      .nav-links a { border-top: 1px solid rgba(255,255,255,.08); margin-left: 0; padding: 0.55rem 0; }
+    }
 
     /* ── HERO ── */
     .hero { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: #fff; text-align: center; padding: 5rem 1.5rem 6rem; }
@@ -113,13 +121,14 @@
     .mo-timeline.mo-animate > .mo-item.mo-visible { opacity: 1; transform: translateX(0); }
 
     /* demo controls */
-    .demo-controls { text-align: center; margin-top: 1.5rem; }
+    .demo-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
     .demo-controls button { background: var(--accent); border: none; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.875rem; font-weight: 600; padding: 0.55rem 1.3rem; }
     .demo-controls button:hover { background: var(--accent2); }
 
     /* ── DEMO TABS ── */
-    .demo-tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.75rem; flex-wrap: wrap; }
-    .demo-tab { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-bottom: -2px; padding: 0.65rem 1.3rem; transition: color .15s, border-color .15s; }
+    .demo-tabs { border-bottom: 2px solid var(--border); display: flex; gap: 0; margin-bottom: 1.75rem; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .demo-tabs::-webkit-scrollbar { display: none; }
+    .demo-tab { background: none; border: none; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-bottom: -2px; padding: 0.65rem 1.3rem; transition: color .15s, border-color .15s; white-space: nowrap; }
     .demo-tab:hover { color: var(--text); }
     .demo-tab.active { border-bottom-color: var(--accent); color: var(--accent); }
 
@@ -168,7 +177,8 @@
 
 <nav>
   <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.0</span></span>
-  <div>
+  <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
+  <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
     <a href="#install">Install</a>
     <a href="#options">Options</a>
@@ -213,11 +223,11 @@
       <ul id="tl-motimeline"></ul>
       <div class="demo-controls">
         <button id="addBtn">+ Add item</button>
-        <button id="addJsonBtn" style="margin-left:0.5rem;background:#0ea5e9">+ Load via JSON</button>
-        <button id="insertRandomBtn" style="margin-left:0.5rem;background:#8b5cf6">Insert at random pos</button>
-        <button id="insertFullWidthBtn" style="margin-left:0.5rem;background:#10b981">Insert full-width at pos 2</button>
-        <button id="toggleFullWidthBtn" style="margin-left:0.5rem;background:#f59e0b">Toggle random full-width</button>
-        <button id="toggleAnimateBtn" style="margin-left:0.5rem;background:#6366f1">Toggle animate</button>
+        <button id="addJsonBtn" style="background:#0ea5e9">+ Load via JSON</button>
+        <button id="insertRandomBtn" style="background:#8b5cf6">Insert at random pos</button>
+        <button id="insertFullWidthBtn" style="background:#10b981">Insert full-width at pos 2</button>
+        <button id="toggleFullWidthBtn" style="background:#f59e0b">Toggle random full-width</button>
+        <button id="toggleAnimateBtn" style="background:#6366f1">Toggle animate</button>
       </div>
     </div>
 
@@ -713,7 +723,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
 <section id="options">
   <div class="container">
     <h2>Options</h2>
-    <table>
+    <div style="overflow-x:auto"><table>
       <thead>
         <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
       </thead>
@@ -786,10 +796,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           </td>
         </tr>
       </tbody>
-    </table>
+    </table></div>
 
     <h2 style="margin-top:2.5rem">Data attributes</h2>
-    <table>
+    <div style="overflow-x:auto"><table>
       <thead>
         <tr><th>Attribute</th><th>Element</th><th>Description</th></tr>
       </thead>
@@ -803,10 +813,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           <td>Space-separated list of category tokens this item belongs to (e.g. <code>"development architecture"</code>). Used by <code>filterByCategory()</code> to show or hide items. Set automatically by <code>addItems()</code> / <code>insertItem()</code> when a <code>categories</code> field is provided (array or string). Can also be set manually in HTML.</td>
         </tr>
       </tbody>
-    </table>
+    </table></div>
 
     <h2 style="margin-top:2.5rem">CSS classes reference</h2>
-    <table>
+    <div style="overflow-x:auto"><table>
       <thead>
         <tr><th>Class</th><th>Applied to</th><th>Description</th></tr>
       </thead>
@@ -829,7 +839,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>
         <tr><td><code>mo-filtered-out</code></td><td><code>&lt;li&gt;</code></td><td>Added by <code>filterByCategory()</code> to items that do not match the active filter. Sets <code>display: none</code> and excludes the item from column-placement calculations. Removed automatically when the filter is cleared or the item's category is selected.</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </section>
 
@@ -1030,6 +1040,14 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       : `<div class="mo-card"><div class="mo-card-body"><h3>${d.title}</h3><p class="mo-meta">${d.meta}</p><p>${d.text}</p></div></div>`;
     tlEl.appendChild(li);
   });
+  // Hamburger nav toggle
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+  }));
+
   const tl1 = new MoTimeline(tlEl, { showBadge:true, showArrow:true, theme:true });
   let addCount = ITEMS.length + 1;
   document.getElementById('addBtn').addEventListener('click', () => {

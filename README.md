@@ -134,6 +134,8 @@ The library injects classes and elements into your markup. Here is what a fully 
 
 ## Options
 
+<div style="overflow-x:auto">
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `columnCount` | object | `{xs:1, sm:2, md:2, lg:2}` | Columns at each responsive breakpoint: `xs` < 600 px · `sm` < 992 px · `md` < 1 200 px · `lg` ≥ 1 200 px. Set any key to `1` to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode. |
@@ -151,18 +153,26 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `renderCard` | function \| null | `null` | `(item, cardEl) => void`. When set, called for every item instead of the built-in HTML renderer. `cardEl` is the `.mo-card` div already placed inside the `<li>`. Populate it via `innerHTML` or DOM methods. The library still owns the `<li>`, column placement, spine, badge, arrow, `addItems()`, and scroll pagination. |
 | `adSlots` | object \| null | `null` | Inject ad slot placeholders into the timeline and observe them. See **Ad slots** below. |
 
+</div>
+
 ---
 
 ## Data attributes
+
+<div style="overflow-x:auto">
 
 | Attribute | Element | Description |
 |---|---|---|
 | `data-mo-icon` | `<li>` | URL of the image shown inside the badge when `showCounterStyle: 'image'`. Accepts any web-safe format including inline SVG data URIs. Falls back to a built-in SVG icon if absent. Also set automatically by `addItems()` when an `icon` field is provided. |
 | `data-categories` | `<li>` | Space-separated list of category tokens this item belongs to (e.g. `"development architecture"`). Used by `filterByCategory()`. Set automatically by `addItems()` / `insertItem()` when a `categories` field is provided. Can also be set manually in HTML. |
 
+</div>
+
 ---
 
 ## CSS classes reference
+
+<div style="overflow-x:auto">
 
 | Class | Applied to | Description |
 |---|---|---|
@@ -183,6 +193,8 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `mo-meta` | `<p>` | Date / subtitle line inside a card body. Muted colour, smaller font. |
 | `js-mo-item` · `js-mo-inverted` | `<li>` | JS-only selector mirrors of `mo-item` / `mo-inverted`. Use in your own JS queries to avoid coupling to styling class names. |
 | `mo-filtered-out` | `<li>` | Added by `filterByCategory()` to items that do not match the active filter. Sets `display: none` and excludes the item from column-placement calculations. Removed when the filter is cleared or the item's category is selected. |
+
+</div>
 
 ---
 
@@ -364,12 +376,16 @@ const tl = new MoTimeline('#my-timeline', {
 
 ### `adSlots` option shape
 
+<div style="overflow-x:auto">
+
 | Property | Type | Description |
 |---|---|---|
 | `mode` | `'every_n' \| 'random'` | `'every_n'` — inject after every `interval` real items. `'random'` — inject one slot at a random position within each `interval`-item page. |
 | `interval` | number | Cadence for slot injection (see `mode`). |
 | `style` | `'card' \| 'fullwidth'` | `'card'` — slot sits in the normal left/right column flow. `'fullwidth'` — slot spans both columns (adds `mo-fullwidth`). |
 | `onEnterViewport` | `(slotEl: HTMLElement, position: number) => void` | Called once per slot when ≥ 50% of it enters the viewport. `position` is the 0-based child index of the slot in the container at injection time. |
+
+</div>
 
 **What the library provides:**
 - A `<li class="mo-ad-slot">` element with `min-height: 100px` (so the observer can detect it before content loads)
@@ -498,11 +514,15 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Examples
 
+<div style="overflow-x:auto">
+
 | Folder | Description |
 |---|---|
 | [`example/`](example/) | Main example — run with `npm run dev` |
 | [`example/mattopen/`](example/mattopen/) | Bootstrap 5 integration |
 | [`example/livestamp/`](example/livestamp/) | Livestamp.js + Moment.js relative timestamps |
+
+</div>
 
 ---
 
