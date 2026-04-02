@@ -906,7 +906,8 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       if(d.col>1){
         if(l.gppu>e.o+1) lr=1;
         if(r.gppu>l.gppu) lr=0;
-        const prev=el.previousElementSibling;
+        let prev=el.previousElementSibling;
+        while(prev&&prev.classList.contains('mo-filtered-out')) prev=prev.previousElementSibling;
         if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1;
       }
       return{lr,bo};
@@ -948,6 +949,9 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       d._activeFilter=(category==null||category===''||category==='all')?null:String(category);
       instanceData.set(this.element,d);
       this._af(Array.from(this.element.querySelectorAll('.js-mo-item')));
+      Array.from(this.element.querySelectorAll('.js-mo-item:not(.mo-filtered-out)')).forEach(item=>{
+        item.classList.remove('mo-inverted','js-mo-inverted','mo-offset');
+      });
       this.refresh();
     }
     _af(items){

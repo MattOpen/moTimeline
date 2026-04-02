@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.13.0
+ * moTimeline v2.13.1
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -297,6 +297,13 @@ export class MoTimeline {
     instanceData.set(this.element, data);
 
     this._applyFilter(Array.from(this.element.querySelectorAll('.js-mo-item')));
+
+    // Reset column placement on visible items only so refresh() recalculates
+    // from scratch without stale left/right assignments interfering
+    Array.from(this.element.querySelectorAll('.js-mo-item:not(.mo-filtered-out)')).forEach((item) => {
+      item.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+    });
+
     this.refresh();
   }
 
@@ -427,7 +434,8 @@ export class MoTimeline {
       if (l.gppu > e.o + 1) pos = 1; // +1px tolerance for offsetHeight/offsetTop rounding mismatch
       if (r.gppu > l.gppu) pos = 0;
 
-      const prev = el.previousElementSibling;
+      let prev = el.previousElementSibling;
+      while (prev && prev.classList.contains('mo-filtered-out')) prev = prev.previousElementSibling;
       if (prev && Math.abs(e.o - getPosition(prev).o) < 40) bo = 1;
     }
 
