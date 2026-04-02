@@ -176,7 +176,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.2</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -858,8 +858,6 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
   function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
-  function pos(el){ if(!el) return{o:0,h:0,gppu:0}; return{o:el.offsetTop,h:el.offsetHeight,gppu:el.offsetTop+el.offsetHeight}; }
-  function prevAll(el,sel){ const r=[]; let s=el.previousElementSibling; while(s){ if(!sel||s.matches(sel)) r.push(s); s=s.previousElementSibling; } return r; }
 
   class MoTimeline {
     static instances = new Set();
@@ -891,26 +889,21 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     refresh(){
       MoTimeline.instances.forEach(inst=>{
         const el=inst.element, d=instanceData.get(el); if(!d) return;
-        d.col=d.columnCount[bp()]; inst._div();
-        Array.from(el.children).forEach(child=>inst._spp(child));
+        d.col=d.columnCount[bp()]; inst._div(); inst._layout();
       });
     }
-    _spp(el){ if(el.classList.contains('mo-filtered-out')) return; if(el.classList.contains('mo-fullwidth')){ el.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); return; } const r=this._lr(el); if(!r) return; el.classList.toggle('mo-inverted',r.lr>0); el.classList.toggle('js-mo-inverted',r.lr>0); el.classList.toggle('mo-offset',r.bo>0); }
-    _lr(el){
-      if(!el) return null;
-      const d=this._d(); if(!d) return null;
-      const pi=prevAll(el,'.js-mo-inverted:not(.mo-filtered-out)')[0]||null;
-      const pl=prevAll(el,'.js-mo-item:not(.js-mo-inverted):not(.mo-filtered-out)')[0]||null;
-      const l=pos(pl), r=pos(pi), e=pos(el);
-      let lr=0, bo=0;
-      if(d.col>1){
-        if(l.gppu>e.o+1) lr=1;
-        if(r.gppu>l.gppu) lr=0;
-        let prev=el.previousElementSibling;
-        while(prev&&prev.classList.contains('mo-filtered-out')) prev=prev.previousElementSibling;
-        if(prev&&Math.abs(e.o-pos(prev).o)<40) bo=1;
-      }
-      return{lr,bo};
+    _layout(){
+      const el=this.element, d=this._d(); if(!d) return;
+      if(d.col<=1){ Array.from(el.children).forEach(c=>c.classList.remove('mo-inverted','js-mo-inverted','mo-offset')); return; }
+      let lH=0, rH=0, pS=-Infinity;
+      Array.from(el.children).forEach(c=>{
+        if(c.classList.contains('mo-filtered-out')) return;
+        if(c.classList.contains('mo-fullwidth')){ c.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); lH=rH=Math.max(lH,rH)+c.offsetHeight; pS=-Infinity; return; }
+        const rs=Math.min(lH,rH), goL=lH<=rH;
+        c.classList.toggle('mo-inverted',!goL); c.classList.toggle('js-mo-inverted',!goL); c.classList.toggle('mo-offset',Math.abs(rs-pS)<40);
+        if(goL) lH+=c.offsetHeight; else rH+=c.offsetHeight;
+        pS=rs;
+      });
     }
     initNewItems(){ this._initItems(); }
     clear(){
@@ -949,9 +942,6 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       d._activeFilter=(category==null||category===''||category==='all')?null:String(category);
       instanceData.set(this.element,d);
       this._af(Array.from(this.element.querySelectorAll('.js-mo-item')));
-      Array.from(this.element.querySelectorAll('.js-mo-item:not(.mo-filtered-out)')).forEach(item=>{
-        item.classList.remove('mo-inverted','js-mo-inverted','mo-offset');
-      });
       this.refresh();
     }
     _af(items){

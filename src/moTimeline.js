@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.13.1
+ * moTimeline v2.13.2
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -45,24 +45,6 @@ function debounce(fn, delay = 100) {
   };
 }
 
-function getPosition(el) {
-  if (!el) return { o: 0, h: 0, gppu: 0 };
-  return {
-    o: el.offsetTop,
-    h: el.offsetHeight,
-    gppu: el.offsetTop + el.offsetHeight,
-  };
-}
-
-function prevAll(el, selector) {
-  const results = [];
-  let sibling = el.previousElementSibling;
-  while (sibling) {
-    if (!selector || sibling.matches(selector)) results.push(sibling);
-    sibling = sibling.previousElementSibling;
-  }
-  return results;
-}
 
 export class MoTimeline {
   static instances = new Set();
@@ -146,10 +128,7 @@ export class MoTimeline {
 
       data.col = data.columnCount[getBreakpoint()];
       instance._setDivider();
-
-      Array.from(el.children).forEach((child) => {
-        instance._setPostPosition(child);
-      });
+      instance._layout();
     });
   }
 
@@ -297,13 +276,6 @@ export class MoTimeline {
     instanceData.set(this.element, data);
 
     this._applyFilter(Array.from(this.element.querySelectorAll('.js-mo-item')));
-
-    // Reset column placement on visible items only so refresh() recalculates
-    // from scratch without stale left/right assignments interfering
-    Array.from(this.element.querySelectorAll('.js-mo-item:not(.mo-filtered-out)')).forEach((item) => {
-      item.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
-    });
-
     this.refresh();
   }
 
@@ -395,51 +367,38 @@ export class MoTimeline {
     });
   }
 
-  _setPostPosition(el) {
-    if (el.classList.contains('mo-filtered-out')) return;
+  _layout() {
+    const el = this.element;
+    const data = this._getData();
+    if (!data) return;
 
-    // Full-width items span both columns — skip column assignment
-    if (el.classList.contains('mo-fullwidth')) {
-      el.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+    if (data.col <= 1) {
+      Array.from(el.children).forEach((child) => {
+        child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+      });
       return;
     }
 
-    const result = this._getLeftOrRight(el);
-    if (!result) return;
+    let leftH = 0, rightH = 0, prevStart = -Infinity;
+    Array.from(el.children).forEach((child) => {
+      if (child.classList.contains('mo-filtered-out')) return;
 
-    el.classList.toggle('mo-inverted', result.lr > 0);
-    el.classList.toggle('js-mo-inverted', result.lr > 0);
-    el.classList.toggle('mo-offset', result.badge_offset > 0);
-  }
+      if (child.classList.contains('mo-fullwidth')) {
+        child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+        leftH = rightH = Math.max(leftH, rightH) + child.offsetHeight;
+        prevStart = -Infinity;
+        return;
+      }
 
-  _getLeftOrRight(el) {
-    if (!el) return null;
-
-    const data = this._getData();
-    if (!data) return null;
-
-    const col = data.col;
-
-    const prevInverted = prevAll(el, '.js-mo-inverted:not(.mo-filtered-out)')[0] || null;
-    const prevLeft = prevAll(el, '.js-mo-item:not(.js-mo-inverted):not(.mo-filtered-out)')[0] || null;
-
-    const l = getPosition(prevLeft);
-    const r = getPosition(prevInverted);
-    const e = getPosition(el);
-
-    let pos = 0;
-    let bo = 0;
-
-    if (col > 1) {
-      if (l.gppu > e.o + 1) pos = 1; // +1px tolerance for offsetHeight/offsetTop rounding mismatch
-      if (r.gppu > l.gppu) pos = 0;
-
-      let prev = el.previousElementSibling;
-      while (prev && prev.classList.contains('mo-filtered-out')) prev = prev.previousElementSibling;
-      if (prev && Math.abs(e.o - getPosition(prev).o) < 40) bo = 1;
-    }
-
-    return { lr: pos, badge_offset: bo };
+      const rowStart = Math.min(leftH, rightH);
+      const goLeft = leftH <= rightH;
+      child.classList.toggle('mo-inverted', !goLeft);
+      child.classList.toggle('js-mo-inverted', !goLeft);
+      child.classList.toggle('mo-offset', Math.abs(rowStart - prevStart) < 40);
+      if (goLeft) leftH += child.offsetHeight;
+      else rightH += child.offsetHeight;
+      prevStart = rowStart;
+    });
   }
 
   _createBadge(el, idx) {
