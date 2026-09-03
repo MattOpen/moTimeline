@@ -10,6 +10,10 @@ name: Publish to npm
 # Configure once at: npmjs.com -> motimeline -> Settings -> Trusted Publisher
 #   Organization/User: MattOpen   Repository: moTimeline
 #   Workflow filename: publish.yml
+#   Allowed action:    leave "publish directly" UNCHECKED (staged only)
+#
+# The workflow stages the release; it does not make it public. Approve the
+# staged version afterwards on npmjs.com (or `npm stage approve`) with 2FA.
 
 on:
   push:
@@ -65,5 +69,15 @@ jobs:
             fi
           done
 
-      - name: Publish
-        run: npm publish
+      # Staged publish: this uploads the version but does NOT make it public.
+      # A maintainer approves it afterwards with 2FA (npmjs.com, or `npm stage
+      # approve`), which is why the trusted publisher does not need direct
+      # publish rights. npm recommends this over allowing direct publishing.
+      - name: Stage publish
+        run: npm stage publish
+
+      - name: Next step
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          echo "motimeline@$PKG is staged, not yet public." >> $GITHUB_STEP_SUMMARY
+          echo "Approve it to release: https://www.npmjs.com/package/motimeline" >> $GITHUB_STEP_SUMMARY

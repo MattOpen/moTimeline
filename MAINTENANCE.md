@@ -25,7 +25,7 @@ Produces `dist/moTimeline.js` (ESM), `dist/moTimeline.cjs`, `dist/moTimeline.umd
 Wait for explicit go-ahead — no exceptions.
 
 ### 5 — Release
-Pushing a `v*` tag publishes to npm via GitHub Actions — no local `npm publish`.
+Pushing a `v*` tag *stages* the release on npm via GitHub Actions.
 ```
 git push                                    # code + docs first
 git tag -a vX.Y.Z -m "vX.Y.Z — <summary>"
@@ -33,8 +33,14 @@ git push origin vX.Y.Z                      # triggers the publish workflow
 gh release create vX.Y.Z --title "..." --notes "..."
 ```
 The workflow verifies that the tag matches `package.json` and that the step-1
-version banners are in place, then builds and publishes. Watch it with
-`gh run watch`, and confirm afterwards with `npm view motimeline version`.
+version banners are in place, then builds and stages. Watch it with `gh run watch`.
+
+### 6 — Approve the staged version
+The staged version is **not public yet**. Approve it on
+[npmjs.com/package/motimeline](https://www.npmjs.com/package/motimeline)
+(or `npm stage approve`) — this needs 2FA and is the deliberate release step.
+
+Confirm afterwards: `npm view motimeline version`.
 
 GitHub Pages auto-deploys from `/docs` on push — no manual step needed.
 
@@ -53,6 +59,10 @@ One-time setup on npmjs.com → *motimeline* → Settings → Trusted Publisher:
 | Organization / User | `MattOpen` |
 | Repository | `moTimeline` |
 | Workflow filename | `publish.yml` |
+| Allow publishing directly | **unchecked** — staged publishing only |
+
+Leaving that box unchecked is npm's own recommendation: CI can stage a release,
+but only a maintainer with 2FA can make it public.
 
 The account uses 2FA mode `auth-and-writes`, so a **local** `npm publish` still
 requires a one-time code — that path is the fallback if CI is unavailable.
