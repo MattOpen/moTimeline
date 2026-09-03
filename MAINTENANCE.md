@@ -24,37 +24,42 @@ Produces `dist/moTimeline.js` (ESM), `dist/moTimeline.cjs`, `dist/moTimeline.umd
 ### 4 — User verifies locally
 Wait for explicit go-ahead — no exceptions.
 
-### 5 — Publish and push
+### 5 — Release
+Pushing a `v*` tag publishes to npm via GitHub Actions — no local `npm publish`.
 ```
-npm publish --otp=123456     # code from the authenticator app
-git push
-```
-The OTP is required on every publish — see "npm authentication" below.
-
-GitHub Pages auto-deploys from `/docs` on push — no manual step needed.
-
-Also push the tag and create a release:
-```
+git push                                    # code + docs first
 git tag -a vX.Y.Z -m "vX.Y.Z — <summary>"
-git push origin vX.Y.Z
+git push origin vX.Y.Z                      # triggers the publish workflow
 gh release create vX.Y.Z --title "..." --notes "..."
 ```
+The workflow verifies that the tag matches `package.json` and that the step-1
+version banners are in place, then builds and publishes. Watch it with
+`gh run watch`, and confirm afterwards with `npm view motimeline version`.
+
+GitHub Pages auto-deploys from `/docs` on push — no manual step needed.
 
 ---
 
 ## npm authentication
 
-The account uses 2FA mode **`auth-and-writes`**, so *every* publish needs a
-one-time code — a normal `npm login` token is not enough on its own.
+Publishing uses **Trusted Publishing** (OIDC): npm grants the workflow a
+short-lived credential at run time, so no token is stored in the repo, in
+`~/.npmrc`, or in GitHub secrets.
 
-- `npm login` (browser) authenticates the CLI, but publishes still ask for the OTP.
-- An **automation token** (npmjs.com → Access Tokens → Generate → *Automation*)
-  bypasses the OTP prompt, because automation tokens are exempt from 2FA.
-  Store it as `//registry.npmjs.org/:_authToken=<token>` in `~/.npmrc`.
+One-time setup on npmjs.com → *motimeline* → Settings → Trusted Publisher:
 
-⚠️ An automation token is a standing publish credential in a plain-text file: it
-weakens the 2FA guarantee that mode `auth-and-writes` is there to provide. Worth
-it for CI, a deliberate trade-off on a workstation. Never commit it.
+| Field | Value |
+|---|---|
+| Organization / User | `MattOpen` |
+| Repository | `moTimeline` |
+| Workflow filename | `publish.yml` |
+
+The account uses 2FA mode `auth-and-writes`, so a **local** `npm publish` still
+requires a one-time code — that path is the fallback if CI is unavailable.
+
+⚠️ Automation tokens would also bypass the OTP, but npm itself warns against
+them: they are a standing publish credential in a plain-text file. Trusted
+Publishing exists to avoid exactly that, so do not create one.
 
 ---
 
