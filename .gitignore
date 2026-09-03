@@ -49,3 +49,4 @@ Icon
 
 # Local-only release helpers - never commit
 publish.ps1
+.preview/

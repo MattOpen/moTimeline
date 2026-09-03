@@ -84,13 +84,34 @@
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow { display: none; }
     .mo-timeline > .mo-item.mo-ad-slot { min-height: 100px; }
 
+    /* layout: 'stacked' — one column, spine left, dates in a gutter */
+    .mo-timeline.mo-stacked { padding-left: var(--mo-stacked-gutter, 90px); }
+    .mo-timeline.mo-stacked::before { background-color: var(--mo-line-color); bottom: 0; content: ''; left: var(--mo-stacked-gutter, 90px); margin-left: -1.5px; position: absolute; top: 0; width: 3px; z-index: 0; }
+    .mo-timeline.mo-stacked > .mo-item::before { color: var(--mo-meta-color, #94a3b8); content: attr(data-mo-date); font-size: .8rem; font-weight: 600; position: absolute; right: calc(100% + 1.6rem); text-align: right; top: 18px; white-space: nowrap; }
+    .mo-timeline.mo-stacked > .mo-item .mo-badge { left: calc(var(--mo-badge-size) / -2); right: auto; }
+
+    /* layout: 'rows' — 'stacked' mirrored per item */
+    .mo-timeline.mo-rows { display: grid; grid-template-columns: 1fr 1fr; padding-left: 0; }
+    .mo-timeline.mo-rows::before { background-color: var(--mo-line-color); bottom: 0; content: ''; left: 50%; margin-left: -1.5px; position: absolute; top: 0; width: 3px; z-index: 0; }
+    .mo-timeline.mo-rows > .mo-item { float: none; width: auto; grid-column: 2; }
+    .mo-timeline.mo-rows > .mo-item.mo-inverted { float: none; grid-column: 1; }
+    .mo-timeline.mo-rows > .mo-item.mo-fullwidth { grid-column: 1 / -1; }
+    .mo-timeline.mo-rows > .mo-item::before { color: var(--mo-meta-color, #94a3b8); content: attr(data-mo-date); font-size: .8rem; font-weight: 600; position: absolute; right: calc(100% + 1.6rem); text-align: right; top: 18px; white-space: nowrap; }
+    .mo-timeline.mo-rows > .mo-item.mo-inverted::before { left: calc(100% + 1.6rem); right: auto; text-align: left; }
+    .mo-timeline.mo-rows > .mo-item .mo-badge { left: calc(var(--mo-badge-size) / -2); right: auto; }
+    .mo-timeline.mo-rows > .mo-item.mo-inverted .mo-badge { left: auto; right: calc(var(--mo-badge-size) / -2); }
+
+    /* mirrorText: right-hand cards align toward the centre line */
+    .mo-timeline.mo-twocol.mo-mirror-text > .mo-item.mo-inverted .mo-card { text-align: right; }
+    .mo-timeline.mo-twocol.mo-mirror-text > .mo-item.mo-inverted .mo-avatar { left: 14px; right: auto; }
+
     .mo-badge { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); overflow: hidden; position: absolute; top: 18px; z-index: 2; }
     .mo-badge .mo-badge-icon { border-radius: 50%; height: 100%; object-fit: cover; width: 100%; }
     .mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-badge { left: auto; right: calc(var(--mo-badge-size) / -2); }
     .mo-timeline.mo-twocol > .mo-item.mo-inverted        .mo-badge { left: calc(var(--mo-badge-size) / -2); right: auto; }
     .mo-timeline.mo-twocol > .mo-item.mo-offset .mo-badge { top: calc(18px + var(--mo-badge-size) + 10px); }
     .mo-timeline.mo-twocol > .mo-item.mo-offset .mo-arrow { top: calc(26px + var(--mo-badge-size) + 10px); }
-    .mo-timeline:not(.mo-twocol) > .mo-item .mo-badge    { display: none; }
+    .mo-timeline:not(.mo-twocol):not(.mo-stacked):not(.mo-rows) > .mo-item .mo-badge    { display: none; }
 
     .mo-arrow { border: 8px solid transparent; display: block; height: 0; position: absolute; top: 26px; width: 0; z-index: 1; }
     .mo-timeline.mo-twocol > .mo-item:not(.mo-inverted) .mo-arrow { border-left: 8px solid var(--mo-arrow-color); border-right: none; left: auto; right: 0; }
@@ -138,6 +159,13 @@
     .cat-btn { background: #fff; border: 1.5px solid var(--border); border-radius: 999px; color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
     .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
     .cat-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    /* Layout switcher (Timestamp tab) */
+    .layout-switch { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1.25rem; }
+    .layout-btn { background: #fff; border: 1.5px solid var(--border); border-radius: 999px; color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
+    .layout-btn span { font-weight: 400; opacity: .75; }
+    .layout-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .layout-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .layout-btn.active span { opacity: .8; }
     /* Ad slots demo */
     .ads-intro { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.5rem; text-align: center; }
     .ads-counter { align-self: center; color: var(--muted); font-size: 0.875rem; font-weight: 600; }
@@ -194,7 +222,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.3</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.14.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -274,13 +302,19 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
 
     <!-- ── Tab 2: Timestamp ── -->
     <div class="demo-panel" id="tab-timestamp">
+      <div class="layout-switch" role="group" aria-label="Layout">
+        <button class="layout-btn active" data-layout="fill">Fill <span>(Standard)</span></button>
+        <button class="layout-btn" data-layout="rows">Alternating <span>(Datum wechselt)</span></button>
+        <button class="layout-btn" data-layout="stacked">Stacked <span>(Datum links)</span></button>
+        <button class="layout-btn" data-layout="mirror">Mirror text <span>(fill + Spiegelung)</span></button>
+      </div>
       <div class="demo-controls">
         <button class="code-btn" data-code="code-timestamp" style="background:#0ea5e9">Show setup code</button>
       </div>
       <pre id="code-timestamp" hidden><code><span class="cm">&lt;!-- Items written as plain HTML — no addItems() needed. --&gt;</span>
-<span class="cm">&lt;!-- The timestamp span is yours; the library does not touch it. --&gt;</span>
+<span class="cm">&lt;!-- data-mo-date feeds the date gutter used by 'stacked' and 'rows'. --&gt;</span>
 &lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
-  &lt;<span class="fn">li</span>&gt;
+  &lt;<span class="fn">li</span> data-mo-date=<span class="str">"Oct 2025"</span>&gt;
     &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
       &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
         &lt;<span class="fn">h3</span>&gt;v1.5 shipped&lt;/<span class="fn">h3</span>&gt;
@@ -294,7 +328,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
   showBadge: <span class="kw">true</span>,
   showArrow: <span class="kw">true</span>,
-  theme:     <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,<span id="code-ts-layout"></span>
 });
 
 <span class="cm">// Refresh the relative labels on your own schedule</span>
@@ -885,6 +919,14 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           <td>Columns at each responsive breakpoint: <code>xs</code> &lt; 600 px · <code>sm</code> &lt; 992 px · <code>md</code> &lt; 1 200 px · <code>lg</code> ≥ 1 200 px. Set any key to <code>1</code> to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode.</td>
         </tr>
         <tr>
+          <td><code>layout</code></td><td>string</td><td><code>'fill'</code></td>
+          <td>How items are placed. <code>'fill'</code> — each item goes into the shorter column, so cards pull up alongside each other and leave no gaps. <code>'stacked'</code> — a single column with the spine on the left and the date in a gutter beside it. <code>'rows'</code> — like <code>'stacked'</code>, but card and date swap sides on every item; one item per row, so nothing is pulled upward. <code>'stacked'</code> and <code>'rows'</code> read the date from <code>data-mo-date</code> (set it directly, or pass <code>date</code> to <code>addItems()</code>). See the <b>Timestamp</b> demo tab.</td>
+        </tr>
+        <tr>
+          <td><code>mirrorText</code></td><td>boolean</td><td><code>false</code></td>
+          <td>Right-hand cards align their text toward the center line, so the two columns read as reflections of each other. Independent of <code>layout</code>.</td>
+        </tr>
+        <tr>
           <td><code>showBadge</code></td><td>boolean</td><td><code>false</code></td>
           <td>Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active (no center line to attach to).</td>
         </tr>
@@ -963,6 +1005,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr>
           <td><code>data-categories</code></td><td><code>&lt;li&gt;</code></td>
           <td>Space-separated list of category tokens this item belongs to (e.g. <code>"development architecture"</code>). Used by <code>filterByCategory()</code> to show or hide items. Set automatically by <code>addItems()</code> / <code>insertItem()</code> when a <code>categories</code> field is provided (array or string). Can also be set manually in HTML.</td>
+        </tr>
+        <tr>
+          <td><code>data-mo-date</code></td><td><code>&lt;li&gt;</code></td>
+          <td>Short date shown in the gutter by <code>layout: 'stacked'</code> and <code>layout: 'rows'</code> (e.g. <code>"Oct 2025"</code>). Ignored by the other layouts. Set automatically by <code>addItems()</code> / <code>insertItem()</code> when a <code>date</code> field is provided.</td>
         </tr>
       </tbody>
     </table></div>
@@ -1046,7 +1092,18 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     }
     _layout(){
       const el=this.element, d=this._d(); if(!d) return;
-      if(d.col<=1){ Array.from(el.children).forEach(c=>c.classList.remove('mo-inverted','js-mo-inverted','mo-offset')); return; }
+      if(d.col<=1){ Array.from(el.children).forEach(c=>{c.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); c.style.removeProperty('grid-row');}); return; }
+      if(d.layout!=='rows'){ Array.from(el.children).forEach(c=>c.style.removeProperty('grid-row')); }
+      if(d.layout==='rows'){ let i=0, row=0;
+        Array.from(el.children).forEach(c=>{
+          if(c.classList.contains('mo-filtered-out')) return;
+          c.style.gridRow=String(++row);
+          if(c.classList.contains('mo-fullwidth')){ c.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); i=0; return; }
+          const goL=i%2===0;
+          c.classList.toggle('mo-inverted',!goL); c.classList.toggle('js-mo-inverted',!goL); c.classList.remove('mo-offset');
+          i++;
+        });
+        return; }
       let lH=0, rH=0, pS=-Infinity;
       Array.from(el.children).forEach(c=>{
         if(c.classList.contains('mo-filtered-out')) return;
@@ -1127,9 +1184,15 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
+    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
     _d(){ return instanceData.get(this.element); }
-    _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()]; this.element.classList.toggle('mo-twocol',d.col>1); }
+    _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()];
+      this.element.classList.toggle('mo-twocol',d.col>1);
+      this.element.classList.toggle('mo-mirror-text',!!d.mirrorText);
+      this.element.classList.toggle('mo-rows',d.layout==='rows'&&d.col>1);
+      this.element.classList.toggle('mo-stacked',d.layout==='stacked');
+      if(d.layout==='stacked'){ d.col=1; this.element.classList.remove('mo-twocol','mo-rows'); }
+      if(d.layout==='rows'&&d.col>1){ this.element.classList.remove('mo-twocol'); } }
     _initItems(){
       const el=this.element,d=this._d(); if(!d) return;
       const all=Array.from(el.children), items=all.slice(d.lastItemIdx);
@@ -1281,7 +1344,45 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   updateTimestamps();
   setInterval(updateTimestamps, 60000);
 
-  const tl2 = new MoTimeline(document.getElementById('tl-timestamp'), { showBadge:true, showArrow:true, theme:true });
+  // Dates for the gutter layouts, derived from the timestamps already in the markup
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.querySelectorAll('#tl-timestamp > li').forEach(li => {
+    const ts = li.querySelector('.js-ts-ago');
+    if (!ts) return;
+    const d = new Date(ts.dataset.ts);
+    li.dataset.moDate = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  });
+
+  let tl2 = new MoTimeline(document.getElementById('tl-timestamp'), { showBadge:true, showArrow:true, theme:true });
+
+  // Layout switcher — each option is a separate MoTimeline configuration, so the
+  // instance is rebuilt rather than mutated.
+  const LAYOUTS = {
+    fill:    { },
+    rows:    { layout: 'rows' },
+    stacked: { layout: 'stacked' },
+    mirror:  { mirrorText: true },
+  };
+  // The setup-code panel shows the option for the active layout, so it always
+  // matches what is on screen.
+  const CODE_LINES = {
+    fill:    '',
+    rows:    '\n  layout:    <span class="str">\'rows\'</span>,',
+    stacked: '\n  layout:    <span class="str">\'stacked\'</span>,',
+    mirror:  '\n  mirrorText: <span class="kw">true</span>,',
+  };
+  const codeSlot = document.getElementById('code-ts-layout');
+
+  document.querySelectorAll('#tab-timestamp .layout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#tab-timestamp .layout-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (codeSlot) codeSlot.innerHTML = CODE_LINES[btn.dataset.layout];
+      tl2.destroy();
+      tl2 = new MoTimeline(document.getElementById('tl-timestamp'),
+        Object.assign({ showBadge:true, showArrow:true, theme:true }, LAYOUTS[btn.dataset.layout]));
+    });
+  });
 
   // ── Tab 3: Bootstrap demo ───────────────────────────────────────────────────
   const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { showBadge:true, showArrow:true, theme:false });
@@ -1386,8 +1487,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       btn.classList.add('active');
       const panel = document.getElementById(btn.dataset.tab);
       panel.classList.add('active');
-      // tl5 is rebuilt on style change / reset, so resolve it at click time
-      const inst = btn.dataset.tab === 'tab-ads' ? tl5 : instances[btn.dataset.tab];
+      // tl2 and tl5 are rebuilt (layout switch / ad style), so resolve at click time
+      const inst = btn.dataset.tab === 'tab-ads' ? tl5
+                 : btn.dataset.tab === 'tab-timestamp' ? tl2
+                 : instances[btn.dataset.tab];
       if (inst) inst.refresh();
     });
   });

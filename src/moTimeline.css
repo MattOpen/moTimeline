@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.13.3 — CSS
+ * moTimeline v2.14.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -43,6 +43,39 @@
   z-index: 0;
 }
 
+/* ── layout: 'stacked' — one column, spine on the left, dates outside ──
+   Single column normally has no spine; this variant draws one and reserves
+   a gutter for the date, which is read from data-mo-date on each item. */
+.mo-timeline.mo-stacked {
+  padding-left: var(--mo-stacked-gutter, 90px);
+}
+.mo-timeline.mo-stacked::before {
+  background-color: var(--mo-line-color);
+  bottom: 0;
+  content: '';
+  left: var(--mo-stacked-gutter, 90px);
+  margin-left: -1.5px;
+  position: absolute;
+  top: 0;
+  width: 3px;
+  z-index: 0;
+}
+.mo-timeline.mo-stacked > .mo-item::before {
+  color: var(--mo-meta-color, #94a3b8);
+  content: attr(data-mo-date);
+  font-size: 0.8rem;
+  font-weight: 600;
+  position: absolute;
+  right: calc(100% + 1.6rem);
+  text-align: right;
+  top: 18px;
+  white-space: nowrap;
+}
+.mo-timeline.mo-stacked > .mo-item .mo-badge {
+  left: calc(var(--mo-badge-size) / -2);
+  right: auto;
+}
+
 /* ── Items ──────────────────────────────────────────────────── */
 
 .mo-timeline > .mo-item {
@@ -69,6 +102,80 @@
   clear: both;
   float: none;
   width: 100%;
+}
+
+/* ── layout: 'rows' — 'stacked' mirrored per item ──
+   Same idea as 'stacked': card on one side of the spine, date on the other.
+   The difference is that both swap sides with every item, so the spine keeps a
+   card on each side while document order is preserved — item n+1 always starts
+   below item n, never beside it.
+   Grid, not floats: floats cannot keep a strict one-item-per-row order. */
+.mo-timeline.mo-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-left: 0;
+}
+.mo-timeline.mo-rows::before {
+  background-color: var(--mo-line-color);
+  bottom: 0;
+  content: '';
+  left: 50%;
+  margin-left: -1.5px;
+  position: absolute;
+  top: 0;
+  width: 3px;
+  z-index: 0;
+}
+.mo-timeline.mo-rows > .mo-item {
+  float: none;
+  width: auto;
+  grid-column: 2;          /* card right of the spine … */
+}
+.mo-timeline.mo-rows > .mo-item.mo-inverted {
+  float: none;
+  grid-column: 1;          /* … and left of it on every other item */
+}
+.mo-timeline.mo-rows > .mo-item.mo-fullwidth {
+  grid-column: 1 / -1;
+}
+
+/* The date sits in the opposite half, hard against the spine. */
+.mo-timeline.mo-rows > .mo-item::before {
+  color: var(--mo-meta-color, #94a3b8);
+  content: attr(data-mo-date);
+  font-size: 0.8rem;
+  font-weight: 600;
+  position: absolute;
+  right: calc(100% + 1.6rem);
+  text-align: right;
+  top: 18px;
+  white-space: nowrap;
+}
+.mo-timeline.mo-rows > .mo-item.mo-inverted::before {
+  left: calc(100% + 1.6rem);
+  right: auto;
+  text-align: left;
+}
+
+/* Badge sits on the spine, on whichever side the card is. */
+.mo-timeline.mo-rows > .mo-item .mo-badge {
+  left: calc(var(--mo-badge-size) / -2);
+  right: auto;
+}
+.mo-timeline.mo-rows > .mo-item.mo-inverted .mo-badge {
+  left: auto;
+  right: calc(var(--mo-badge-size) / -2);
+}
+
+/* ── mirrorText: true — right-hand cards align their text toward the centre ──
+   Independent of layout: works in 'fill' and 'rows' alike. */
+.mo-timeline.mo-twocol.mo-mirror-text > .mo-item.mo-inverted .mo-card {
+  text-align: right;
+}
+/* The avatar is absolutely positioned, so mirroring it means swapping sides. */
+.mo-timeline.mo-twocol.mo-mirror-text > .mo-item.mo-inverted .mo-avatar {
+  left: 14px;
+  right: auto;
 }
 
 /* Full-width card: equal margin on both sides (no center-line gap) */
@@ -132,7 +239,7 @@
 }
 
 /* Single column: hide badge (center-line elements have no meaning without a center line) */
-.mo-timeline:not(.mo-twocol) > .mo-item .mo-badge {
+.mo-timeline:not(.mo-twocol):not(.mo-stacked):not(.mo-rows) > .mo-item .mo-badge {
   display: none;
 }
 

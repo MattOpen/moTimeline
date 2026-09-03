@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.13.3
+ * moTimeline v2.14.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -12,6 +12,8 @@ const instanceData = new WeakMap();
 
 const DEFAULTS = {
   columnCount: { xs: 1, sm: 2, md: 2, lg: 2 },
+  layout: 'fill',     // 'fill' = shorter column wins | 'rows' = alternating sides | 'stacked' = one side
+  mirrorText: false,  // right-hand cards align their text toward the centre line
   showBadge: false,
   showArrow: false,
   theme: false,
@@ -252,9 +254,10 @@ export class MoTimeline {
     this.element.style.removeProperty('--mo-card-margin');
     this.element.style.removeProperty('--mo-card-margin-inverted');
     this.element.style.removeProperty('--mo-card-margin-fullwidth');
-    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide');
+    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out');
+      child.style.removeProperty('grid-row');
       child.querySelectorAll('.js-mo-badge, .js-mo-arrow').forEach((b) => b.remove());
     });
   }
@@ -304,6 +307,18 @@ export class MoTimeline {
     if (!data) return;
     data.col = data.columnCount[getBreakpoint()];
     this.element.classList.toggle('mo-twocol', data.col > 1);
+    this.element.classList.toggle('mo-mirror-text', !!data.mirrorText);
+    // 'rows' and 'stacked' both place one item per row, so neither uses the
+    // two-column float layout — they own their spine and date gutter.
+    this.element.classList.toggle('mo-rows', data.layout === 'rows' && data.col > 1);
+    this.element.classList.toggle('mo-stacked', data.layout === 'stacked');
+    if (data.layout === 'stacked') {
+      data.col = 1;
+      this.element.classList.remove('mo-twocol', 'mo-rows');
+    }
+    if (data.layout === 'rows' && data.col > 1) {
+      this.element.classList.remove('mo-twocol');
+    }
   }
 
   _initItems() {
@@ -313,7 +328,10 @@ export class MoTimeline {
 
     const lastItemIdx = data.lastItemIdx;
     const allChildren = Array.from(el.children);
-    const newItems = allChildren.slice(lastItemIdx);
+    // Ad slots live among the children but are not entries: counting them here
+    // would make them real items and stretch the configured interval.
+    const newItems = allChildren.slice(lastItemIdx)
+      .filter((c) => !c.classList.contains('mo-ad-slot'));
 
     if (newItems.length === 0) return;
 
@@ -375,6 +393,36 @@ export class MoTimeline {
     if (data.col <= 1) {
       Array.from(el.children).forEach((child) => {
         child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+        child.style.removeProperty('grid-row');
+      });
+      return;
+    }
+
+    // Only layout 'rows' pins grid rows; clear leftovers when it is not active.
+    if (data.layout !== 'rows') {
+      Array.from(el.children).forEach((c) => c.style.removeProperty('grid-row'));
+    }
+
+    // 'rows' keeps document order: every item starts below the previous one and
+    // merely alternates sides. 'fill' (default) instead moves each item into the
+    // shorter column, so items pull up alongside each other.
+    if (data.layout === 'rows') {
+      let i = 0;
+      let row = 0;
+      Array.from(el.children).forEach((child) => {
+        if (child.classList.contains('mo-filtered-out')) return;
+        // One grid row per item, so each starts below the previous one.
+        child.style.gridRow = String(++row);
+        if (child.classList.contains('mo-fullwidth')) {
+          child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+          i = 0;
+          return;
+        }
+        const goLeft = i % 2 === 0;
+        child.classList.toggle('mo-inverted', !goLeft);
+        child.classList.toggle('js-mo-inverted', !goLeft);
+        child.classList.remove('mo-offset');
+        i++;
       });
       return;
     }
@@ -424,6 +472,8 @@ export class MoTimeline {
   _createItemElement(item) {
     const li = document.createElement('li');
     if (item.icon) li.dataset.moIcon = item.icon;
+    // Shown in the left gutter by layout 'stacked'; ignored by other layouts.
+    if (item.date) li.dataset.moDate = item.date;
     if (item.categories) {
       li.dataset.categories = Array.isArray(item.categories)
         ? item.categories.join(' ')

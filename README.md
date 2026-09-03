@@ -139,6 +139,8 @@ The library injects classes and elements into your markup. Here is what a fully 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `columnCount` | object | `{xs:1, sm:2, md:2, lg:2}` | Columns at each responsive breakpoint: `xs` < 600 px · `sm` < 992 px · `md` < 1 200 px · `lg` ≥ 1 200 px. Set any key to `1` to force single-column at that width. The center line, badges, and arrows are only visible in two-column mode. |
+| `layout` | string | `'fill'` | How items are placed. `'fill'` — each item goes into the shorter column, so cards pull up alongside each other and leave no gaps. `'stacked'` — a single column with the spine on the left and the date in a gutter beside it. `'rows'` — like `'stacked'`, but card and date swap sides on every item; one item per row, so nothing is pulled upward. `'stacked'` and `'rows'` read the date from `data-mo-date` (set it directly, or pass `date` to `addItems()`). |
+| `mirrorText` | boolean | `false` | Right-hand cards align their text toward the center line, so the two columns read as reflections. Independent of `layout`. |
 | `showBadge` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
 | `showArrow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
 | `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
@@ -165,6 +167,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 |---|---|---|
 | `data-mo-icon` | `<li>` | URL of the image shown inside the badge when `showCounterStyle: 'image'`. Accepts any web-safe format including inline SVG data URIs. Falls back to a built-in SVG icon if absent. Also set automatically by `addItems()` when an `icon` field is provided. |
 | `data-categories` | `<li>` | Space-separated list of category tokens this item belongs to (e.g. `"development architecture"`). Used by `filterByCategory()`. Set automatically by `addItems()` / `insertItem()` when a `categories` field is provided. Can also be set manually in HTML. |
+| `data-mo-date` | `<li>` | Short date shown in the gutter by `layout: 'stacked'` and `layout: 'rows'` (e.g. `"Oct 2025"`). Ignored by other layouts. Set automatically by `addItems()` / `insertItem()` when a `date` field is provided. |
 
 </div>
 
@@ -527,6 +530,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.14.0
+- New option **`layout`** — `'fill'` (default, unchanged), `'stacked'` (single column, spine left, date in a gutter) and `'rows'` (like `'stacked'`, but card and date swap sides on every item, one item per row). The date comes from `data-mo-date` / the new `date` field.
+- New option **`mirrorText`** — right-hand cards align their text toward the center line. Independent of `layout`.
+- Fix: **ad slots were counted as items when paginating.** `_initItems()` took every child from `lastItemIdx` onward, so injected slots picked up `js-mo-item`, counted as entries and were given a badge and arrow. With `interval: 5` over four pages the slots drifted to positions 6, 11, 16, 21 instead of 6, 12, 18, 24, and the item count read 21 instead of 20.
 
 ### v2.13.3
 - Fix: **ad slots never received the `mo-item` class**, so no layout rule applied to them — slots spanned the full container width instead of one column, got no `float`, and lost the `min-height: 100px` reservation. Because an empty slot then had zero height, the `IntersectionObserver` could fail to reach its 0.5 threshold and `onEnterViewport` never fired. Affects both `style: 'card'` and `style: 'fullwidth'` since v2.11.0 ([#10](https://github.com/MattOpen/moTimeline/issues/10)). `js-mo-item` remains intentionally absent so slots are still never counted as real items.
