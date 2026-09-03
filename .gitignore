@@ -46,3 +46,7 @@ Icon
 
 # npm credentials - never commit
 .npmrc
+
+# Local-only release helpers - never commit
+publish.ps1
+set-npm-token.ps1
