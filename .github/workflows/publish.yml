@@ -1,19 +1,10 @@
 name: Publish to npm
 
-# Triggered by pushing a version tag, not by every push: an npm version can only
-# ever be published once, so the tag is the deliberate "release this" signal.
+# Triggered by a version tag, not by every push: an npm version can only ever be
+# published once, so the tag is the deliberate "release this" signal.
 #
-#   npm version patch   (bumps package.json, commits, creates the tag)
-#   git push --follow-tags
-#
-# Auth uses npm Trusted Publishing (OIDC) — no token is stored anywhere.
-# Configure once at: npmjs.com -> motimeline -> Settings -> Trusted Publisher
-#   Organization/User: MattOpen   Repository: moTimeline
-#   Workflow filename: publish.yml
-#   Allowed action:    leave "publish directly" UNCHECKED (staged only)
-#
-# The workflow stages the release; it does not make it public. Approve the
-# staged version afterwards on npmjs.com (or `npm stage approve`) with 2FA.
+# Auth is npm Trusted Publishing (OIDC) — no token stored anywhere. This only
+# stages the release; a maintainer approves it separately.
 
 on:
   push:
@@ -69,10 +60,7 @@ jobs:
             fi
           done
 
-      # Staged publish: this uploads the version but does NOT make it public.
-      # A maintainer approves it afterwards with 2FA (npmjs.com, or `npm stage
-      # approve`), which is why the trusted publisher does not need direct
-      # publish rights. npm recommends this over allowing direct publishing.
+      # Uploads the version without making it public.
       - name: Stage publish
         run: npm stage publish
 

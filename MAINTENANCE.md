@@ -48,28 +48,10 @@ GitHub Pages auto-deploys from `/docs` on push — no manual step needed.
 
 ## npm authentication
 
-Publishing uses **Trusted Publishing** (OIDC): npm grants the workflow a
-short-lived credential at run time, so no token is stored in the repo, in
-`~/.npmrc`, or in GitHub secrets.
+Publishing uses Trusted Publishing (OIDC) — no tokens anywhere. CI may only
+stage; releasing is a manual approval. Do not create automation tokens.
 
-One-time setup on npmjs.com → *motimeline* → Settings → Trusted Publisher:
-
-| Field | Value |
-|---|---|
-| Organization / User | `MattOpen` |
-| Repository | `moTimeline` |
-| Workflow filename | `publish.yml` |
-| Allow publishing directly | **unchecked** — staged publishing only |
-
-Leaving that box unchecked is npm's own recommendation: CI can stage a release,
-but only a maintainer with 2FA can make it public.
-
-The account uses 2FA mode `auth-and-writes`, so a **local** `npm publish` still
-requires a one-time code — that path is the fallback if CI is unavailable.
-
-⚠️ Automation tokens would also bypass the OTP, but npm itself warns against
-them: they are a standing publish credential in a plain-text file. Trusted
-Publishing exists to avoid exactly that, so do not create one.
+Setup details: `.github/workflows/publish.yml`.
 
 ---
 
