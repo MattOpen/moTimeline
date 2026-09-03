@@ -1,7 +1,7 @@
 {
   "name": "motimeline",
   "version": "2.14.0",
-  "description": "Responsive two-column timeline layout library. Plain JavaScript, no dependencies.",
+  "description": "Responsive timeline layout library for JavaScript. Four layouts, themes, category filters and ad slots. No dependencies.",
   "main": "./dist/moTimeline.cjs",
   "module": "./dist/moTimeline.js",
   "style": "./dist/moTimeline.css",
@@ -25,9 +25,20 @@
   },
   "keywords": [
     "timeline",
-    "JavaScript",
+    "vertical-timeline",
+    "timeline-component",
+    "history",
+    "chronology",
+    "roadmap",
+    "changelog",
+    "javascript",
+    "vanilla-js",
     "responsive",
-    "two-column"
+    "two-column",
+    "no-dependencies",
+    "css",
+    "ui",
+    "ui-components"
   ],
   "author": "mattopen - www.mattopen.com",
   "license": "MIT",

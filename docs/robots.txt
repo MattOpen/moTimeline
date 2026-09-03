@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mattopen.github.io/moTimeline/sitemap.xml

@@ -1,6 +1,7 @@
 # moTimeline
 
-Responsive two-column timeline layout library — plain JavaScript, zero dependencies, MIT licensed.
+Responsive timeline layout library for JavaScript — four layouts, zero dependencies, MIT licensed.
+Works with any framework or a plain `<script>` tag.
 
 **[Live demo & docs → mattopen.github.io/moTimeline](https://mattopen.github.io/moTimeline/)**
 
@@ -14,6 +15,7 @@ Responsive two-column timeline layout library — plain JavaScript, zero depende
 ## Features
 
 - **Zero dependencies** — no jQuery, no frameworks required
+- **Four layouts, one option** — `layout: 'fill'` fills the shorter column, `'rows'` alternates card and date across the spine, `'stacked'` keeps one column with a date gutter; `mirrorText` mirrors the right-hand column. See **[Layouts](#layouts)**.
 - **Responsive** — two columns on desktop, single column on mobile
 - **Configurable breakpoints** — control column count at xs / sm / md / lg
 - **Badges & arrows** — numbered badges on the center line, directional arrows
@@ -347,6 +349,56 @@ export default function App() {
 ```
 
 > **How it works:** React renders the `<li>` elements. moTimeline initialises once on mount and reads the DOM. When the `items` array grows, `initNewItems()` picks up the new `<li>` nodes React just appended. When items are removed or reordered React re-renders the list and the instance is fully reinitialised.
+
+---
+
+## Layouts
+
+`layout` decides where items are placed. All four looks below use the same items and
+the same options — only this one value changes.
+
+```js
+new MoTimeline('#my-timeline', { layout: 'rows', theme: true, showBadge: true });
+```
+
+<div style="overflow-x:auto">
+
+| Value | Placement | Spine | Date gutter |
+|---|---|---|---|
+| `'fill'` *(default)* | each item goes into the **shorter** column, so cards pull up next to each other | centre | — |
+| `'stacked'` | one column, every card on the same side | left | yes, left of the spine |
+| `'rows'` | one item per row; card **and** date swap sides with every item | centre | yes, opposite the card |
+
+</div>
+
+**When to use which.** `'fill'` wastes no vertical space and is the right default for
+cards of uneven height. `'rows'` is the classic alternating timeline: it keeps strict
+document order, so item *n+1* always begins below item *n* — at the price of gaps when
+one card is much taller than its neighbour. `'stacked'` reads like a changelog and is the
+most compact on narrow screens.
+
+**Dates.** `'stacked'` and `'rows'` show a date beside the spine, read from
+`data-mo-date` on the `<li>`. With `addItems()` pass a `date` field:
+
+```js
+tl.addItems([
+  { title: 'v1.5 shipped', date: 'Oct 2025', meta: 'October 2025', text: '…' },
+]);
+```
+
+The other layouts ignore it, so the field is safe to always include.
+
+### `mirrorText`
+
+Independent of `layout`: right-hand cards align their text toward the centre line, so the
+two columns read as mirror images instead of both being left-aligned.
+
+```js
+new MoTimeline('#my-timeline', { mirrorText: true });
+```
+
+Try all four in the **Timestamp** and **On This Day** tabs of the
+[live demo](https://mattopen.github.io/moTimeline/#demo).
 
 ---
 

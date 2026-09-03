@@ -196,7 +196,9 @@
   background: var(--mo-badge-bg);
   border-radius: 50%;
   /* Border-box so a custom border stays inside --mo-badge-size: the centring
-     offset is size/2, which would otherwise miss the spine by the border width. */
+     offset is size/2, which would otherwise miss the spine by the border width.
+     Holds for any badge size and border — the one exception is a border thicker
+     than half the badge, which no longer fits and forces the element wider. */
   box-sizing: border-box;
   color: var(--mo-badge-color);
   display: flex;

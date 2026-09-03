@@ -3,8 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>moTimeline — Responsive Two-Column Timeline</title>
-  <meta name="description" content="moTimeline: lightweight, dependency-free JavaScript library for responsive two-column timeline layouts with themes, badges and arrows.">
+  <title>moTimeline — Responsive Timeline Library for JavaScript</title>
+  <meta name="description" content="Dependency-free JavaScript timeline library. Four layouts, themes, category filters and ad slots. Works with any framework or a plain script tag.">
+  <link rel="canonical" href="https://mattopen.github.io/moTimeline/">
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mattopen.github.io/moTimeline/">
+  <meta property="og:title" content="moTimeline — Responsive Timeline Library for JavaScript">
+  <meta property="og:description" content="Dependency-free JavaScript timeline library. Four layouts, themes, badges, category filters and publisher-ready ad slots.">
+  <meta property="og:image" content="https://mattopen.github.io/moTimeline/web-app-manifest-512x512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="moTimeline — Responsive Timeline Library for JavaScript">
+  <meta name="twitter:description" content="Dependency-free JavaScript timeline library. Four layouts, themes, badges, category filters and ad slots.">
+  <meta name="twitter:image" content="https://mattopen.github.io/moTimeline/web-app-manifest-512x512.png">
+
+  <!-- Tells search engines this page documents a software library -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "moTimeline",
+    "description": "Responsive timeline layout library for JavaScript. No dependencies.",
+    "url": "https://mattopen.github.io/moTimeline/",
+    "codeRepository": "https://github.com/MattOpen/moTimeline",
+    "programmingLanguage": "JavaScript",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "Matt Open", "url": "https://www.mattopen.com" }
+  }
+  </script>
 
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -166,6 +193,16 @@
     .layout-btn:hover { border-color: var(--accent); color: var(--accent); }
     .layout-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .layout-btn.active span { opacity: .8; }
+    .otd-layout-btn { background: #fff; border: 1.5px solid var(--border); border-radius: 999px; color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
+    .otd-layout-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .otd-layout-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .otd-field { align-items: center; color: var(--muted); display: flex; font-size: 0.85rem; font-weight: 600; gap: 0.4rem; }
+    .otd-field input, .otd-field select { border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font: inherit; font-size: 0.85rem; font-weight: 500; padding: 0.4rem 0.6rem; }
+    /* Wikipedia thumbnails vary wildly in aspect ratio — cap them so one tall
+       portrait does not dominate the timeline. */
+    #tl-otd .mo-banner { max-height: 200px; object-fit: cover; }
+    .otd-attrib { color: var(--muted); font-size: 0.78rem; margin-top: 1.5rem; text-align: center; }
+    .otd-attrib a { color: var(--accent); }
     /* Ad slots demo */
     .ads-intro { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.5rem; text-align: center; }
     .ads-counter { align-self: center; color: var(--muted); font-size: 0.875rem; font-weight: 600; }
@@ -235,7 +272,7 @@
 
 <div class="hero">
   <h1>moTimeline</h1>
-  <p>Lightweight, dependency-free JavaScript library for responsive two-column timeline layouts — with the most publisher-friendly ad slot support on npm.</p>
+  <p>Lightweight, dependency-free JavaScript timeline library — four layouts, themes, category filters, and the most publisher-friendly ad slot support on npm.</p>
   <div class="badge-row">
     <span class="pill">No jQuery</span>
     <span class="pill">Zero dependencies</span>
@@ -263,6 +300,7 @@
       <button class="demo-tab" data-tab="tab-bootstrap">Bootstrap</button>
       <button class="demo-tab" data-tab="tab-filter">Category Filter</button>
       <button class="demo-tab" data-tab="tab-ads">Ad Slots</button>
+      <button class="demo-tab" data-tab="tab-otd">On This Day</button>
     </div>
 
     <!-- ── Tab 1: moTimeline ── -->
@@ -617,6 +655,63 @@ tl.<span class="fn">filterByCategory</span>(<span class="str">'all'</span>);   <
 
 tl.<span class="fn">addItems</span>(items);   <span class="cm">// slots are injected automatically</span></code></pre>
       <ul id="tl-ads"></ul>
+    </div>
+
+    <!-- ── Tab 6: On This Day ── -->
+    <div class="demo-panel" id="tab-otd">
+      <p class="ads-intro">
+        Real events from the <a href="https://api.wikimedia.org/" target="_blank" rel="noopener">Wikimedia API</a>
+        — no API key, fetched live and fed straight into <code>addItems()</code>.
+        Switch the layout to see any design with real data.
+      </p>
+      <div class="layout-switch" role="group" aria-label="Layout">
+        <button class="otd-layout-btn active" data-layout="fill">Fill</button>
+        <button class="otd-layout-btn" data-layout="rows">Alternating</button>
+        <button class="otd-layout-btn" data-layout="stacked">Stacked</button>
+        <button class="otd-layout-btn" data-layout="mirror">Mirror text</button>
+      </div>
+      <div class="demo-controls">
+        <label class="otd-field">Date <input type="date" id="otdDate"></label>
+        <label class="otd-field">Language
+          <select id="otdLang"><option value="en">English</option><option value="de">Deutsch</option></select>
+        </label>
+        <label class="otd-field">Kind
+          <select id="otdKind">
+            <option value="events">Events</option>
+            <option value="births">Births</option>
+            <option value="deaths">Deaths</option>
+            <option value="holidays">Holidays</option>
+          </select>
+        </label>
+        <button id="otdLoad">Load</button>
+        <button class="code-btn" data-code="code-otd" style="background:#0ea5e9">Show setup code</button>
+        <span class="ads-counter" id="otdStatus"></span>
+      </div>
+      <pre id="code-otd" hidden><code><span class="cm">// Wikimedia's on-this-day feed — public, no key, CC BY-SA.</span>
+<span class="kw">const</span> res  = <span class="kw">await</span> <span class="fn">fetch</span>(
+  <span class="str">`https://api.wikimedia.org/feed/v1/wikipedia/${lang}/onthisday/${kind}/${mm}/${dd}`</span>);
+<span class="kw">const</span> json = <span class="kw">await</span> res.<span class="fn">json</span>();
+
+<span class="cm">// Map the feed onto the item schema — one line per field.</span>
+<span class="kw">const</span> items = json[kind].<span class="fn">map</span>(e =&gt; {
+  <span class="kw">const</span> page = (e.pages || [])[0] || {};
+  <span class="kw">return</span> {
+    title:  page.normalizedtitle,
+    meta:   <span class="fn">String</span>(e.year),
+    date:   <span class="fn">String</span>(e.year),        <span class="cm">// gutter for 'stacked' / 'rows'</span>
+    text:   e.text,
+    banner: page.thumbnail?.source,
+    icon:   page.thumbnail?.source,
+  };
+});
+
+tl.<span class="fn">clear</span>();
+tl.<span class="fn">addItems</span>(items);</code></pre>
+      <ul id="tl-otd"></ul>
+      <p class="otd-attrib">
+        Content from the <a href="https://api.wikimedia.org/" target="_blank" rel="noopener">Wikimedia REST API</a>,
+        text under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+      </p>
     </div>
 
   </div>
@@ -1163,7 +1258,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     }
     _cie(item){
       const li=document.createElement('li');
-      if(item.icon) li.dataset.moIcon=item.icon;
+      if(item.icon) li.dataset.moIcon=item.icon; if(item.date) li.dataset.moDate=item.date;
       if(item.categories){ li.dataset.categories=Array.isArray(item.categories)?item.categories.join(' '):String(item.categories); }
       const card=document.createElement('div'); card.className='mo-card';
       const d=this._d();
@@ -1467,6 +1562,67 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
 
   document.getElementById('adsResetBtn').addEventListener('click', buildAdsTimeline);
 
+  // ── Tab 6: On This Day — live data from the Wikimedia API ───────────────────
+  const OTD_LAYOUTS = { fill:{}, rows:{layout:'rows'}, stacked:{layout:'stacked'}, mirror:{mirrorText:true} };
+  let otdLayout = 'fill';
+  let otdItems = [];
+  let tl6 = null;
+
+  function otdBuild() {
+    if (tl6) tl6.destroy();
+    const ul = document.getElementById('tl-otd');
+    ul.innerHTML = '';
+    tl6 = new MoTimeline(ul, Object.assign(
+      { showBadge:true, showArrow:true, theme:true, showCounterStyle:'image' },
+      OTD_LAYOUTS[otdLayout]));
+    if (otdItems.length) tl6.addItems(otdItems);
+  }
+
+  async function otdLoad() {
+    const d = document.getElementById('otdDate').valueAsDate || new Date();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const lang = document.getElementById('otdLang').value;
+    const kind = document.getElementById('otdKind').value;
+    const status = document.getElementById('otdStatus');
+    status.textContent = 'loading…';
+    try {
+      const res = await fetch(`https://api.wikimedia.org/feed/v1/wikipedia/${lang}/onthisday/${kind}/${mm}/${dd}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      const raw = json[kind] || [];
+      // Newest first; holidays carry no year.
+      const sorted = kind === 'holidays' ? raw : [...raw].sort((a,b) => (b.year||0)-(a.year||0));
+      otdItems = sorted.slice(0, 12).map(e => {
+        const p = (e.pages || [])[0] || {};
+        return {
+          title: p.normalizedtitle || (e.text||'').slice(0,60),
+          meta:  e.year != null ? String(e.year) : '',
+          date:  e.year != null ? String(e.year) : '',
+          text:  e.text || p.extract || '',
+          banner: p.thumbnail ? p.thumbnail.source : undefined,
+          icon:   p.thumbnail ? p.thumbnail.source : undefined,
+        };
+      });
+      otdBuild();
+      status.textContent = `${otdItems.length} of ${raw.length} entries · ${dd}.${mm}.`;
+    } catch (err) {
+      status.textContent = 'Failed: ' + err.message;
+    }
+  }
+
+  document.getElementById('otdDate').valueAsDate = new Date();
+  document.getElementById('otdLoad').addEventListener('click', otdLoad);
+  document.querySelectorAll('#tab-otd .otd-layout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#tab-otd .otd-layout-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      otdLayout = btn.dataset.layout;
+      otdBuild();
+    });
+  });
+  otdBuild();   // empty instance so the tab is never blank before the first load
+
   // ── "Show setup code" toggles (one handler for every demo tab) ──────────────
   document.querySelectorAll('.code-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1487,9 +1643,12 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       btn.classList.add('active');
       const panel = document.getElementById(btn.dataset.tab);
       panel.classList.add('active');
-      // tl2 and tl5 are rebuilt (layout switch / ad style), so resolve at click time
+      // Fetch on first view only — the page stays fully usable offline otherwise.
+      if (btn.dataset.tab === 'tab-otd' && !otdItems.length) otdLoad();
+      // tl2, tl5 and tl6 are rebuilt (layout switch / ad style), so resolve at click time
       const inst = btn.dataset.tab === 'tab-ads' ? tl5
                  : btn.dataset.tab === 'tab-timestamp' ? tl2
+                 : btn.dataset.tab === 'tab-otd' ? tl6
                  : instances[btn.dataset.tab];
       if (inst) inst.refresh();
     });
