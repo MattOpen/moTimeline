@@ -149,6 +149,14 @@
 
     .demo-panel { display: none; }
     .demo-panel.active { display: block; }
+    /* Controls and setup code sit above the timeline in every tab. Where the
+       markup order differs (long inline item lists), flex order fixes it
+       without moving the blocks. */
+    .demo-panel.controls-first.active { display: flex; flex-direction: column; }
+    .demo-panel.controls-first > .cat-filters   { order: 0; }
+    .demo-panel.controls-first > .demo-controls { order: 1; margin-top: 0; }
+    .demo-panel.controls-first > pre           { order: 2; }
+    .demo-panel.controls-first > ul            { order: 3; }
 
     /* ── TIMESTAMP DEMO ── */
     .ts-label { color: #9ca3af; font-size: 0.75rem; margin-bottom: 0.4rem; }
@@ -231,7 +239,6 @@
 
     <!-- ── Tab 1: moTimeline ── -->
     <div class="demo-panel active" id="tab-motimeline">
-      <ul id="tl-motimeline"></ul>
       <div class="demo-controls">
         <button class="code-btn" data-code="code-motimeline" style="background:#0ea5e9">Show setup code</button>
         <button id="addBtn">+ Add item</button>
@@ -262,10 +269,36 @@ tl.<span class="fn">insertItem</span>({ title: <span class="str">'Full-width'</s
 <span class="cm">// Appending your own markup? Tell the library about it:</span>
 myUl.<span class="fn">appendChild</span>(li);
 tl.<span class="fn">initNewItems</span>();</code></pre>
+      <ul id="tl-motimeline"></ul>
     </div>
 
     <!-- ── Tab 2: Timestamp ── -->
     <div class="demo-panel" id="tab-timestamp">
+      <div class="demo-controls">
+        <button class="code-btn" data-code="code-timestamp" style="background:#0ea5e9">Show setup code</button>
+      </div>
+      <pre id="code-timestamp" hidden><code><span class="cm">&lt;!-- Items written as plain HTML — no addItems() needed. --&gt;</span>
+<span class="cm">&lt;!-- The timestamp span is yours; the library does not touch it. --&gt;</span>
+&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
+  &lt;<span class="fn">li</span>&gt;
+    &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
+        &lt;<span class="fn">h3</span>&gt;v1.5 shipped&lt;/<span class="fn">h3</span>&gt;
+        &lt;<span class="fn">p</span>&gt;&lt;<span class="fn">span</span> class=<span class="str">"js-ts-ago"</span> data-ts=<span class="str">"2025-10-15T11:00:00"</span>&gt;&lt;/<span class="fn">span</span>&gt;&lt;/<span class="fn">p</span>&gt;
+        &lt;<span class="fn">p</span>&gt;Dark mode, keyboard navigation and a new plugin API.&lt;/<span class="fn">p</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
+&lt;/<span class="fn">ul</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,
+});
+
+<span class="cm">// Refresh the relative labels on your own schedule</span>
+<span class="fn">setInterval</span>(updateTimestamps, 60000);</code></pre>
       <ul id="tl-timestamp">
 
         <li>
@@ -349,35 +382,10 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
       </ul>
-      <div class="demo-controls">
-        <button class="code-btn" data-code="code-timestamp" style="background:#0ea5e9">Show setup code</button>
-      </div>
-      <pre id="code-timestamp" hidden><code><span class="cm">&lt;!-- Items written as plain HTML — no addItems() needed. --&gt;</span>
-<span class="cm">&lt;!-- The timestamp span is yours; the library does not touch it. --&gt;</span>
-&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
-  &lt;<span class="fn">li</span>&gt;
-    &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
-      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
-        &lt;<span class="fn">h3</span>&gt;v1.5 shipped&lt;/<span class="fn">h3</span>&gt;
-        &lt;<span class="fn">p</span>&gt;&lt;<span class="fn">span</span> class=<span class="str">"js-ts-ago"</span> data-ts=<span class="str">"2025-10-15T11:00:00"</span>&gt;&lt;/<span class="fn">span</span>&gt;&lt;/<span class="fn">p</span>&gt;
-        &lt;<span class="fn">p</span>&gt;Dark mode, keyboard navigation and a new plugin API.&lt;/<span class="fn">p</span>&gt;
-      &lt;/<span class="fn">div</span>&gt;
-    &lt;/<span class="fn">div</span>&gt;
-  &lt;/<span class="fn">li</span>&gt;
-&lt;/<span class="fn">ul</span>&gt;
-
-<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
-  showBadge: <span class="kw">true</span>,
-  showArrow: <span class="kw">true</span>,
-  theme:     <span class="kw">true</span>,
-});
-
-<span class="cm">// Refresh the relative labels on your own schedule</span>
-<span class="fn">setInterval</span>(updateTimestamps, 60000);</code></pre>
     </div>
 
     <!-- ── Tab 3: Bootstrap ── -->
-    <div class="demo-panel" id="tab-bootstrap">
+    <div class="demo-panel controls-first" id="tab-bootstrap">
       <ul id="tl-bootstrap">
 
         <li>
@@ -501,7 +509,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
     </div>
 
     <!-- ── Tab 4: Category Filter ── -->
-    <div class="demo-panel" id="tab-filter">
+    <div class="demo-panel controls-first" id="tab-filter">
       <div class="cat-filters">
         <button class="cat-btn active" data-cat="all">All</button>
         <button class="cat-btn" data-cat="development">Development</button>
