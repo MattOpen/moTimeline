@@ -26,10 +26,35 @@ Wait for explicit go-ahead — no exceptions.
 
 ### 5 — Publish and push
 ```
-npm publish
+npm publish --otp=123456     # code from the authenticator app
 git push
 ```
+The OTP is required on every publish — see "npm authentication" below.
+
 GitHub Pages auto-deploys from `/docs` on push — no manual step needed.
+
+Also push the tag and create a release:
+```
+git tag -a vX.Y.Z -m "vX.Y.Z — <summary>"
+git push origin vX.Y.Z
+gh release create vX.Y.Z --title "..." --notes "..."
+```
+
+---
+
+## npm authentication
+
+The account uses 2FA mode **`auth-and-writes`**, so *every* publish needs a
+one-time code — a normal `npm login` token is not enough on its own.
+
+- `npm login` (browser) authenticates the CLI, but publishes still ask for the OTP.
+- An **automation token** (npmjs.com → Access Tokens → Generate → *Automation*)
+  bypasses the OTP prompt, because automation tokens are exempt from 2FA.
+  Store it as `//registry.npmjs.org/:_authToken=<token>` in `~/.npmrc`.
+
+⚠️ An automation token is a standing publish credential in a plain-text file: it
+weakens the 2FA guarantee that mode `auth-and-writes` is there to provide. Worth
+it for CI, a deliberate trade-off on a workstation. Never commit it.
 
 ---
 
