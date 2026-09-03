@@ -82,6 +82,7 @@
     .mo-theme > .mo-item.mo-fullwidth .mo-card { margin: var(--mo-card-margin-fullwidth, 0.5rem); }
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-badge,
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow { display: none; }
+    .mo-timeline > .mo-item.mo-ad-slot { min-height: 100px; }
 
     .mo-badge { align-items: center; background: var(--mo-badge-bg); border-radius: 50%; color: var(--mo-badge-color); display: flex; font-size: 12px; font-weight: 700; height: var(--mo-badge-size); justify-content: center; min-width: var(--mo-badge-size); overflow: hidden; position: absolute; top: 18px; z-index: 2; }
     .mo-badge .mo-badge-icon { border-radius: 50%; height: 100%; object-fit: cover; width: 100%; }
@@ -137,6 +138,15 @@
     .cat-btn { background: #fff; border: 1.5px solid var(--border); border-radius: 999px; color: var(--muted); cursor: pointer; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 1rem; transition: background .15s, color .15s, border-color .15s; }
     .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
     .cat-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    /* Ad slots demo */
+    .ads-intro { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.5rem; text-align: center; }
+    .ads-counter { align-self: center; color: var(--muted); font-size: 0.875rem; font-weight: 600; }
+    .ad-box { align-items: center; background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 10px, #e2e8f0 10px, #e2e8f0 20px);
+              border: 2px dashed var(--accent); border-radius: 8px; color: var(--accent2); display: flex; font-size: 0.875rem;
+              font-weight: 700; justify-content: center; letter-spacing: 0.04em; min-height: 100px; padding: 1rem; text-align: center; }
+    .mo-ad-slot .ad-box { animation: adFade .35s ease both; }
+    @keyframes adFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
     .demo-panel { display: none; }
     .demo-panel.active { display: block; }
 
@@ -176,7 +186,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.2</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.13.3</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -216,12 +226,14 @@
       <button class="demo-tab" data-tab="tab-timestamp">Timestamp</button>
       <button class="demo-tab" data-tab="tab-bootstrap">Bootstrap</button>
       <button class="demo-tab" data-tab="tab-filter">Category Filter</button>
+      <button class="demo-tab" data-tab="tab-ads">Ad Slots</button>
     </div>
 
     <!-- ── Tab 1: moTimeline ── -->
     <div class="demo-panel active" id="tab-motimeline">
       <ul id="tl-motimeline"></ul>
       <div class="demo-controls">
+        <button class="code-btn" data-code="code-motimeline" style="background:#0ea5e9">Show setup code</button>
         <button id="addBtn">+ Add item</button>
         <button id="addJsonBtn" style="background:#0ea5e9">+ Load via JSON</button>
         <button id="insertRandomBtn" style="background:#8b5cf6">Insert at random pos</button>
@@ -229,6 +241,27 @@
         <button id="toggleFullWidthBtn" style="background:#f59e0b">Toggle random full-width</button>
         <button id="toggleAnimateBtn" style="background:#6366f1">Toggle animate</button>
       </div>
+      <pre id="code-motimeline" hidden><code>&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;&lt;/<span class="fn">ul</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,
+});
+
+<span class="cm">// Load items from a JSON array</span>
+tl.<span class="fn">addItems</span>([
+  { title: <span class="str">'Loaded from JSON'</span>, meta: <span class="str">'March 2025'</span>, text: <span class="str">'…'</span> },
+  { title: <span class="str">'Second JSON item'</span>, meta: <span class="str">'April 2025'</span>, text: <span class="str">'…'</span> },
+]);
+
+<span class="cm">// Insert at a random position, or at a fixed index</span>
+tl.<span class="fn">insertItem</span>({ title: <span class="str">'Inserted'</span>, meta: <span class="str">'Just now'</span>, text: <span class="str">'…'</span> });
+tl.<span class="fn">insertItem</span>({ title: <span class="str">'Full-width'</span>, fullWidth: <span class="kw">true</span> }, 2);
+
+<span class="cm">// Appending your own markup? Tell the library about it:</span>
+myUl.<span class="fn">appendChild</span>(li);
+tl.<span class="fn">initNewItems</span>();</code></pre>
     </div>
 
     <!-- ── Tab 2: Timestamp ── -->
@@ -316,6 +349,31 @@
         </li>
 
       </ul>
+      <div class="demo-controls">
+        <button class="code-btn" data-code="code-timestamp" style="background:#0ea5e9">Show setup code</button>
+      </div>
+      <pre id="code-timestamp" hidden><code><span class="cm">&lt;!-- Items written as plain HTML — no addItems() needed. --&gt;</span>
+<span class="cm">&lt;!-- The timestamp span is yours; the library does not touch it. --&gt;</span>
+&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
+  &lt;<span class="fn">li</span>&gt;
+    &lt;<span class="fn">div</span> class=<span class="str">"mo-card"</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"mo-card-body"</span>&gt;
+        &lt;<span class="fn">h3</span>&gt;v1.5 shipped&lt;/<span class="fn">h3</span>&gt;
+        &lt;<span class="fn">p</span>&gt;&lt;<span class="fn">span</span> class=<span class="str">"js-ts-ago"</span> data-ts=<span class="str">"2025-10-15T11:00:00"</span>&gt;&lt;/<span class="fn">span</span>&gt;&lt;/<span class="fn">p</span>&gt;
+        &lt;<span class="fn">p</span>&gt;Dark mode, keyboard navigation and a new plugin API.&lt;/<span class="fn">p</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
+&lt;/<span class="fn">ul</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,
+});
+
+<span class="cm">// Refresh the relative labels on your own schedule</span>
+<span class="fn">setInterval</span>(updateTimestamps, 60000);</code></pre>
     </div>
 
     <!-- ── Tab 3: Bootstrap ── -->
@@ -419,6 +477,27 @@
         </li>
 
       </ul>
+      <div class="demo-controls">
+        <button class="code-btn" data-code="code-bootstrap" style="background:#0ea5e9">Show setup code</button>
+      </div>
+      <pre id="code-bootstrap" hidden><code><span class="cm">&lt;!-- theme:false — the library handles layout only, --&gt;</span>
+<span class="cm">&lt;!-- Bootstrap's own panels provide the card styling. --&gt;</span>
+&lt;<span class="fn">div</span> class=<span class="str">"container"</span>&gt;
+  &lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
+    &lt;<span class="fn">li</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"panel panel-primary"</span>&gt;
+        &lt;<span class="fn">div</span> class=<span class="str">"panel-heading"</span>&gt;&lt;<span class="fn">h3</span>&gt;Beta launch&lt;/<span class="fn">h3</span>&gt;&lt;/<span class="fn">div</span>&gt;
+        &lt;<span class="fn">div</span> class=<span class="str">"panel-body"</span>&gt;200 early users invited.&lt;/<span class="fn">div</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    &lt;/<span class="fn">li</span>&gt;
+  &lt;/<span class="fn">ul</span>&gt;
+&lt;/<span class="fn">div</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  theme:     <span class="kw">false</span>,   <span class="cm">// no built-in card theme</span>
+});</code></pre>
     </div>
 
     <!-- ── Tab 4: Category Filter ── -->
@@ -431,6 +510,71 @@
         <button class="cat-btn" data-cat="database">Database &amp; BI</button>
       </div>
       <ul id="tl-filter"></ul>
+      <div class="demo-controls">
+        <button class="code-btn" data-code="code-filter" style="background:#0ea5e9">Show setup code</button>
+      </div>
+      <pre id="code-filter" hidden><code><span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  theme:     <span class="kw">true</span>,
+});
+
+<span class="cm">// Tag each item — array or space-separated string</span>
+tl.<span class="fn">addItems</span>([
+  { title: <span class="str">'DI &amp; .NET Cleanup'</span>, meta: <span class="str">'01/2026'</span>, text: <span class="str">'…'</span>,
+    categories: [<span class="str">'architecture'</span>, <span class="str">'development'</span>] },
+  { title: <span class="str">'Sales Dashboard'</span>,  meta: <span class="str">'01/2024'</span>, text: <span class="str">'…'</span>,
+    categories: [<span class="str">'database'</span>, <span class="str">'management'</span>] },
+]);
+
+<span class="cm">// Show one category…</span>
+tl.<span class="fn">filterByCategory</span>(<span class="str">'development'</span>);
+
+<span class="cm">// …or clear the filter again</span>
+tl.<span class="fn">filterByCategory</span>(<span class="str">'all'</span>);   <span class="cm">// null / '' work too</span>
+
+<span class="cm">// The active filter is remembered and re-applied</span>
+<span class="cm">// to items added later — infinite scroll stays correct.</span></code></pre>
+    </div>
+
+    <!-- AD SLOTS -->
+    <div class="demo-panel" id="tab-ads">
+      <p class="ads-intro">
+        A slot is injected after every 3rd item. Each placeholder is a
+        <code>&lt;li class="mo-item mo-ad-slot"&gt;</code> the library reserves space for —
+        <code>onEnterViewport</code> fires once per slot at ≥&nbsp;50&nbsp;% visibility and fills it.
+        Scroll down to watch the slots load; the counter shows how many have fired.
+      </p>
+      <div class="demo-controls">
+        <button class="code-btn" data-code="adsCode" style="background:#0ea5e9">Show setup code</button>
+        <button id="adsStyleBtn" style="background:#10b981">Style: card</button>
+        <button id="adsResetBtn" style="background:#8b5cf6">Reset &amp; replay</button>
+        <span class="ads-counter" id="adsCounter">0 slots filled</span>
+      </div>
+      <pre id="adsCode" hidden><code>&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;&lt;/<span class="fn">ul</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  theme:     <span class="kw">true</span>,
+  showBadge: <span class="kw">true</span>,
+  showArrow: <span class="kw">true</span>,
+  adSlots: {
+    mode:     <span class="str">'every_n'</span>,   <span class="cm">// or 'random'</span>
+    interval: 3,           <span class="cm">// a slot after every 3rd item</span>
+    style:    <span class="str">'card'</span>,      <span class="cm">// or 'fullwidth' — spans both columns</span>
+
+    <span class="cm">// Fires once per slot, at >= 50% visibility.</span>
+    <span class="cm">// slotEl is the empty &lt;li&gt;; position is its child index.</span>
+    <span class="fn">onEnterViewport</span>(slotEl, position) {
+      <span class="cm">// Real AdSense usage:</span>
+      <span class="cm">//   slotEl.innerHTML = '&lt;ins class="adsbygoogle" ...&gt;&lt;/ins&gt;';</span>
+      <span class="cm">//   (adsbygoogle = window.adsbygoogle || []).push({});</span>
+      slotEl.innerHTML = <span class="str">'&lt;div class="ad-box"&gt;Ad #'</span> + position + <span class="str">'&lt;/div&gt;'</span>;
+    },
+  },
+});
+
+tl.<span class="fn">addItems</span>(items);   <span class="cm">// slots are injected automatically</span></code></pre>
+      <ul id="tl-ads"></ul>
     </div>
 
   </div>
@@ -787,7 +931,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr>
           <td><code>adSlots</code></td><td>object&nbsp;|&nbsp;null</td><td><code>null</code></td>
           <td>
-            Inject ad slot <code>&lt;li class="mo-ad-slot"&gt;</code> placeholders and observe them. Shape:
+            Inject ad slot <code>&lt;li class="mo-item mo-ad-slot"&gt;</code> placeholders and observe them. Shape:
             <code>{ mode: 'every_n'|'random', interval: number, style: 'card'|'fullwidth', onEnterViewport: (slotEl, position) =&gt; void }</code>.
             <code>mode:'every_n'</code> — inject after every <code>interval</code> real items.
             <code>mode:'random'</code> — inject one slot at a random position within each <code>interval</code>-item page.
@@ -1006,7 +1150,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       d._adRealCount+=newItems.length; if(needsRefresh) this.refresh();
     }
-    _cas(fw){ const s=document.createElement('li'); s.className='mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); return s; }
+    _cas(fw){ const s=document.createElement('li'); s.className='mo-item mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); return s; }
   }
   window.MoTimeline = MoTimeline;
 
@@ -1158,6 +1302,73 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     });
   });
 
+  // ── Ad slots demo ───────────────────────────────────────────────────────────
+  const AD_ITEMS = [
+    { title:'Release 2.13',            meta:'Sep 2026', text:'Category filtering plus the virtual fill-shorter-column placement algorithm.' },
+    { title:'Ad slot support',         meta:'Mar 2026', text:'Publisher-friendly placeholders injected at a configurable cadence.' },
+    { title:'renderCard() option',     meta:'Mar 2026', text:'Bring your own card markup — the library keeps owning the layout.' },
+    { title:'Category filter',         meta:'Feb 2026', text:'Filter items by token; the filter sticks to items added later.' },
+    { title:'Infinite scroll',         meta:'Jan 2026', text:'addItems() appends pages without re-rendering what is already there.' },
+    { title:'Animation presets',       meta:'Nov 2025', text:'Fade and slide reveals driven by an IntersectionObserver.' },
+    { title:'Full-width items',        meta:'Sep 2025', text:'Let a single entry span both columns and clear the row.' },
+    { title:'Badge icons',             meta:'Jul 2025', text:'Swap the counter for a favicon or any inline SVG data URI.' },
+    { title:'Bootstrap compatibility', meta:'May 2025', text:'Drop the list into a .container — no extra configuration needed.' },
+    { title:'First public release',    meta:'Feb 2025', text:'Dependency-free two-column timeline in ESM, CJS and UMD builds.' },
+  ];
+
+  let adsFilled = 0;
+  let adsStyle  = 'card';
+  let tl5       = null;
+  const adsCounterEl = document.getElementById('adsCounter');
+
+  function buildAdsTimeline() {
+    if (tl5) tl5.destroy();
+    adsFilled = 0;
+    adsCounterEl.textContent = '0 slots filled';
+    const ul = document.getElementById('tl-ads');
+    ul.innerHTML = '';
+
+    tl5 = new MoTimeline(ul, {
+      theme: true, showBadge: true, showArrow: true,
+      adSlots: {
+        mode: 'every_n',
+        interval: 3,
+        style: adsStyle,
+        onEnterViewport(slotEl, position) {
+          // A real integration would push an AdSense <ins> here instead.
+          const box = document.createElement('div');
+          box.className = 'ad-box';
+          box.textContent = 'ADVERTISEMENT · slot at position ' + position;
+          slotEl.appendChild(box);
+          adsFilled++;
+          adsCounterEl.textContent = adsFilled + (adsFilled === 1 ? ' slot filled' : ' slots filled');
+        },
+      },
+    });
+    tl5.addItems(AD_ITEMS);
+    return tl5;
+  }
+  buildAdsTimeline();
+
+  document.getElementById('adsStyleBtn').addEventListener('click', (e) => {
+    adsStyle = adsStyle === 'card' ? 'fullwidth' : 'card';
+    e.target.textContent = 'Style: ' + adsStyle;
+    buildAdsTimeline();
+  });
+
+  document.getElementById('adsResetBtn').addEventListener('click', buildAdsTimeline);
+
+  // ── "Show setup code" toggles (one handler for every demo tab) ──────────────
+  document.querySelectorAll('.code-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = document.getElementById(btn.dataset.code);
+      if (!pre) return;
+      pre.hidden = !pre.hidden;
+      btn.textContent = pre.hidden ? 'Show setup code' : 'Hide setup code';
+      // Layout of the tab's timeline is unaffected — the panel sits outside the <ul>.
+    });
+  });
+
   // ── Tab switching ───────────────────────────────────────────────────────────
   const instances = { 'tab-motimeline': tl1, 'tab-timestamp': tl2, 'tab-bootstrap': tl3, 'tab-filter': tl4 };
   document.querySelectorAll('.demo-tab').forEach(btn => {
@@ -1167,7 +1378,9 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       btn.classList.add('active');
       const panel = document.getElementById(btn.dataset.tab);
       panel.classList.add('active');
-      instances[btn.dataset.tab].refresh();
+      // tl5 is rebuilt on style change / reset, so resolve it at click time
+      const inst = btn.dataset.tab === 'tab-ads' ? tl5 : instances[btn.dataset.tab];
+      if (inst) inst.refresh();
     });
   });
 })();

@@ -532,7 +532,9 @@ export class MoTimeline {
 
   _createAdSlot(fullWidth) {
     const slot = document.createElement('li');
-    slot.className = 'mo-ad-slot';
+    // `mo-item` carries the layout rules (float/width); `js-mo-item` is deliberately
+    // omitted so _initItems() and filterByCategory() never treat a slot as a real item.
+    slot.className = 'mo-item mo-ad-slot';
     if (fullWidth) slot.classList.add('mo-fullwidth');
     return slot;
   }

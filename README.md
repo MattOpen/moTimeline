@@ -359,7 +359,7 @@ const tl = new MoTimeline('#my-timeline', {
                          // random:  inject once at a random position per N-item page
     style:    'card',    // 'card' | 'fullwidth'
     onEnterViewport: (slotEl, position) => {
-      // slotEl   = the <li class="mo-ad-slot"> element
+      // slotEl   = the <li class="mo-item mo-ad-slot"> element
       // position = its 0-based index in the container at injection time
       const ins = document.createElement('ins');
       ins.className        = 'adsbygoogle';
@@ -388,7 +388,7 @@ const tl = new MoTimeline('#my-timeline', {
 </div>
 
 **What the library provides:**
-- A `<li class="mo-ad-slot">` element with `min-height: 100px` (so the observer can detect it before content loads)
+- A `<li class="mo-item mo-ad-slot">` element with `min-height: 100px` (so the observer can detect it before content loads). `mo-item` carries the column layout; `js-mo-item` is intentionally absent so slots are never counted as real items.
 - `fullwidth` layout via the existing `mo-fullwidth` mechanism when `style: 'fullwidth'`
 - Exactly-once `IntersectionObserver` (threshold 0.5) per slot
 - Automatic slot cleanup on `tl.destroy()`
@@ -527,6 +527,17 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.13.3
+- Fix: **ad slots never received the `mo-item` class**, so no layout rule applied to them — slots spanned the full container width instead of one column, got no `float`, and lost the `min-height: 100px` reservation. Because an empty slot then had zero height, the `IntersectionObserver` could fail to reach its 0.5 threshold and `onEnterViewport` never fired. Affects both `style: 'card'` and `style: 'fullwidth'` since v2.11.0 ([#10](https://github.com/MattOpen/moTimeline/issues/10)). `js-mo-item` remains intentionally absent so slots are still never counted as real items.
+- Demo: new **Ad Slots** tab on the demo page with a card/fullwidth switch and a live counter of fired slots — the option previously had no demo coverage, which is why the bug went unnoticed.
+- Demo: **"Show setup code"** toggle on every demo tab — each panel reveals the exact configuration behind that demo (options, `addItems()` / markup, and the relevant API calls).
+
+### v2.13.2
+- Fix: column placement — replaced the `offsetTop` algorithm with a virtual fill-shorter-column calculation
+
+### v2.13.1
+- Fix: category filter — correct badge placement and column reflow ([#9](https://github.com/MattOpen/moTimeline/issues/9))
 
 ### v2.13.0
 - New: **category filtering** — tag items with `categories` (array or space-separated string) and call `filterByCategory(category)` to show only matching items. Pass `null` or `'all'` to clear the filter. The active filter is stored on the instance and applied automatically to items added via `addItems()` or `initNewItems()`, making it fully compatible with infinite scroll / server-side pagination. Column placement recalculates on every filter change so the two-column layout stays correct. New class `mo-filtered-out` is used internally (`display: none`) and new attribute `data-categories` is set on each `<li>`.
