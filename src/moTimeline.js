@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.0
+ * moTimeline v2.14.1
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -543,6 +543,10 @@ export class MoTimeline {
     const { mode, interval, style } = data.adSlots;
     const fullWidth = style === 'fullwidth';
     const el = this.element;
+    // A card-style slot is a regular layout element like any real item (it
+    // carries `mo-item` without `mo-fullwidth`) and affects column/row
+    // placement the same way — so it needs refresh() just as much as a
+    // fullwidth slot does, not only the latter.
     let needsRefresh = false;
 
     if (mode === 'every_n') {
@@ -552,7 +556,7 @@ export class MoTimeline {
           item.after(slot);
           slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
           if (this._adObserver) this._adObserver.observe(slot);
-          if (fullWidth) needsRefresh = true;
+          needsRefresh = true;
         }
       });
     } else if (mode === 'random') {
@@ -567,7 +571,7 @@ export class MoTimeline {
           anchor.after(slot);
           slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
           if (this._adObserver) this._adObserver.observe(slot);
-          if (fullWidth) needsRefresh = true;
+          needsRefresh = true;
           pageOffset = 0;
         } else {
           pageOffset += chunk.length;

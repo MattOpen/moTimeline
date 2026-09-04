@@ -583,6 +583,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.14.1
+- Fix: **card-style ad slots didn't trigger `refresh()`.** `_injectAdSlots()` only set `needsRefresh` when `style: 'fullwidth'`, so a card-style slot — a regular layout element like any item — was inserted without the column/row placement being recalculated. With `layout: 'rows'` this broke the left/right alternation entirely; with `layout: 'fill'` it shifted column assignment for every item after the slot ([#11](https://github.com/MattOpen/moTimeline/issues/11)).
+
 ### v2.14.0
 - New option **`layout`** — `'fill'` (default, unchanged), `'stacked'` (single column, spine left, date in a gutter) and `'rows'` (like `'stacked'`, but card and date swap sides on every item, one item per row). The date comes from `data-mo-date` / the new `date` field.
 - New option **`mirrorText`** — right-hand cards align their text toward the center line. Independent of `layout`.

@@ -1,6 +1,6 @@
 {
   "name": "motimeline",
-  "version": "2.14.0",
+  "version": "2.14.1",
   "description": "Responsive timeline layout library for JavaScript. Four layouts, themes, category filters and ad slots. No dependencies.",
   "main": "./dist/moTimeline.cjs",
   "module": "./dist/moTimeline.js",

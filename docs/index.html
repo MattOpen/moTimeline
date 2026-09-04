@@ -259,7 +259,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.14.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.14.1</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -1309,10 +1309,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       const d=this._d(); if(!d||!d.adSlots||!newItems.length) return;
       const {mode,interval,style}=d.adSlots; const fw=style==='fullwidth'; const el=this.element; let needsRefresh=false;
       if(mode==='every_n'){
-        newItems.forEach((item,i)=>{ if((d._adRealCount+i+1)%interval===0){ const slot=this._cas(fw); item.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); if(fw) needsRefresh=true; } });
+        newItems.forEach((item,i)=>{ if((d._adRealCount+i+1)%interval===0){ const slot=this._cas(fw); item.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); needsRefresh=true; } });
       } else if(mode==='random'){
         let po=d._adRealCount%interval,i=0;
-        while(i<newItems.length){ const rem=interval-po; const chunk=newItems.slice(i,i+rem); if(chunk.length===rem){ const anchor=chunk[Math.floor(Math.random()*chunk.length)]; const slot=this._cas(fw); anchor.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); if(fw) needsRefresh=true; po=0; } else { po+=chunk.length; } i+=rem; }
+        while(i<newItems.length){ const rem=interval-po; const chunk=newItems.slice(i,i+rem); if(chunk.length===rem){ const anchor=chunk[Math.floor(Math.random()*chunk.length)]; const slot=this._cas(fw); anchor.after(slot); slot.dataset.moAdPosition=String(Array.from(el.children).indexOf(slot)); if(this._adObserver) this._adObserver.observe(slot); needsRefresh=true; po=0; } else { po+=chunk.length; } i+=rem; }
       }
       d._adRealCount+=newItems.length; if(needsRefresh) this.refresh();
     }
