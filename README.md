@@ -583,6 +583,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.14.2
+- Add: **`LICENSE` file (MIT).** The README linked it and `package.json` declared MIT, but the file itself was missing from the repository and the npm package.
+
 ### v2.14.1
 - Fix: **card-style ad slots didn't trigger `refresh()`.** `_injectAdSlots()` only set `needsRefresh` when `style: 'fullwidth'`, so a card-style slot — a regular layout element like any item — was inserted without the column/row placement being recalculated. With `layout: 'rows'` this broke the left/right alternation entirely; with `layout: 'fill'` it shifted column assignment for every item after the slot ([#11](https://github.com/MattOpen/moTimeline/issues/11)).
 
