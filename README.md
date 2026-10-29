@@ -583,6 +583,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 
 ## Changelog
 
+### v2.14.3
+- Fix: **ad slots stayed invisible with `animate`.** Slots carry `mo-item`, so `animate: 'fade'` / `'slide'` set them to `opacity: 0` (and, for `slide`, shifted them 40 px), but `_injectAdSlots()` never handed them to the reveal observer — they never received `mo-visible`, even after `onEnterViewport` had filled them. Slots now go through the same `IntersectionObserver` as items; they still never get `js-mo-item`.
+- Fix: **`layout: 'stacked'` overflowed on pages without a global `box-sizing: border-box`.** `.mo-timeline` is `width: 100%` and `stacked` adds a 90 px `padding-left` date gutter, so under the default `content-box` the container grew 90 px wider than the page (464 px at 390 px viewport) and the date was cut off. `.mo-timeline` now carries `box-sizing: border-box` itself — note that any padding you put on the container yourself is now included in its width, too.
+- Demo: removed the page-wide `box-sizing` rule that had hidden the `stacked` overflow; the **Ad Slots** tab gained an **Animate** switch (off / fade / slide).
+
 ### v2.14.2
 - Add: **`LICENSE` file (MIT).** The README linked it and `package.json` declared MIT, but the file itself was missing from the repository and the npm package.
 

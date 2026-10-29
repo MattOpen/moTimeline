@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.2 — CSS
+ * moTimeline v2.14.3 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -14,7 +14,10 @@
 
 /* ── Container ──────────────────────────────────────────────── */
 
+/* border-box: padding on the container (the 'stacked' date gutter, or the
+   page's own) stays inside width: 100% instead of widening the page. */
 .mo-timeline {
+  box-sizing: border-box;
   display: block;
   list-style: none;
   margin: 0;

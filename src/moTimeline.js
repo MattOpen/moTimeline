@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.2
+ * moTimeline v2.14.3
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -547,7 +547,9 @@ export class MoTimeline {
     // carries `mo-item` without `mo-fullwidth`) and affects column/row
     // placement the same way — so it needs refresh() just as much as a
     // fullwidth slot does, not only the latter.
-    let needsRefresh = false;
+    // Slots also fall under `animate` (they carry `mo-item`), so they go through
+    // the same reveal observer as real items.
+    const newSlots = [];
 
     if (mode === 'every_n') {
       newItems.forEach((item, i) => {
@@ -556,7 +558,7 @@ export class MoTimeline {
           item.after(slot);
           slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
           if (this._adObserver) this._adObserver.observe(slot);
-          needsRefresh = true;
+          newSlots.push(slot);
         }
       });
     } else if (mode === 'random') {
@@ -571,7 +573,7 @@ export class MoTimeline {
           anchor.after(slot);
           slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
           if (this._adObserver) this._adObserver.observe(slot);
-          needsRefresh = true;
+          newSlots.push(slot);
           pageOffset = 0;
         } else {
           pageOffset += chunk.length;
@@ -581,7 +583,10 @@ export class MoTimeline {
     }
 
     data._adRealCount += newItems.length;
-    if (needsRefresh) this.refresh();
+    if (newSlots.length) {
+      this._observeItems(newSlots);
+      this.refresh();
+    }
   }
 
   _createAdSlot(fullWidth) {
