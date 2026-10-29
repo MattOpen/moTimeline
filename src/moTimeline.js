@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.3
+ * moTimeline v2.14.4
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -112,6 +112,11 @@ export class MoTimeline {
           });
         }, { threshold: 0.5 });
       }
+      // Column placement uses slot heights at refresh() time; a slot filled
+      // later (sync or async, e.g. AdSense) re-runs the layout once it resizes.
+      if (typeof ResizeObserver === 'function') {
+        this._adResizeObserver = new ResizeObserver(this._resizeHandler);
+      }
     }
 
     this._initialized = true;
@@ -223,6 +228,7 @@ export class MoTimeline {
     // Disconnect observers — they remain alive and will re-observe new items
     if (this._observer) this._observer.disconnect();
     if (this._adObserver) this._adObserver.disconnect();
+    if (this._adResizeObserver) this._adResizeObserver.disconnect();
 
     // Remove all library-managed elements (real items + ad slots)
     Array.from(this.element.children).forEach((child) => {
@@ -245,6 +251,10 @@ export class MoTimeline {
     if (this._adObserver) {
       this._adObserver.disconnect();
       this._adObserver = null;
+    }
+    if (this._adResizeObserver) {
+      this._adResizeObserver.disconnect();
+      this._adResizeObserver = null;
     }
     Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach((s) => s.remove());
     instanceData.delete(this.element);
@@ -585,6 +595,7 @@ export class MoTimeline {
     data._adRealCount += newItems.length;
     if (newSlots.length) {
       this._observeItems(newSlots);
+      if (this._adResizeObserver) newSlots.forEach((s) => this._adResizeObserver.observe(s));
       this.refresh();
     }
   }
