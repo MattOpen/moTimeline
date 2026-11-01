@@ -108,6 +108,13 @@
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-badge,
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow { display: none; }
     .mo-timeline > .mo-item.mo-ad-slot { min-height: 100px; }
+    .mo-timeline > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, 0); }
+    .mo-theme > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem)); }
+    .mo-theme > .mo-item.mo-ad-filled.mo-inverted { padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem)); }
+    .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth { padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem)); }
+    .mo-ad-slot .mo-ad-label { color: var(--mo-ad-label-color, #94a3b8); display: block; font-size: .7rem; font-weight: 600; letter-spacing: .04em; padding: 0 0 .25rem; text-transform: uppercase; }
+    .mo-ad-slot .mo-ad-link { display: block; }
+    .mo-ad-slot .mo-ad-image { border-radius: var(--mo-card-border-radius, 8px); display: block; height: auto; max-width: 100%; width: 100%; }
 
     /* layout: 'stacked' — one column, spine left, dates in a gutter */
     .mo-timeline.mo-stacked { padding-left: var(--mo-stacked-gutter, 90px); }
@@ -257,7 +264,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.14.4</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.15.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -618,15 +625,16 @@ tl.<span class="fn">filterByCategory</span>(<span class="str">'all'</span>);   <
     <!-- AD SLOTS -->
     <div class="demo-panel" id="tab-ads">
       <p class="ads-intro">
-        A slot is injected after every 3rd item. Each placeholder is a
-        <code>&lt;li class="mo-item mo-ad-slot"&gt;</code> the library reserves space for —
-        <code>onEnterViewport</code> fires once per slot at ≥&nbsp;50&nbsp;% visibility and fills it.
-        Scroll down to watch the slots load; the counter shows how many have fired.
+        A slot is injected after every 3rd item. <strong>Source</strong> decides who fills it:
+        <em>callback</em> — your code (e.g. an ad network) fills the empty slot when it scrolls into view;
+        <em>ads list</em> — you pass a list of ads and moTimeline renders one into each slot, picked by weight.
+        Scroll down to watch the slots load. <a href="#ad-slots">How to set it up →</a>
       </p>
       <div class="demo-controls">
         <button class="code-btn" data-code="adsCode" style="background:#0ea5e9">Show setup code</button>
         <button id="adsStyleBtn" style="background:#10b981">Style: card</button>
         <button id="adsAnimateBtn" style="background:#6366f1">Animate: off</button>
+        <button id="adsSourceBtn" style="background:#f59e0b">Source: callback</button>
         <button id="adsResetBtn" style="background:#8b5cf6">Reset &amp; replay</button>
         <span class="ads-counter" id="adsCounter">0 slots filled</span>
       </div>
@@ -652,7 +660,20 @@ tl.<span class="fn">filterByCategory</span>(<span class="str">'all'</span>);   <
   },
 });
 
-tl.<span class="fn">addItems</span>(items);   <span class="cm">// slots are injected automatically</span></code></pre>
+tl.<span class="fn">addItems</span>(items);   <span class="cm">// slots are injected automatically</span>
+
+<span class="cm">// ── Or pass an ads list and let moTimeline render it ──</span>
+<span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  adSlots: {
+    mode: <span class="str">'every_n'</span>, interval: 3, style: <span class="str">'card'</span>,
+    ads: [   <span class="cm">// data only, no HTML — one picked per slot by weight</span>
+      { id: <span class="str">'a'</span>, image: <span class="str">'/ads/a.png'</span>, alt: <span class="str">'Spring sale'</span>, url: <span class="str">'https://example.com/a'</span>, weight: 1, label: <span class="str">'Ad'</span> },
+      { id: <span class="str">'b'</span>, image: <span class="str">'/ads/b.png'</span>, alt: <span class="str">'New shop'</span>,    url: <span class="str">'https://example.com/b'</span>, weight: 8, label: <span class="str">'Ad'</span> },
+    ],
+    <span class="fn">onAdView</span>(ad, slotEl)  { <span class="cm">/* once per slot at >= 50% visibility */</span> },
+    <span class="fn">onAdClick</span>(ad, slotEl) { <span class="cm">/* link opens in a new tab, rel="noopener sponsored" */</span> },
+  },
+});</code></pre>
       <ul id="tl-ads"></ul>
     </div>
 
@@ -981,6 +1002,53 @@ document.<span class="fn">querySelectorAll</span>(<span class="str">'.filters bu
 <span class="cm">// Active filter persists through lazy-loaded batches</span>
 tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// new items auto-filtered to match current selection</span></code></pre>
 
+    <h3 id="ad-slots" style="scroll-margin-top:5rem">Ad slots recipe</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">The library injects ad slots between your items and keeps them in the column layout. Fill them in one of two ways: <strong>ads list</strong> — you pass a list, moTimeline renders it; or <strong>callback</strong> — your code (e.g. an ad network) fills the empty slot when it scrolls into view.</p>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>Field</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>mode</code></td><td><code>'every_n'</code> — a slot after every <code>interval</code> items · <code>'random'</code> — one slot at a random position in each block of <code>interval</code> items</td></tr>
+        <tr><td><code>interval</code></td><td>Number of items per slot.</td></tr>
+        <tr><td><code>style</code></td><td><code>'card'</code> — slot sits in a column like a card · <code>'fullwidth'</code> — slot spans both columns</td></tr>
+        <tr><td><code>ads</code></td><td>Ads list: <code>[{ id, image, alt, url, weight, label }]</code>. One entry per slot, picked at random by <code>weight</code>.</td></tr>
+        <tr><td><code>onAdView</code></td><td><code>(ad, slotEl) =&gt; void</code> — with <code>ads</code>: once per slot at ≥ 50 % visibility.</td></tr>
+        <tr><td><code>onAdClick</code></td><td><code>(ad, slotEl) =&gt; void</code> — with <code>ads</code>: on every click on the ad.</td></tr>
+        <tr><td><code>onEnterViewport</code></td><td><code>(slotEl, position) =&gt; void</code> — callback: once per slot at ≥ 50 % visibility; <code>position</code> is the slot's 0-based child index.</td></tr>
+      </tbody>
+    </table></div>
+    <pre><code><span class="cm">// Ads list — data only, never HTML</span>
+<span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  theme: <span class="kw">true</span>,
+  adSlots: {
+    mode: <span class="str">'every_n'</span>, interval: 5, style: <span class="str">'card'</span>,
+    ads: [
+      { id: <span class="str">'spring'</span>, image: <span class="str">'/ads/spring.png'</span>, alt: <span class="str">'Spring sale'</span>, url: <span class="str">'https://example.com/spring'</span>, weight: 1, label: <span class="str">'Ad'</span> },
+      { id: <span class="str">'shop'</span>,   image: <span class="str">'/ads/shop.png'</span>,   alt: <span class="str">'New shop'</span>,    url: <span class="str">'https://example.com/shop'</span>,   weight: 3, label: <span class="str">'Ad'</span> },
+    ],
+    <span class="fn">onAdView</span>(ad)  { <span class="fn">track</span>(<span class="str">'view'</span>, ad.id); },
+    <span class="fn">onAdClick</span>(ad) { <span class="fn">track</span>(<span class="str">'click'</span>, ad.id); },
+  },
+});
+
+<span class="cm">// Callback — e.g. an ad network</span>
+<span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
+  adSlots: {
+    mode: <span class="str">'every_n'</span>, interval: 5, style: <span class="str">'card'</span>,
+    <span class="fn">onEnterViewport</span>(slotEl, position) {
+      slotEl.innerHTML = <span class="str">'&lt;ins class="adsbygoogle" ...&gt;&lt;/ins&gt;'</span>;
+      (adsbygoogle = window.adsbygoogle || []).<span class="fn">push</span>({});
+    },
+  },
+});</code></pre>
+    <ul style="color:var(--muted);font-size:0.9rem">
+      <li><code>weight</code>: missing = 1, 0 or not a number = never shown. Weights 1 / 1 / 8 show the third ad in about 80 % of the slots.</li>
+      <li>Only <code>http:</code> / <code>https:</code> URLs become a link; the link always opens in a new tab with <code>rel="noopener sponsored"</code>.</li>
+      <li>Every field is shown as text — markup in an entry is never rendered.</li>
+      <li>A filled ad is as wide as a card and keeps the card gap to edge and spine; its height follows the image.</li>
+      <li>Scheduling, language and counting stay with you: pass only the ads that should run, count in the callbacks.</li>
+      <li>Slots are removed on <code>destroy()</code> and <code>clear()</code>.</li>
+    </ul>
+
     <h3>CSS custom properties</h3>
     <pre><code><span class="fn">#my-timeline</span> {
   <span class="str">--mo-line-color</span>:      <span class="str">#c7d2fe</span>;
@@ -995,6 +1063,11 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   <span class="str">--mo-card-margin-inverted</span>:   <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
   <span class="str">--mo-card-margin-fullwidth</span>:  <span class="str">0.5rem</span>;
   <span class="str">--mo-animate-duration</span>:        <span class="str">0.5s</span>;
+  <span class="cm">/* ads list — default: the card margins above */</span>
+  <span class="str">--mo-ad-margin</span>:              <span class="str">0.5rem 1.25rem 0.5rem 0.5rem</span>;
+  <span class="str">--mo-ad-margin-inverted</span>:     <span class="str">0.5rem 0.5rem 0.5rem 1.25rem</span>;
+  <span class="str">--mo-ad-margin-fullwidth</span>:    <span class="str">0.5rem</span>;
+  <span class="str">--mo-ad-label-color</span>:         <span class="str">#94a3b8</span>;
 }</code></pre>
   </div>
 </section>
@@ -1075,12 +1148,9 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr>
           <td><code>adSlots</code></td><td>object&nbsp;|&nbsp;null</td><td><code>null</code></td>
           <td>
-            Inject ad slot <code>&lt;li class="mo-item mo-ad-slot"&gt;</code> placeholders and observe them. Shape:
-            <code>{ mode: 'every_n'|'random', interval: number, style: 'card'|'fullwidth', onEnterViewport: (slotEl, position) =&gt; void }</code>.
-            <code>mode:'every_n'</code> — inject after every <code>interval</code> real items.
-            <code>mode:'random'</code> — inject one slot at a random position within each <code>interval</code>-item page.
-            <code>style:'fullwidth'</code> — slot spans both columns.
-            <code>onEnterViewport</code> fires once per slot when ≥ 50% is visible; <code>position</code> is the slot's 0-based child index at injection time. Slots are removed on <code>destroy()</code>.
+            Inject ad slots between items. Fields: <code>mode</code>, <code>interval</code>, <code>style</code>,
+            plus either <code>ads</code> with <code>onAdView</code> / <code>onAdClick</code> (ads list) or <code>onEnterViewport</code> (callback).
+            Details: <a href="#ad-slots">Ad slots recipe</a>.
           </td>
         </tr>
       </tbody>
@@ -1129,6 +1199,9 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr><td><code>mo-card-body</code></td><td><code>&lt;div&gt;</code></td><td>Text content area. Receives padding and typography when <code>mo-theme</code> is active.</td></tr>
         <tr><td><code>mo-meta</code></td><td><code>&lt;p&gt;</code></td><td>Date / subtitle line inside a card body. Muted colour, smaller font.</td></tr>
         <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>
+        <tr><td><code>mo-ad-slot</code></td><td><code>&lt;li&gt;</code></td><td>Ad slot injected by <code>adSlots</code>. Takes part in column placement like an item, but is never counted as one.</td></tr>
+        <tr><td><code>mo-ad-filled</code></td><td><code>&lt;li&gt;</code></td><td>Ad slot filled from <code>adSlots.ads</code>. Gets the card gap via <code>--mo-ad-margin</code>.</td></tr>
+        <tr><td><code>mo-ad-label</code> · <code>mo-ad-link</code> · <code>mo-ad-image</code></td><td>inside a filled slot</td><td>Label text (<code>--mo-ad-label-color</code>), link (new tab, <code>rel="noopener sponsored"</code>), image.</td></tr>
         <tr><td><code>mo-filtered-out</code></td><td><code>&lt;li&gt;</code></td><td>Added by <code>filterByCategory()</code> to items that do not match the active filter. Sets <code>display: none</code> and excludes the item from column-placement calculations. Removed automatically when the filter is cleared or the item's category is selected.</td></tr>
       </tbody>
     </table></div>
@@ -1150,6 +1223,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
 
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
   function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
+  const slotAds=new WeakMap();
+  function adWeight(a){ if(!a||typeof a!=='object') return 0; const w=a.weight==null?1:Number(a.weight); return Number.isFinite(w)&&w>0?w:0; }
+  function pickAd(ads){ if(!Array.isArray(ads)) return null; const tot=ads.reduce((s,a)=>s+adWeight(a),0); if(tot<=0) return null; let r=Math.random()*tot, last=null; for(const a of ads){ const w=adWeight(a); if(w<=0) continue; last=a; r-=w; if(r<0) return a; } return last; }
+  function safeAdHref(u){ if(u==null||u==='') return null; try{ const x=new URL(String(u),document.baseURI); return x.protocol==='http:'||x.protocol==='https:'?x.href:null; }catch{ return null; } }
 
   class MoTimeline {
     static instances = new Set();
@@ -1174,7 +1251,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
       el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
       if(data.animate){ const type=data.animate===true?'fade':data.animate; el.classList.add('mo-animate','mo-animate-'+type); this._observer=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('mo-visible'); this._observer.unobserve(e.target); } }); },{threshold:0.1}); }
-      if(data.adSlots){ data._adRealCount=0; if(typeof data.adSlots.onEnterViewport==='function'){ this._adObserver=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ this._adObserver.unobserve(e.target); data.adSlots.onEnterViewport(e.target,Number(e.target.dataset.moAdPosition)); } }); },{threshold:0.5}); } if(typeof ResizeObserver==='function') this._aro=new ResizeObserver(this._rh); }
+      if(data.adSlots){ data._adRealCount=0; const {onEnterViewport:oev,onAdView:oav}=data.adSlots; if(typeof oev==='function'||typeof oav==='function'){ this._adObserver=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ const s=e.target; this._adObserver.unobserve(s); if(typeof oev==='function') oev(s,Number(s.dataset.moAdPosition)); if(typeof oav==='function'&&slotAds.has(s)) oav(slotAds.get(s),s); } }); },{threshold:0.5}); } if(typeof ResizeObserver==='function') this._aro=new ResizeObserver(this._rh); }
       this._initItems();
       window.addEventListener('resize',this._rh);
     }
@@ -1316,7 +1393,14 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       d._adRealCount+=newItems.length; if(newSlots.length){ this._obs(newSlots); if(this._aro) newSlots.forEach(s=>this._aro.observe(s)); this.refresh(); }
     }
-    _cas(fw){ const s=document.createElement('li'); s.className='mo-item mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); return s; }
+    _cas(fw){ const s=document.createElement('li'); s.className='mo-item mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); const ad=pickAd(this._d().adSlots.ads); if(ad) this._rad(s,ad); return s; }
+    _rad(s,ad){ const {onAdClick}=this._d().adSlots; slotAds.set(s,ad); s.classList.add('mo-ad-filled');
+      if(ad.label!=null&&ad.label!==''){ const l=document.createElement('span'); l.className='mo-ad-label'; l.textContent=String(ad.label); s.appendChild(l); }
+      let img=null; if(ad.image){ img=document.createElement('img'); img.className='mo-ad-image'; img.src=String(ad.image); img.alt=ad.alt==null?'':String(ad.alt); }
+      const href=safeAdHref(ad.url); if(!href){ if(img) s.appendChild(img); return; }
+      const a=document.createElement('a'); a.className='mo-ad-link'; a.href=href; a.target='_blank'; a.rel='noopener sponsored';
+      if(img) a.appendChild(img); else a.textContent=ad.alt==null?href:String(ad.alt);
+      if(typeof onAdClick==='function') a.addEventListener('click',()=>onAdClick(ad,s)); s.appendChild(a); }
   }
   window.MoTimeline = MoTimeline;
 
@@ -1523,33 +1607,68 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   let adsFilled = 0;
   let adsStyle  = 'card';
   let adsAnimate = false;
+  let adsSource = 'callback';
   let tl5       = null;
   const adsCounterEl = document.getElementById('adsCounter');
+
+  // Banner image as an inline SVG, so the demo needs no image files
+  function adBanner(text, color) {
+    const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 200'>"
+      + "<rect width='600' height='200' fill='" + color + "'/>"
+      + "<text x='300' y='112' fill='white' font-family='system-ui,sans-serif' font-size='34' font-weight='700' text-anchor='middle'>"
+      + text + "</text></svg>";
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+
+  // Three ads in the list, weighted 1/1/8: the third shows up in about 80 % of the slots
+  const OWN_ADS = [
+    { id: 'npm',    image: adBanner('moTimeline on npm', '#0ea5e9'),    alt: 'moTimeline on npm',
+      url: 'https://www.npmjs.com/package/motimeline',   weight: 1, label: 'Advertisement' },
+    { id: 'github', image: adBanner('Star it on GitHub', '#10b981'),    alt: 'moTimeline on GitHub',
+      url: 'https://github.com/MattOpen/moTimeline',     weight: 1, label: 'Advertisement' },
+    { id: 'main',   image: adBanner('Your ad could be here', '#6366f1'), alt: 'Your ad could be here',
+      url: 'https://github.com/MattOpen/moTimeline#ad-slots', weight: 8, label: 'Advertisement' },
+  ];
+  let adViews = {}, adClicks = 0;
+
+  function showAdStats() {
+    const views = OWN_ADS.map((ad) => ad.id + ' ' + (adViews[ad.id] || 0)).join(' · ');
+    adsCounterEl.textContent = 'views: ' + views + ' · clicks: ' + adClicks;
+  }
 
   function buildAdsTimeline() {
     if (tl5) tl5.destroy();
     adsFilled = 0;
-    adsCounterEl.textContent = '0 slots filled';
+    adViews = {}; adClicks = 0;
+    if (adsSource === 'list') showAdStats();
+    else adsCounterEl.textContent = '0 slots filled';
     const ul = document.getElementById('tl-ads');
     ul.innerHTML = '';
+
+    const adSlots = adsSource === 'list'
+      ? {
+          mode: 'every_n', interval: 3, style: adsStyle,
+          ads: OWN_ADS,
+          onAdView(ad) { adViews[ad.id] = (adViews[ad.id] || 0) + 1; showAdStats(); },
+          onAdClick() { adClicks++; showAdStats(); },
+        }
+      : {
+          mode: 'every_n', interval: 3, style: adsStyle,
+          onEnterViewport(slotEl, position) {
+            // A real integration would push an AdSense <ins> here instead.
+            const box = document.createElement('div');
+            box.className = 'ad-box';
+            box.textContent = 'ADVERTISEMENT · slot at position ' + position;
+            slotEl.appendChild(box);
+            adsFilled++;
+            adsCounterEl.textContent = adsFilled + (adsFilled === 1 ? ' slot filled' : ' slots filled');
+          },
+        };
 
     tl5 = new MoTimeline(ul, {
       theme: true, showBadge: true, showArrow: true,
       animate: adsAnimate,
-      adSlots: {
-        mode: 'every_n',
-        interval: 3,
-        style: adsStyle,
-        onEnterViewport(slotEl, position) {
-          // A real integration would push an AdSense <ins> here instead.
-          const box = document.createElement('div');
-          box.className = 'ad-box';
-          box.textContent = 'ADVERTISEMENT · slot at position ' + position;
-          slotEl.appendChild(box);
-          adsFilled++;
-          adsCounterEl.textContent = adsFilled + (adsFilled === 1 ? ' slot filled' : ' slots filled');
-        },
-      },
+      adSlots,
     });
     tl5.addItems(AD_ITEMS);
     return tl5;
@@ -1566,6 +1685,12 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   document.getElementById('adsAnimateBtn').addEventListener('click', (e) => {
     adsAnimate = adsAnimate === false ? 'fade' : adsAnimate === 'fade' ? 'slide' : false;
     e.target.textContent = 'Animate: ' + (adsAnimate || 'off');
+    buildAdsTimeline();
+  });
+
+  document.getElementById('adsSourceBtn').addEventListener('click', (e) => {
+    adsSource = adsSource === 'callback' ? 'list' : 'callback';
+    e.target.textContent = 'Source: ' + (adsSource === 'list' ? 'ads list' : 'callback');
     buildAdsTimeline();
   });
 

@@ -197,6 +197,9 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `mo-card-body` | `<div>` | Text content area. Padding and typography when `mo-theme` is active. |
 | `mo-meta` | `<p>` | Date / subtitle line inside a card body. Muted colour, smaller font. |
 | `js-mo-item` · `js-mo-inverted` | `<li>` | JS-only selector mirrors of `mo-item` / `mo-inverted`. Use in your own JS queries to avoid coupling to styling class names. |
+| `mo-ad-slot` | `<li>` | Ad slot injected by `adSlots`. Takes part in column placement like an item, but is never counted as one. |
+| `mo-ad-filled` | `<li>` | Ad slot filled from `adSlots.ads`. Gets the card gap via `--mo-ad-margin`. |
+| `mo-ad-label` · `mo-ad-link` · `mo-ad-image` | inside a filled slot | Label text (`--mo-ad-label-color`), link (new tab, `rel="noopener sponsored"`), image. |
 | `mo-filtered-out` | `<li>` | Added by `filterByCategory()` to items that do not match the active filter. Sets `display: none` and excludes the item from column-placement calculations. Removed when the filter is cleared or the item's category is selected. |
 
 </div>
@@ -439,8 +442,46 @@ const tl = new MoTimeline('#my-timeline', {
 | `interval` | number | Cadence for slot injection (see `mode`). |
 | `style` | `'card' \| 'fullwidth'` | `'card'` — slot sits in the normal left/right column flow. `'fullwidth'` — slot spans both columns (adds `mo-fullwidth`). |
 | `onEnterViewport` | `(slotEl: HTMLElement, position: number) => void` | Called once per slot when ≥ 50% of it enters the viewport. `position` is the 0-based child index of the slot in the container at injection time. |
+| `ads` | `Array<{ id, image, alt, url, weight, label }>` | Optional. An ads list — the library renders one entry into each slot itself (see below). Without it, slots stay empty for `onEnterViewport`. |
+| `onAdView` | `(ad: object, slotEl: HTMLElement) => void` | With `ads`: called once per filled slot when ≥ 50% of it is visible. `ad` is your own entry. |
+| `onAdClick` | `(ad: object, slotEl: HTMLElement) => void` | With `ads`: called on every click on the ad link. |
 
 </div>
+
+### Ads list (`ads`)
+
+Pass a list and moTimeline fills every slot with one entry, picked at random by `weight`:
+
+```js
+new MoTimeline('#my-timeline', {
+  adSlots: {
+    mode: 'every_n', interval: 5, style: 'card',
+    ads: [
+      { id: 'spring', image: '/ads/spring.png', alt: 'Spring sale', url: 'https://example.com/spring', weight: 1, label: 'Ad' },
+      { id: 'shop',   image: '/ads/shop.png',   alt: 'New shop',    url: 'https://example.com/shop',   weight: 3, label: 'Ad' },
+    ],
+    onAdView:  (ad, slotEl) => track('view', ad.id),
+    onAdClick: (ad, slotEl) => track('click', ad.id),
+  },
+});
+```
+
+| Field | Description |
+|---|---|
+| `id` | Your identifier; moTimeline does not read it. |
+| `image` | Image URL, rendered as `<img class="mo-ad-image">`. |
+| `alt` | Alt text of the image (also the link text if there is no image). |
+| `url` | Target of the link. Only `http:` / `https:` URLs become a link — anything else (e.g. `javascript:`) shows the image without a link. |
+| `weight` | Relative chance per slot; missing = `1`, `0` or not a number = never shown. Weights `1 / 1 / 8` show the third ad in about 80% of the slots. |
+| `label` | Visible marking above the ad, e.g. `'Ad'` or `'Anzeige'` (`<span class="mo-ad-label">`). |
+
+- The link **always** opens in a new tab with `target="_blank" rel="noopener sponsored"`; these are set by moTimeline, not taken from the entry.
+- Entries are data, not HTML: everything is created with DOM APIs and `textContent`, so markup in any field is shown as text.
+- A filled slot gets the class `mo-ad-filled`. The label colour follows `--mo-ad-label-color`.
+- With `theme: true` a filled slot keeps the same gap to the edge and the spine as a card (it follows `cardMargin`, `cardMarginInverted`, `cardMarginFullWidth`). Override it with `--mo-ad-margin`, `--mo-ad-margin-inverted` and `--mo-ad-margin-fullwidth`; without a theme the gap is `--mo-ad-margin` (default `0`). Empty slots for `onEnterViewport` stay untouched — style your own content there.
+- Slots are filled when they are injected, so the layout knows their height; when an image loads and the slot grows, the layout re-runs.
+- Scheduling, language, targeting and counting views or clicks stay with you — pass only the ads that should run, and count in the callbacks.
+- `onEnterViewport` keeps working alongside `ads`, e.g. for an ad network in the same slots.
 
 **What the library provides:**
 - A `<li class="mo-item mo-ad-slot">` element with `min-height: 100px` (so the observer can detect it before content loads). `mo-item` carries the column layout; `js-mo-item` is intentionally absent so slots are never counted as real items.
@@ -448,7 +489,7 @@ const tl = new MoTimeline('#my-timeline', {
 - Exactly-once `IntersectionObserver` (threshold 0.5) per slot
 - Automatic slot cleanup on `tl.destroy()`
 
-**What you provide:** everything inside the slot — the ad creative, network scripts, markup.
+**What you provide:** everything inside the slot — the ad creative, network scripts, markup — or an ads list via `ads` (see above).
 
 Slots are injected after each `addItems()` call, so they work seamlessly with infinite scroll.
 
@@ -550,6 +591,11 @@ async function fetchPage(page) {
   --mo-card-margin-inverted:   0.5rem 0.5rem 0.5rem 1.25rem;
   --mo-card-margin-fullwidth:  0.5rem;
   --mo-animate-duration:       0.5s;
+  /* ads list — default: the card margins above */
+  --mo-ad-margin:              0.5rem 1.25rem 0.5rem 0.5rem;
+  --mo-ad-margin-inverted:     0.5rem 0.5rem 0.5rem 1.25rem;
+  --mo-ad-margin-fullwidth:    0.5rem;
+  --mo-ad-label-color:         #94a3b8;
 }
 ```
 
@@ -582,6 +628,10 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.15.0
+- Add: **`adSlots.ads` — an ads list, rendered by the library.** Pass `{ id, image, alt, url, weight, label }` entries and each slot is filled with one of them, picked by weight. Links always open in a new tab with `rel="noopener sponsored"`; only `http(s)` URLs become links, and entries are rendered as data, never as HTML. New callbacks `onAdView(ad, slotEl)` (once per slot at ≥ 50% visibility) and `onAdClick(ad, slotEl)`. Filled slots keep the card gap to edge and spine; override with `--mo-ad-margin`, `--mo-ad-margin-inverted`, `--mo-ad-margin-fullwidth`. Without `ads`, ad slots behave exactly as before.
+- Demo: the **Ad Slots** tab gained a **Source** switch (callback / ads list) with three ads weighted 1 / 1 / 8 and live view and click counts. The docs page has a new **Ad slots recipe** section; the `adSlots` options row now links there.
 
 ### v2.14.4
 - Fix: **column placement went wrong once an ad slot was filled.** `refresh()` assigns columns from the heights it sees at that moment, but `onEnterViewport` fills a slot later — if the ad is taller than the empty slot, items further down sat in the wrong column. Every ad slot is now watched by a `ResizeObserver`, and any change in its size re-runs the (debounced) layout, including ads that load asynchronously such as AdSense.

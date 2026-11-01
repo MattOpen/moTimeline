@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.4 — CSS
+ * moTimeline v2.15.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -422,6 +422,46 @@
 /* Minimum height so IntersectionObserver can fire before content loads */
 .mo-timeline > .mo-item.mo-ad-slot {
   min-height: 100px;
+}
+
+/* Slots filled from adSlots.ads — same gap to edge and spine as a themed card;
+   override with --mo-ad-margin / -inverted / -fullwidth */
+.mo-timeline > .mo-item.mo-ad-filled {
+  padding: var(--mo-ad-margin, 0);
+}
+
+.mo-theme > .mo-item.mo-ad-filled {
+  padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem));
+}
+
+.mo-theme > .mo-item.mo-ad-filled.mo-inverted {
+  padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem));
+}
+
+.mo-theme > .mo-item.mo-ad-filled.mo-fullwidth {
+  padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem));
+}
+
+.mo-ad-slot .mo-ad-label {
+  color: var(--mo-ad-label-color, #94a3b8);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0 0 0.25rem;
+  text-transform: uppercase;
+}
+
+.mo-ad-slot .mo-ad-link {
+  display: block;
+}
+
+.mo-ad-slot .mo-ad-image {
+  border-radius: var(--mo-card-border-radius, 8px);
+  display: block;
+  height: auto;
+  max-width: 100%;
+  width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════════════

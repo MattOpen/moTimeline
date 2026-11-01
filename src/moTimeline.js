@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.14.4
+ * moTimeline v2.15.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -26,8 +26,46 @@ const DEFAULTS = {
   randomFullWidth: 0, // 0 = off; 0–1 = probability per item; true = 0.33
   animate: false,     // false | 'fade' | 'slide'
   renderCard: null,   // (item, cardEl) => void — custom card renderer; skips built-in HTML
-  adSlots: null,      // { mode, interval, style, onEnterViewport } — see docs
+  adSlots: null,      // { mode, interval, style, onEnterViewport, ads, onAdView, onAdClick } — see docs
 };
+
+// Ad object shown in each slot filled from `adSlots.ads`, read by onAdView/onAdClick.
+const slotAds = new WeakMap();
+
+// Weight of an `ads` entry: missing = 1, anything not a positive number = never shown.
+function adWeight(ad) {
+  if (!ad || typeof ad !== 'object') return 0;
+  const w = ad.weight == null ? 1 : Number(ad.weight);
+  return Number.isFinite(w) && w > 0 ? w : 0;
+}
+
+// Picks one entry at random, proportional to its weight; null if none can be shown.
+function pickAd(ads) {
+  if (!Array.isArray(ads)) return null;
+  const total = ads.reduce((sum, ad) => sum + adWeight(ad), 0);
+  if (total <= 0) return null;
+  let r = Math.random() * total;
+  let last = null;
+  for (const ad of ads) {
+    const w = adWeight(ad);
+    if (w <= 0) continue;
+    last = ad;
+    r -= w;
+    if (r < 0) return ad;
+  }
+  return last; // float rounding at the upper edge
+}
+
+// Only http(s) URLs become links, so a `javascript:` URL never reaches an href.
+function safeAdHref(url) {
+  if (url == null || url === '') return null;
+  try {
+    const u = new URL(String(url), document.baseURI);
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : null;
+  } catch {
+    return null;
+  }
+}
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
@@ -102,12 +140,19 @@ export class MoTimeline {
 
     if (data.adSlots) {
       data._adRealCount = 0;
-      if (typeof data.adSlots.onEnterViewport === 'function') {
+      const { onEnterViewport, onAdView } = data.adSlots;
+      if (typeof onEnterViewport === 'function' || typeof onAdView === 'function') {
         this._adObserver = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              this._adObserver.unobserve(entry.target);
-              data.adSlots.onEnterViewport(entry.target, Number(entry.target.dataset.moAdPosition));
+              const slot = entry.target;
+              this._adObserver.unobserve(slot);
+              if (typeof onEnterViewport === 'function') {
+                onEnterViewport(slot, Number(slot.dataset.moAdPosition));
+              }
+              if (typeof onAdView === 'function' && slotAds.has(slot)) {
+                onAdView(slotAds.get(slot), slot);
+              }
             }
           });
         }, { threshold: 0.5 });
@@ -606,7 +651,50 @@ export class MoTimeline {
     // omitted so _initItems() and filterByCategory() never treat a slot as a real item.
     slot.className = 'mo-item mo-ad-slot';
     if (fullWidth) slot.classList.add('mo-fullwidth');
+    const { ads } = this._getData().adSlots;
+    const ad = pickAd(ads);
+    if (ad) this._renderAd(slot, ad);
     return slot;
+  }
+
+  // Fills a slot from an `adSlots.ads` entry using DOM APIs only — the entry is
+  // data, never HTML. target/rel are always set here, not taken from the entry.
+  _renderAd(slot, ad) {
+    const { onAdClick } = this._getData().adSlots;
+    slotAds.set(slot, ad);
+    slot.classList.add('mo-ad-filled');
+
+    if (ad.label != null && ad.label !== '') {
+      const label = document.createElement('span');
+      label.className = 'mo-ad-label';
+      label.textContent = String(ad.label);
+      slot.appendChild(label);
+    }
+
+    let img = null;
+    if (ad.image) {
+      img = document.createElement('img');
+      img.className = 'mo-ad-image';
+      img.src = String(ad.image);
+      img.alt = ad.alt == null ? '' : String(ad.alt);
+    }
+
+    const href = safeAdHref(ad.url);
+    if (!href) {
+      if (img) slot.appendChild(img);
+      return;
+    }
+    const link = document.createElement('a');
+    link.className = 'mo-ad-link';
+    link.href = href;
+    link.target = '_blank';
+    link.rel = 'noopener sponsored';
+    if (img) link.appendChild(img);
+    else link.textContent = ad.alt == null ? href : String(ad.alt);
+    if (typeof onAdClick === 'function') {
+      link.addEventListener('click', () => onAdClick(ad, slot));
+    }
+    slot.appendChild(link);
   }
 
   _observeItems(items) {
