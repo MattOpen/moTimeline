@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.15.0
+ * moTimeline v2.16.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -650,9 +650,13 @@ export class MoTimeline {
     // `mo-item` carries the layout rules (float/width); `js-mo-item` is deliberately
     // omitted so _initItems() and filterByCategory() never treat a slot as a real item.
     slot.className = 'mo-item mo-ad-slot';
-    if (fullWidth) slot.classList.add('mo-fullwidth');
     const { ads } = this._getData().adSlots;
     const ad = pickAd(ads);
+    // An entry's own `style` overrides the list width, so the slot is sized
+    // before it enters the DOM and the next refresh() places it correctly.
+    const style = ad && ad.style;
+    if (style === 'card' || style === 'fullwidth') fullWidth = style === 'fullwidth';
+    if (fullWidth) slot.classList.add('mo-fullwidth');
     if (ad) this._renderAd(slot, ad);
     return slot;
   }

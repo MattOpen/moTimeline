@@ -442,7 +442,7 @@ const tl = new MoTimeline('#my-timeline', {
 | `interval` | number | Cadence for slot injection (see `mode`). |
 | `style` | `'card' \| 'fullwidth'` | `'card'` — slot sits in the normal left/right column flow. `'fullwidth'` — slot spans both columns (adds `mo-fullwidth`). |
 | `onEnterViewport` | `(slotEl: HTMLElement, position: number) => void` | Called once per slot when ≥ 50% of it enters the viewport. `position` is the 0-based child index of the slot in the container at injection time. |
-| `ads` | `Array<{ id, image, alt, url, weight, label }>` | Optional. An ads list — the library renders one entry into each slot itself (see below). Without it, slots stay empty for `onEnterViewport`. |
+| `ads` | `Array<{ id, image, alt, url, weight, label, style }>` | Optional. An ads list — the library renders one entry into each slot itself (see below). Without it, slots stay empty for `onEnterViewport`. |
 | `onAdView` | `(ad: object, slotEl: HTMLElement) => void` | With `ads`: called once per filled slot when ≥ 50% of it is visible. `ad` is your own entry. |
 | `onAdClick` | `(ad: object, slotEl: HTMLElement) => void` | With `ads`: called on every click on the ad link. |
 
@@ -459,6 +459,8 @@ new MoTimeline('#my-timeline', {
     ads: [
       { id: 'spring', image: '/ads/spring.png', alt: 'Spring sale', url: 'https://example.com/spring', weight: 1, label: 'Ad' },
       { id: 'shop',   image: '/ads/shop.png',   alt: 'New shop',    url: 'https://example.com/shop',   weight: 3, label: 'Ad' },
+      { id: 'launch', image: '/ads/launch-wide.png', alt: 'Big launch', url: 'https://example.com/launch', weight: 2, label: 'Ad',
+        style: 'fullwidth' }, // this ad's slot spans both columns
     ],
     onAdView:  (ad, slotEl) => track('view', ad.id),
     onAdClick: (ad, slotEl) => track('click', ad.id),
@@ -474,6 +476,7 @@ new MoTimeline('#my-timeline', {
 | `url` | Target of the link. Only `http:` / `https:` URLs become a link — anything else (e.g. `javascript:`) shows the image without a link. |
 | `weight` | Relative chance per slot; missing = `1`, `0` or not a number = never shown. Weights `1 / 1 / 8` show the third ad in about 80% of the slots. |
 | `label` | Visible marking above the ad, e.g. `'Ad'` or `'Anzeige'` (`<span class="mo-ad-label">`). |
+| `style` | Optional width of the slot that shows this ad: `'card'` or `'fullwidth'`. Missing or any other value = `adSlots.style`. Lets card and full-width ads run in the same list; the cadence (`mode`, `interval`) stays per list. moTimeline sets no aspect ratio: the image fills the slot width and keeps its own proportions, so you choose image format and `style` per ad. |
 
 - The link **always** opens in a new tab with `target="_blank" rel="noopener sponsored"`; these are set by moTimeline, not taken from the entry.
 - Entries are data, not HTML: everything is created with DOM APIs and `textContent`, so markup in any field is shown as text.
@@ -628,6 +631,10 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.16.0
+- Add: **width per ad** — an entry in `adSlots.ads` can carry `style: 'card' | 'fullwidth'`; the slot that shows it takes that width, so card and full-width ads run in the same list. Without `style` on the entry, `adSlots.style` applies as before.
+- Demo: the ads list in the **Ad Slots** tab gained a full-width ad (weights 1 / 1 / 4 / 4).
 
 ### v2.15.0
 - Add: **`adSlots.ads` — an ads list, rendered by the library.** Pass `{ id, image, alt, url, weight, label }` entries and each slot is filled with one of them, picked by weight. Links always open in a new tab with `rel="noopener sponsored"`; only `http(s)` URLs become links, and entries are rendered as data, never as HTML. New callbacks `onAdView(ad, slotEl)` (once per slot at ≥ 50% visibility) and `onAdClick(ad, slotEl)`. Filled slots keep the card gap to edge and spine; override with `--mo-ad-margin`, `--mo-ad-margin-inverted`, `--mo-ad-margin-fullwidth`. Without `ads`, ad slots behave exactly as before.

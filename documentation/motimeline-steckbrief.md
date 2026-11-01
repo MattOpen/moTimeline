@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-01 · **Type:** library (npm `motimeline`) · **Version:** 2.15.0
+**As of:** 2026-11-01 · **Type:** library (npm `motimeline`) · **Version:** 2.16.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -9,7 +9,7 @@
 
 Responsive two-column timeline as a dependency-free vanilla JS library: cards, badges, arrows, categories, fill and
 stacked layout, animations, infinite scroll and ad slots (`adSlots`). Since 2.15.0 it can render an ads list into the
-ad slots (`adSlots.ads`).
+ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`).
 
 ## Where things are
 
@@ -31,6 +31,9 @@ ad slots (`adSlots.ads`).
 - Entries of the ads list are data, never HTML: built with DOM APIs and `textContent` only (`_renderAd`); links only for `http(s)`
   (`safeAdHref`), always `target="_blank" rel="noopener sponsored"`.
 - Weight: missing = 1, ≤ 0 or not a number = never shown (`adWeight`, `pickAd`).
+- Width per ad: `_createAdSlot` picks the ad first; a valid `ad.style` (`card`/`fullwidth`) overrides `adSlots.style`
+  before the slot enters the DOM, so `_layout()` needs no special case. The library sets no aspect ratio: the image
+  fills the slot width at its own proportions (`.mo-ad-image`); format and `style` are the caller's choice per ad.
 - A filled slot (`mo-ad-filled`) keeps the card gap to edge and spine via padding (`--mo-ad-margin`, `-inverted`,
   `-fullwidth`, defaulting to the card margins under `.mo-theme`); empty slots stay unstyled (`src/moTimeline.css`,
   section "AD SLOTS").

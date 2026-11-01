@@ -264,7 +264,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.15.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.16.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -627,7 +627,8 @@ tl.<span class="fn">filterByCategory</span>(<span class="str">'all'</span>);   <
       <p class="ads-intro">
         A slot is injected after every 3rd item. <strong>Source</strong> decides who fills it:
         <em>callback</em> — your code (e.g. an ad network) fills the empty slot when it scrolls into view;
-        <em>ads list</em> — you pass a list of ads and moTimeline renders one into each slot, picked by weight.
+        <em>ads list</em> — you pass a list of ads and moTimeline renders one into each slot, picked by weight;
+        an ad with <code>style: 'fullwidth'</code> spans both columns.
         Scroll down to watch the slots load. <a href="#ad-slots">How to set it up →</a>
       </p>
       <div class="demo-controls">
@@ -669,6 +670,8 @@ tl.<span class="fn">addItems</span>(items);   <span class="cm">// slots are inje
     ads: [   <span class="cm">// data only, no HTML — one picked per slot by weight</span>
       { id: <span class="str">'a'</span>, image: <span class="str">'/ads/a.png'</span>, alt: <span class="str">'Spring sale'</span>, url: <span class="str">'https://example.com/a'</span>, weight: 1, label: <span class="str">'Ad'</span> },
       { id: <span class="str">'b'</span>, image: <span class="str">'/ads/b.png'</span>, alt: <span class="str">'New shop'</span>,    url: <span class="str">'https://example.com/b'</span>, weight: 8, label: <span class="str">'Ad'</span> },
+      { id: <span class="str">'c'</span>, image: <span class="str">'/ads/c-wide.png'</span>, alt: <span class="str">'Big launch'</span>, url: <span class="str">'https://example.com/c'</span>, weight: 2, label: <span class="str">'Ad'</span>,
+        style: <span class="str">'fullwidth'</span> },   <span class="cm">// this ad's slot spans both columns</span>
     ],
     <span class="fn">onAdView</span>(ad, slotEl)  { <span class="cm">/* once per slot at >= 50% visibility */</span> },
     <span class="fn">onAdClick</span>(ad, slotEl) { <span class="cm">/* link opens in a new tab, rel="noopener sponsored" */</span> },
@@ -1009,8 +1012,8 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       <tbody>
         <tr><td><code>mode</code></td><td><code>'every_n'</code> — a slot after every <code>interval</code> items · <code>'random'</code> — one slot at a random position in each block of <code>interval</code> items</td></tr>
         <tr><td><code>interval</code></td><td>Number of items per slot.</td></tr>
-        <tr><td><code>style</code></td><td><code>'card'</code> — slot sits in a column like a card · <code>'fullwidth'</code> — slot spans both columns</td></tr>
-        <tr><td><code>ads</code></td><td>Ads list: <code>[{ id, image, alt, url, weight, label }]</code>. One entry per slot, picked at random by <code>weight</code>.</td></tr>
+        <tr><td><code>style</code></td><td><code>'card'</code> — slot sits in a column like a card · <code>'fullwidth'</code> — slot spans both columns. Default for every slot; an entry in <code>ads</code> can override it.</td></tr>
+        <tr><td><code>ads</code></td><td>Ads list: <code>[{ id, image, alt, url, weight, label, style }]</code>. One entry per slot, picked at random by <code>weight</code>. An entry's <code>style</code> (<code>'card'</code> or <code>'fullwidth'</code>) sets the width of the slot that shows it.</td></tr>
         <tr><td><code>onAdView</code></td><td><code>(ad, slotEl) =&gt; void</code> — with <code>ads</code>: once per slot at ≥ 50 % visibility.</td></tr>
         <tr><td><code>onAdClick</code></td><td><code>(ad, slotEl) =&gt; void</code> — with <code>ads</code>: on every click on the ad.</td></tr>
         <tr><td><code>onEnterViewport</code></td><td><code>(slotEl, position) =&gt; void</code> — callback: once per slot at ≥ 50 % visibility; <code>position</code> is the slot's 0-based child index.</td></tr>
@@ -1024,6 +1027,8 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     ads: [
       { id: <span class="str">'spring'</span>, image: <span class="str">'/ads/spring.png'</span>, alt: <span class="str">'Spring sale'</span>, url: <span class="str">'https://example.com/spring'</span>, weight: 1, label: <span class="str">'Ad'</span> },
       { id: <span class="str">'shop'</span>,   image: <span class="str">'/ads/shop.png'</span>,   alt: <span class="str">'New shop'</span>,    url: <span class="str">'https://example.com/shop'</span>,   weight: 3, label: <span class="str">'Ad'</span> },
+      { id: <span class="str">'launch'</span>, image: <span class="str">'/ads/launch-wide.png'</span>, alt: <span class="str">'Big launch'</span>, url: <span class="str">'https://example.com/launch'</span>, weight: 2, label: <span class="str">'Ad'</span>,
+        style: <span class="str">'fullwidth'</span> },   <span class="cm">// spans both columns — image format is up to you</span>
     ],
     <span class="fn">onAdView</span>(ad)  { <span class="fn">track</span>(<span class="str">'view'</span>, ad.id); },
     <span class="fn">onAdClick</span>(ad) { <span class="fn">track</span>(<span class="str">'click'</span>, ad.id); },
@@ -1045,6 +1050,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       <li>Only <code>http:</code> / <code>https:</code> URLs become a link; the link always opens in a new tab with <code>rel="noopener sponsored"</code>.</li>
       <li>Every field is shown as text — markup in an entry is never rendered.</li>
       <li>A filled ad is as wide as a card and keeps the card gap to edge and spine; its height follows the image.</li>
+      <li>Width per ad: an entry with <code>style: 'fullwidth'</code> or <code>'card'</code> gets a slot of that width, whatever <code>adSlots.style</code> says; without it the list's <code>style</code> applies. The cadence (<code>mode</code>, <code>interval</code>) stays per list.</li>
       <li>Scheduling, language and counting stay with you: pass only the ads that should run, count in the callbacks.</li>
       <li>Slots are removed on <code>destroy()</code> and <code>clear()</code>.</li>
     </ul>
@@ -1393,7 +1399,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       d._adRealCount+=newItems.length; if(newSlots.length){ this._obs(newSlots); if(this._aro) newSlots.forEach(s=>this._aro.observe(s)); this.refresh(); }
     }
-    _cas(fw){ const s=document.createElement('li'); s.className='mo-item mo-ad-slot'; if(fw) s.classList.add('mo-fullwidth'); const ad=pickAd(this._d().adSlots.ads); if(ad) this._rad(s,ad); return s; }
+    _cas(fw){ const s=document.createElement('li'); s.className='mo-item mo-ad-slot'; const ad=pickAd(this._d().adSlots.ads); const st=ad&&ad.style; if(st==='card'||st==='fullwidth') fw=st==='fullwidth'; if(fw) s.classList.add('mo-fullwidth'); if(ad) this._rad(s,ad); return s; }
     _rad(s,ad){ const {onAdClick}=this._d().adSlots; slotAds.set(s,ad); s.classList.add('mo-ad-filled');
       if(ad.label!=null&&ad.label!==''){ const l=document.createElement('span'); l.className='mo-ad-label'; l.textContent=String(ad.label); s.appendChild(l); }
       let img=null; if(ad.image){ img=document.createElement('img'); img.className='mo-ad-image'; img.src=String(ad.image); img.alt=ad.alt==null?'':String(ad.alt); }
@@ -1612,22 +1618,24 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   const adsCounterEl = document.getElementById('adsCounter');
 
   // Banner image as an inline SVG, so the demo needs no image files
-  function adBanner(text, color) {
-    const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 200'>"
-      + "<rect width='600' height='200' fill='" + color + "'/>"
-      + "<text x='300' y='112' fill='white' font-family='system-ui,sans-serif' font-size='34' font-weight='700' text-anchor='middle'>"
+  function adBanner(text, color, width = 600) {
+    const svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + width + " 200'>"
+      + "<rect width='" + width + "' height='200' fill='" + color + "'/>"
+      + "<text x='" + width / 2 + "' y='112' fill='white' font-family='system-ui,sans-serif' font-size='34' font-weight='700' text-anchor='middle'>"
       + text + "</text></svg>";
     return 'data:image/svg+xml,' + encodeURIComponent(svg);
   }
 
-  // Three ads in the list, weighted 1/1/8: the third shows up in about 80 % of the slots
+  // Four ads in the list, weighted 1/1/4/4; 'wide' spans both columns via its own style
   const OWN_ADS = [
     { id: 'npm',    image: adBanner('moTimeline on npm', '#0ea5e9'),    alt: 'moTimeline on npm',
       url: 'https://www.npmjs.com/package/motimeline',   weight: 1, label: 'Advertisement' },
     { id: 'github', image: adBanner('Star it on GitHub', '#10b981'),    alt: 'moTimeline on GitHub',
       url: 'https://github.com/MattOpen/moTimeline',     weight: 1, label: 'Advertisement' },
     { id: 'main',   image: adBanner('Your ad could be here', '#6366f1'), alt: 'Your ad could be here',
-      url: 'https://github.com/MattOpen/moTimeline#ad-slots', weight: 8, label: 'Advertisement' },
+      url: 'https://github.com/MattOpen/moTimeline#ad-slots', weight: 4, label: 'Advertisement' },
+    { id: 'wide',   image: adBanner('Full width — style: \'fullwidth\'', '#f59e0b', 1200), alt: 'Full-width ad',
+      url: 'https://github.com/MattOpen/moTimeline#ad-slots', weight: 4, label: 'Advertisement', style: 'fullwidth' },
   ];
   let adViews = {}, adClicks = 0;
 
