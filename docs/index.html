@@ -104,14 +104,14 @@
     .mo-timeline:not(.mo-twocol) > .mo-item { float: none; width: 100%; }
     .mo-timeline > .mo-item.mo-inverted { float: right; }
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth { clear: both; float: none; width: 100%; }
-    .mo-theme > .mo-item.mo-fullwidth .mo-card { margin: var(--mo-card-margin-fullwidth, 0.5rem); }
+    .mo-theme > .mo-item.mo-fullwidth .mo-card, .mo-gap > .mo-item.mo-fullwidth .mo-card { margin: var(--mo-card-margin-fullwidth, 0.5rem); }
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-badge,
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth .mo-arrow { display: none; }
     .mo-timeline > .mo-item.mo-ad-slot { min-height: 100px; }
     .mo-timeline > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, 0); }
-    .mo-theme > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem)); }
-    .mo-theme > .mo-item.mo-ad-filled.mo-inverted { padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem)); }
-    .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth { padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem)); }
+    .mo-theme > .mo-item.mo-ad-filled, .mo-gap > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem)); }
+    .mo-theme > .mo-item.mo-ad-filled.mo-inverted, .mo-gap > .mo-item.mo-ad-filled.mo-inverted { padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem)); }
+    .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth, .mo-gap > .mo-item.mo-ad-filled.mo-fullwidth { padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem)); }
     .mo-ad-slot .mo-ad-label { color: var(--mo-ad-label-color, #94a3b8); display: block; font-size: .7rem; font-weight: 600; letter-spacing: .04em; padding: 0 0 .25rem; text-transform: uppercase; }
     .mo-ad-slot .mo-ad-link { display: block; }
     .mo-ad-slot .mo-ad-image { border-radius: var(--mo-card-border-radius, 8px); display: block; height: auto; max-width: 100%; width: 100%; }
@@ -152,8 +152,9 @@
 
     /* ─ Theme ─ */
     .mo-theme { --mo-arrow-color: #fff; }
-    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem); position: relative; }
-    .mo-theme > .mo-item.mo-inverted .mo-card { margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem); }
+    .mo-theme > .mo-item .mo-card, .mo-gap > .mo-item .mo-card { margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem); }
+    .mo-theme > .mo-item.mo-inverted .mo-card, .mo-gap > .mo-item.mo-inverted .mo-card { margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem); }
+    .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); position: relative; }
     .mo-theme > .mo-item .mo-banner  { border-radius: var(--mo-card-border-radius, 8px) var(--mo-card-border-radius, 8px) 0 0; display: block; max-height: 240px; object-fit: cover; width: 100%; }
     .mo-theme > .mo-item .mo-card-image { overflow: visible; position: relative; }
     .mo-theme > .mo-item .mo-avatar  { border: 3px solid #fff; border-radius: 50%; bottom: calc(var(--mo-avatar-size, 50px) * -0.44); box-shadow: 0 2px 8px rgba(0,0,0,.18); height: var(--mo-avatar-size, 50px); object-fit: cover; position: absolute; right: 14px; width: var(--mo-avatar-size, 50px); z-index: 1; }
@@ -233,8 +234,7 @@
 
     /* ── BOOTSTRAP DEMO — minimal panel CSS ── */
     #tl-bootstrap { --mo-badge-bg: #337ab7; --mo-arrow-color: #ddd; --mo-line-color: #ddd; }
-    .bs-panel { background: #fff; border: 1px solid #ddd; border-radius: 4px; margin: 0.5rem 1rem 0.5rem 0.5rem; }
-    .mo-item.mo-inverted .bs-panel { margin: 0.5rem 0.5rem 0.5rem 1rem; }
+    .bs-panel { background: #fff; border: 1px solid #ddd; border-radius: 4px; }
     .bs-panel-heading { background: #f5f5f5; border-bottom: 1px solid #ddd; border-radius: 3px 3px 0 0; padding: 0.65rem 1rem; }
     .bs-panel-heading h3 { color: #333; font-size: 0.95rem; font-weight: 600; margin: 0 0 0.2rem; }
     .bs-panel-heading .bs-meta { color: #777; font-size: 0.78rem; margin: 0; }
@@ -264,7 +264,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.16.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.17.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -466,7 +466,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
       <ul id="tl-bootstrap">
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>Project kickoff</h3>
               <p class="bs-meta">January 2024</p>
@@ -478,7 +478,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>Design system</h3>
               <p class="bs-meta">February 2024</p>
@@ -490,7 +490,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>API development</h3>
               <p class="bs-meta">March 2024</p>
@@ -502,7 +502,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel bs-panel-primary">
+          <div class="bs-panel bs-panel-primary mo-card">
             <div class="bs-panel-heading">
               <h3>Beta launch</h3>
               <p class="bs-meta">April 2024</p>
@@ -514,7 +514,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>User testing</h3>
               <p class="bs-meta">May 2024</p>
@@ -526,7 +526,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>Performance pass</h3>
               <p class="bs-meta">June 2024</p>
@@ -538,7 +538,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel bs-panel-primary">
+          <div class="bs-panel bs-panel-primary mo-card">
             <div class="bs-panel-heading">
               <h3>v1.0 released</h3>
               <p class="bs-meta">July 2024</p>
@@ -550,7 +550,7 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
         </li>
 
         <li>
-          <div class="bs-panel">
+          <div class="bs-panel mo-card">
             <div class="bs-panel-heading">
               <h3>Roadmap planning</h3>
               <p class="bs-meta">August 2024</p>
@@ -564,13 +564,15 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
       </ul>
       <div class="demo-controls">
         <button class="code-btn" data-code="code-bootstrap" style="background:#0ea5e9">Show setup code</button>
+        <button id="bsGapBtn" style="background:#10b981">Theme: 'gap'</button>
       </div>
-      <pre id="code-bootstrap" hidden><code><span class="cm">&lt;!-- theme:false — the library handles layout only, --&gt;</span>
-<span class="cm">&lt;!-- Bootstrap's own panels provide the card styling. --&gt;</span>
+      <pre id="code-bootstrap" hidden><code><span class="cm">&lt;!-- theme: 'gap' — only the gap to edge and spine, no look of its own. --&gt;</span>
+<span class="cm">&lt;!-- Bootstrap's own panels provide the styling; the extra class mo-card --&gt;</span>
+<span class="cm">&lt;!-- tells moTimeline which element gets the gap. theme: false = flush. --&gt;</span>
 &lt;<span class="fn">div</span> class=<span class="str">"container"</span>&gt;
   &lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
     &lt;<span class="fn">li</span>&gt;
-      &lt;<span class="fn">div</span> class=<span class="str">"panel panel-primary"</span>&gt;
+      &lt;<span class="fn">div</span> class=<span class="str">"panel panel-primary mo-card"</span>&gt;
         &lt;<span class="fn">div</span> class=<span class="str">"panel-heading"</span>&gt;&lt;<span class="fn">h3</span>&gt;Beta launch&lt;/<span class="fn">h3</span>&gt;&lt;/<span class="fn">div</span>&gt;
         &lt;<span class="fn">div</span> class=<span class="str">"panel-body"</span>&gt;200 early users invited.&lt;/<span class="fn">div</span>&gt;
       &lt;/<span class="fn">div</span>&gt;
@@ -581,7 +583,8 @@ tl.<span class="fn">initNewItems</span>();</code></pre>
 <span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, {
   showBadge: <span class="kw">true</span>,
   showArrow: <span class="kw">true</span>,
-  theme:     <span class="kw">false</span>,   <span class="cm">// no built-in card theme</span>
+  theme:     <span class="str">'gap'</span>,   <span class="cm">// gap only — or the class mo-gap on the &lt;ul&gt;</span>
+  adSlots:   { mode: <span class="str">'every_n'</span>, interval: 3, ads: [ <span class="cm">/* … */</span> ] },
 });</code></pre>
     </div>
 
@@ -781,6 +784,21 @@ tl.<span class="fn">addItems</span>(items);</code></pre>
     &lt;/<span class="fn">div</span>&gt;
   &lt;/<span class="fn">li</span>&gt;
 &lt;/<span class="fn">ul</span>&gt;</code></pre>
+
+    <h3>Themes — <code>theme</code> takes a name</h3>
+    <pre><code>theme: <span class="str">'default'</span>  <span class="cm">// or true — look (shadow, banner, avatar, badges) + card gap · class mo-theme</span>
+theme: <span class="str">'gap'</span>      <span class="cm">// card gap only, your own look · class mo-gap</span>
+theme: <span class="kw">false</span>      <span class="cm">// default — no theme, cards sit flush (masonry)</span></code></pre>
+
+    <h3>HTML structure (own cards, <code>theme: 'gap'</code>)</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">Keep your own card class and add <code>mo-card</code> — that is the element that gets the gap. Give the card its own padding or border, otherwise the browser's default margins of <code>h3</code>/<code>p</code> add to the gap.</p>
+    <pre><code>&lt;<span class="fn">ul</span> id=<span class="str">"my-timeline"</span>&gt;
+  &lt;<span class="fn">li</span>&gt;
+    &lt;<span class="fn">div</span> class=<span class="str">"my-card mo-card"</span>&gt;...&lt;/<span class="fn">div</span>&gt;
+  &lt;/<span class="fn">li</span>&gt;
+&lt;/<span class="fn">ul</span>&gt;
+
+<span class="kw">const</span> tl = <span class="kw">new</span> <span class="fn">MoTimeline</span>(<span class="str">'#my-timeline'</span>, { theme: <span class="str">'gap'</span> });</code></pre>
 
     <h3>Rendered DOM (after init) — what the library produces</h3>
     <p style="color:var(--muted);font-size:0.9rem;margin:-0.5rem 0 0.75rem">Classes and elements added automatically by the library are highlighted. Right-column items also get <code>mo-inverted js-mo-inverted</code> on the <code>&lt;li&gt;</code>.</p>
@@ -1108,8 +1126,12 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           <td>Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode.</td>
         </tr>
         <tr>
-          <td><code>theme</code></td><td>boolean</td><td><code>false</code></td>
-          <td>Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds the <code>mo-theme</code> class to the container — can also be set manually in HTML.</td>
+          <td><code>theme</code></td><td>string | boolean</td><td><code>false</code></td>
+          <td>
+            <code>'default'</code> (or <code>true</code>) — built-in card theme: white cards with drop shadow, image banners, overlapping circular avatars, styled badges, plus the card gap. Adds <code>mo-theme</code>.<br>
+            <code>'gap'</code> — only the gap of each <code>.mo-card</code> to edge and center line, no look of its own; for your own cards, add the class <code>mo-card</code> to them. Adds <code>mo-gap</code>.<br>
+            <code>false</code> — no theme, cards sit flush. Both classes can also be set manually in HTML.
+          </td>
         </tr>
         <tr>
           <td><code>showCounterStyle</code></td><td>string</td><td><code>'counter'</code></td>
@@ -1121,23 +1143,23 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         </tr>
         <tr>
           <td><code>cardBorderRadius</code></td><td>string</td><td><code>'8px'</code></td>
-          <td>Border radius of the themed card and its banner image top corners. Sets the <code>--mo-card-border-radius</code> CSS custom property on the container. Any valid CSS length is accepted (e.g. <code>'0'</code>, <code>'16px'</code>, <code>'1rem'</code>).</td>
+          <td>Border radius of the themed card and its banner image top corners. Sets the <code>--mo-card-border-radius</code> CSS custom property on the container (only when passed — otherwise the stylesheet default applies and your own CSS can override it). Any valid CSS length is accepted (e.g. <code>'0'</code>, <code>'16px'</code>, <code>'1rem'</code>).</td>
         </tr>
         <tr>
           <td><code>avatarSize</code></td><td>string</td><td><code>'50px'</code></td>
-          <td>Width and height of the circular avatar image. Sets the <code>--mo-avatar-size</code> CSS custom property on the container. Any valid CSS length is accepted (e.g. <code>'40px'</code>, <code>'4rem'</code>).</td>
+          <td>Width and height of the circular avatar image. Sets the <code>--mo-avatar-size</code> CSS custom property on the container (only when passed). Any valid CSS length is accepted (e.g. <code>'40px'</code>, <code>'4rem'</code>).</td>
         </tr>
         <tr>
           <td><code>cardMargin</code></td><td>string</td><td><code>'0.5rem 1.25rem 0.5rem 0.5rem'</code></td>
-          <td>Margin of left-column themed cards (the larger right value creates space toward the center line). Sets <code>--mo-card-margin</code> on the container.</td>
+          <td>Margin of left-column cards under <code>theme: 'default'</code> or <code>'gap'</code> (the larger right value creates space toward the center line). Sets <code>--mo-card-margin</code> on the container (only when passed).</td>
         </tr>
         <tr>
           <td><code>cardMarginInverted</code></td><td>string</td><td><code>'0.5rem 0.5rem 0.5rem 1.25rem'</code></td>
-          <td>Margin of right-column (inverted) themed cards (the larger left value creates space toward the center line). Sets <code>--mo-card-margin-inverted</code> on the container.</td>
+          <td>Margin of right-column (inverted) cards under <code>theme: 'default'</code> or <code>'gap'</code> (the larger left value creates space toward the center line). Sets <code>--mo-card-margin-inverted</code> on the container (only when passed).</td>
         </tr>
         <tr>
           <td><code>cardMarginFullWidth</code></td><td>string</td><td><code>'0.5rem'</code></td>
-          <td>Margin of full-width themed cards. Sets <code>--mo-card-margin-fullwidth</code> on the container.</td>
+          <td>Margin of full-width cards under <code>theme: 'default'</code> or <code>'gap'</code>. Sets <code>--mo-card-margin-fullwidth</code> on the container (only when passed).</td>
         </tr>
         <tr>
           <td><code>randomFullWidth</code></td><td>number&nbsp;|&nbsp;boolean</td><td><code>0</code></td>
@@ -1191,14 +1213,15 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       <tbody>
         <tr><td><code>mo-timeline</code></td><td>container <code>&lt;ul&gt;</code></td><td>Core layout class. Added automatically on init; safe to add in HTML before init.</td></tr>
         <tr><td><code>mo-twocol</code></td><td>container</td><td>Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning.</td></tr>
-        <tr><td><code>mo-theme</code></td><td>container</td><td>Activates the built-in card theme styles. Added by <code>theme: true</code> or set manually.</td></tr>
+        <tr><td><code>mo-theme</code></td><td>container</td><td>Activates the built-in card theme styles, including the card gap. Added by <code>theme: 'default'</code> (or <code>true</code>) or set manually.</td></tr>
+        <tr><td><code>mo-gap</code></td><td>container</td><td>Gives every <code>.mo-card</code> and filled ad slot the gap to edge and center line, nothing else. Added by <code>theme: 'gap'</code> or set manually.</td></tr>
         <tr><td><code>mo-item</code></td><td><code>&lt;li&gt;</code></td><td>Applied to every timeline item. Controls 50 % width and float direction.</td></tr>
         <tr><td><code>mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>Added to right-column items. Flips float, badge, arrow, and avatar positions.</td></tr>
         <tr><td><code>mo-offset</code></td><td><code>&lt;li&gt;</code></td><td>Added when a badge would overlap the previous item's badge on the center line — nudges badge and arrow down to avoid collision.</td></tr>
         <tr><td><code>mo-badge</code></td><td><code>&lt;span&gt;</code></td><td>Badge circle on the center line. Style via CSS custom properties.</td></tr>
         <tr><td><code>mo-badge-icon</code></td><td><code>&lt;img&gt;</code> inside badge</td><td>Image inside the badge when <code>showCounterStyle: 'image'</code>.</td></tr>
         <tr><td><code>mo-arrow</code></td><td><code>&lt;span&gt;</code></td><td>Triangle arrow pointing from the card toward the center line.</td></tr>
-        <tr><td><code>mo-card</code></td><td><code>&lt;div&gt;</code></td><td>Card wrapper. Receives shadow, border-radius, and margins when <code>mo-theme</code> is active.</td></tr>
+        <tr><td><code>mo-card</code></td><td><code>&lt;div&gt;</code></td><td>Card wrapper. Receives margins under <code>mo-theme</code> or <code>mo-gap</code>, plus shadow and border-radius under <code>mo-theme</code>. Add it to your own card element to give it the gap; the card needs its own padding or border, otherwise the browser's default margins of <code>h3</code>/<code>p</code> add to the gap.</td></tr>
         <tr><td><code>mo-card-image</code></td><td><code>&lt;div&gt;</code></td><td>Optional image container inside a card. Required for the avatar-over-banner overlap effect.</td></tr>
         <tr><td><code>mo-banner</code></td><td><code>&lt;img&gt;</code></td><td>Full-width banner image at the top of a themed card.</td></tr>
         <tr><td><code>mo-avatar</code></td><td><code>&lt;img&gt;</code></td><td>Circular avatar that overlaps the bottom edge of the banner. Always positioned on the right side of the card.</td></tr>
@@ -1206,7 +1229,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
         <tr><td><code>mo-meta</code></td><td><code>&lt;p&gt;</code></td><td>Date / subtitle line inside a card body. Muted colour, smaller font.</td></tr>
         <tr><td><code>js-mo-item</code> · <code>js-mo-inverted</code></td><td><code>&lt;li&gt;</code></td><td>JS-only selector mirrors of <code>mo-item</code> / <code>mo-inverted</code>. Use these in your own JavaScript queries to avoid coupling to styling class names.</td></tr>
         <tr><td><code>mo-ad-slot</code></td><td><code>&lt;li&gt;</code></td><td>Ad slot injected by <code>adSlots</code>. Takes part in column placement like an item, but is never counted as one.</td></tr>
-        <tr><td><code>mo-ad-filled</code></td><td><code>&lt;li&gt;</code></td><td>Ad slot filled from <code>adSlots.ads</code>. Gets the card gap via <code>--mo-ad-margin</code>.</td></tr>
+        <tr><td><code>mo-ad-filled</code></td><td><code>&lt;li&gt;</code></td><td>Ad slot filled from <code>adSlots.ads</code>. Gets the card gap under <code>mo-theme</code> or <code>mo-gap</code>; override via <code>--mo-ad-margin</code>.</td></tr>
         <tr><td><code>mo-ad-label</code> · <code>mo-ad-link</code> · <code>mo-ad-image</code></td><td>inside a filled slot</td><td>Label text (<code>--mo-ad-label-color</code>), link (new tab, <code>rel="noopener sponsored"</code>), image.</td></tr>
         <tr><td><code>mo-filtered-out</code></td><td><code>&lt;li&gt;</code></td><td>Added by <code>filterByCategory()</code> to items that do not match the active filter. Sets <code>display: none</code> and excludes the item from column-placement calculations. Removed automatically when the filter is cleared or the item's category is selected.</td></tr>
       </tbody>
@@ -1227,6 +1250,8 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null, adSlots:null };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
+  const CSS_VARS = { cardBorderRadius:'--mo-card-border-radius', avatarSize:'--mo-avatar-size', cardMargin:'--mo-card-margin', cardMarginInverted:'--mo-card-margin-inverted', cardMarginFullWidth:'--mo-card-margin-fullwidth' };
+  function themeClass(t){ return t===true||t==='default'?'mo-theme':t==='gap'?'mo-gap':null; }
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
   function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
   const slotAds=new WeakMap();
@@ -1239,6 +1264,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     constructor(el,opts={}){
       if(typeof el==='string') el=document.querySelector(el);
       this.element=el;
+      this._o=opts;
       this.settings=Object.assign({},DEFAULTS,opts,{columnCount:Object.assign({},DEFAULTS.columnCount,opts.columnCount)});
       this._rh=debounce(()=>this.refresh(),100);
       this.init();
@@ -1250,12 +1276,8 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       instanceData.set(el,data);
       MoTimeline.instances.add(this);
       el.classList.add('mo-timeline');
-      if(data.theme) el.classList.add('mo-theme');
-      el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
-      el.style.setProperty('--mo-avatar-size', data.avatarSize);
-      el.style.setProperty('--mo-card-margin', data.cardMargin);
-      el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
-      el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
+      const tc=themeClass(data.theme); if(tc) el.classList.add(tc);
+      Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) el.style.setProperty(p,this._o[o]); });
       if(data.animate){ const type=data.animate===true?'fade':data.animate; el.classList.add('mo-animate','mo-animate-'+type); this._observer=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('mo-visible'); this._observer.unobserve(e.target); } }); },{threshold:0.1}); }
       if(data.adSlots){ data._adRealCount=0; const {onEnterViewport:oev,onAdView:oav}=data.adSlots; if(typeof oev==='function'||typeof oav==='function'){ this._adObserver=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ const s=e.target; this._adObserver.unobserve(s); if(typeof oev==='function') oev(s,Number(s.dataset.moAdPosition)); if(typeof oav==='function'&&slotAds.has(s)) oav(slotAds.get(s),s); } }); },{threshold:0.5}); } if(typeof ResizeObserver==='function') this._aro=new ResizeObserver(this._rh); }
       this._initItems();
@@ -1362,7 +1384,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); this.element.classList.remove('mo-timeline','mo-theme','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
+    destroy(){ window.removeEventListener('resize',this._rh); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) this.element.style.removeProperty(p); }); this.element.classList.remove('mo-timeline','mo-theme','mo-gap','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); }
     _d(){ return instanceData.get(this.element); }
     _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()];
       this.element.classList.toggle('mo-twocol',d.col>1);
@@ -1419,7 +1441,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
     { title:'Responsive design',     meta:'Apr 2024', text:'Collapses to single column on mobile. Breakpoints configurable per instance.', color: COLORS[3] },
     { title:'Badges & arrows',       meta:'May 2024', text:'Numbered badges sit on the center line. Arrows point from each card toward the center.', color: COLORS[4] },
     { title:'Bootstrap compatible',  meta:'Jun 2024', text:'No framework option needed. Wrap the <ul> in a Bootstrap container for page layout.', color: COLORS[5] },
-    { title:'Theme system',          meta:'Jul 2024', text:'Opt-in theme: card images, overlapping avatars, styled badges. Enable with theme: true.', color: COLORS[0] },
+    { title:'Theme system',          meta:'Jul 2024', text:'Opt-in theme: card images, overlapping avatars, styled badges. Enable with theme: \'default\' — or theme: \'gap\' for spacing only.', color: COLORS[0] },
     { title:'CSS custom properties', meta:'Aug 2024', text:'Override --mo-badge-bg, --mo-line-color and others to match your brand in one line.', color: COLORS[1] },
   ];
   function svg(color){ return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='160'><rect width='700' height='160' fill='${encodeURIComponent(color)}'/></svg>`; }
@@ -1570,7 +1592,16 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   });
 
   // ── Tab 3: Bootstrap demo ───────────────────────────────────────────────────
-  const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { showBadge:true, showArrow:true, theme:false });
+  // Own markup (Bootstrap panels + mo-card) with theme 'gap'; the button toggles
+  // the mo-gap class directly, the same switch as writing it into the markup.
+  const tl3 = new MoTimeline(document.getElementById('tl-bootstrap'), { showBadge:true, showArrow:true, theme:'gap',
+    adSlots: { mode:'every_n', interval:3, ads:[{ id:'bs', image: adBanner('Your ad could be here', '#337ab7'), alt:'Your ad could be here',
+      url:'https://github.com/MattOpen/moTimeline#ad-slots', label:'Advertisement' }] } });
+  document.getElementById('bsGapBtn').addEventListener('click', (e) => {
+    const on = document.getElementById('tl-bootstrap').classList.toggle('mo-gap');
+    e.target.textContent = on ? "Theme: 'gap'" : 'Theme: false';
+    tl3.refresh();
+  });
 
   // ── Tab 4: Category Filter demo ─────────────────────────────────────────────
   const tl4 = new MoTimeline(document.getElementById('tl-filter'), { showBadge:true, showArrow:true, theme:true });

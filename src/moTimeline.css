@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.16.0 — CSS
+ * moTimeline v2.17.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -182,7 +182,8 @@
 }
 
 /* Full-width card: equal margin on both sides (no center-line gap) */
-.mo-theme > .mo-item.mo-fullwidth .mo-card {
+.mo-theme > .mo-item.mo-fullwidth .mo-card,
+.mo-gap > .mo-item.mo-fullwidth .mo-card {
   margin: var(--mo-card-margin-fullwidth, 0.5rem);
 }
 
@@ -285,7 +286,23 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME  —  enabled via new MoTimeline(el, { theme: true })
+   CARD GAP  —  theme: 'gap' (.mo-gap) gives .mo-card only this gap to
+                edge and spine; theme: 'default' (.mo-theme) includes it.
+                Custom cards opt in by also carrying the class mo-card.
+   ═══════════════════════════════════════════════════════════════ */
+
+.mo-theme > .mo-item .mo-card,
+.mo-gap > .mo-item .mo-card {
+  margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem);
+}
+
+.mo-theme > .mo-item.mo-inverted .mo-card,
+.mo-gap > .mo-item.mo-inverted .mo-card {
+  margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME  —  enabled via new MoTimeline(el, { theme: 'default' }) (or true)
              or by adding .mo-theme manually to the container
    ═══════════════════════════════════════════════════════════════ */
 
@@ -298,12 +315,7 @@
   background: #fff;
   border-radius: var(--mo-card-border-radius, 8px);
   box-shadow: 0 2px 14px rgba(0, 0, 0, .10);
-  margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem);
   position: relative;
-}
-
-.mo-theme > .mo-item.mo-inverted .mo-card {
-  margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem);
 }
 
 /* Banner image — top corners rounded to match card, no overflow:hidden needed on card */
@@ -424,21 +436,24 @@
   min-height: 100px;
 }
 
-/* Slots filled from adSlots.ads — same gap to edge and spine as a themed card;
-   override with --mo-ad-margin / -inverted / -fullwidth */
+/* Slots filled from adSlots.ads — same gap to edge and spine as a card under
+   .mo-theme / .mo-gap; override with --mo-ad-margin / -inverted / -fullwidth */
 .mo-timeline > .mo-item.mo-ad-filled {
   padding: var(--mo-ad-margin, 0);
 }
 
-.mo-theme > .mo-item.mo-ad-filled {
+.mo-theme > .mo-item.mo-ad-filled,
+.mo-gap > .mo-item.mo-ad-filled {
   padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem));
 }
 
-.mo-theme > .mo-item.mo-ad-filled.mo-inverted {
+.mo-theme > .mo-item.mo-ad-filled.mo-inverted,
+.mo-gap > .mo-item.mo-ad-filled.mo-inverted {
   padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem));
 }
 
-.mo-theme > .mo-item.mo-ad-filled.mo-fullwidth {
+.mo-theme > .mo-item.mo-ad-filled.mo-fullwidth,
+.mo-gap > .mo-item.mo-ad-filled.mo-fullwidth {
   padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem));
 }
 

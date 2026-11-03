@@ -19,7 +19,7 @@ Works with any framework or a plain `<script>` tag.
 - **Responsive** — two columns on desktop, single column on mobile
 - **Configurable breakpoints** — control column count at xs / sm / md / lg
 - **Badges & arrows** — numbered badges on the center line, directional arrows
-- **Optional theme** — built-in card theme with image banners and overlapping avatars
+- **Optional theme** — `theme: 'default'` gives a built-in card theme with image banners and overlapping avatars; `theme: 'gap'` gives your own cards only the spacing; without a theme cards sit flush (masonry)
 - **CSS custom properties** — override colors and sizes with one line of CSS
 - **Category filtering** — tag items with `categories` and call `filterByCategory()` to show/hide by category; active filter persists automatically through lazy-loaded batches
 - **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`
@@ -97,6 +97,22 @@ import 'motimeline/dist/moTimeline.css';
 </li>
 ```
 
+### Own cards with spacing only (`theme: 'gap'`)
+
+Keep your own card styling and add the class `mo-card`; `theme: 'gap'` adds only the gap to edge and center line:
+
+```html
+<li>
+  <div class="my-card mo-card">…</div>
+</li>
+```
+
+```js
+new MoTimeline('#my-timeline', { theme: 'gap' });
+```
+
+Give the card its own `padding` or `border` — otherwise the browser's default margins of `h3`/`p` inside add to the gap.
+
 ### Rendered DOM (after init)
 
 The library injects classes and elements into your markup. Here is what a fully rendered item looks like:
@@ -145,13 +161,13 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `mirrorText` | boolean | `false` | Right-hand cards align their text toward the center line, so the two columns read as reflections. Independent of `layout`. |
 | `showBadge` | boolean | `false` | Render a circular badge on the center line for every item, numbered sequentially. Badges are automatically hidden when single-column mode is active. |
 | `showArrow` | boolean | `false` | Render a triangle arrow pointing from each card toward the center line. Automatically hidden in single-column mode. |
-| `theme` | boolean | `false` | Enable the built-in card theme: white cards with drop shadow, full-width image banners (160 px), overlapping circular avatars, and styled badges. Adds `mo-theme` to the container — can also be set manually in HTML. |
+| `theme` | string \| boolean | `false` | `'default'` (or `true`) — built-in card theme: white cards with drop shadow, image banners, overlapping circular avatars, styled badges, plus the card gap; adds `mo-theme`. `'gap'` — only the gap of each `.mo-card` (and filled ad slot) to edge and center line, no look of its own; adds `mo-gap`. `false` — no theme, cards sit flush. Both classes can also be set manually in HTML. |
 | `showCounterStyle` | string | `'counter'` | `'counter'` — sequential item number (1, 2, 3…). `'image'` — image from `data-mo-icon` on the `<li>`; falls back to a built-in flat SVG dot if the attribute is absent. `'none'` — badge element is created (preserving center-line spacing) but rendered with `opacity: 0`. |
-| `cardBorderRadius` | string | `'8px'` | Border radius of the themed card and its banner image top corners. Sets `--mo-card-border-radius` on the container. Any valid CSS length is accepted (e.g. `'0'`, `'16px'`, `'1rem'`). |
-| `avatarSize` | string | `'50px'` | Width and height of the circular avatar image. Sets `--mo-avatar-size` on the container. Any valid CSS length is accepted (e.g. `'40px'`, `'4rem'`). |
-| `cardMargin` | string | `'0.5rem 1.25rem 0.5rem 0.5rem'` | Margin of left-column themed cards. The larger right value creates space toward the center line. Sets `--mo-card-margin` on the container. |
-| `cardMarginInverted` | string | `'0.5rem 0.5rem 0.5rem 1.25rem'` | Margin of right-column (inverted) themed cards. The larger left value creates space toward the center line. Sets `--mo-card-margin-inverted` on the container. |
-| `cardMarginFullWidth` | string | `'0.5rem'` | Margin of full-width themed cards. Sets `--mo-card-margin-fullwidth` on the container. |
+| `cardBorderRadius` | string | `'8px'` | Border radius of the themed card and its banner image top corners. Sets `--mo-card-border-radius` on the container (only when passed — otherwise the stylesheet default applies and your own CSS can override it). Any valid CSS length is accepted (e.g. `'0'`, `'16px'`, `'1rem'`). |
+| `avatarSize` | string | `'50px'` | Width and height of the circular avatar image. Sets `--mo-avatar-size` on the container (only when passed). Any valid CSS length is accepted (e.g. `'40px'`, `'4rem'`). |
+| `cardMargin` | string | `'0.5rem 1.25rem 0.5rem 0.5rem'` | Margin of left-column cards under `theme: 'default'` or `'gap'`. The larger right value creates space toward the center line. Sets `--mo-card-margin` on the container (only when passed). |
+| `cardMarginInverted` | string | `'0.5rem 0.5rem 0.5rem 1.25rem'` | Margin of right-column (inverted) cards under `theme: 'default'` or `'gap'`. The larger left value creates space toward the center line. Sets `--mo-card-margin-inverted` on the container (only when passed). |
+| `cardMarginFullWidth` | string | `'0.5rem'` | Margin of full-width cards under `theme: 'default'` or `'gap'`. Sets `--mo-card-margin-fullwidth` on the container (only when passed). |
 | `randomFullWidth` | number \| boolean | `0` | `0`/`false` = off. A number `0–1` sets the probability that each item is randomly promoted to full-width during init. `true` = 33% chance. Items can also be set manually by adding the `mo-fullwidth` class to the `<li>`. |
 | `animate` | string \| boolean | `false` | Animate items as they scroll into view using `IntersectionObserver`. `'fade'` — items fade in. `'slide'` — left-column items slide in from the left, right-column items from the right. `true` = `'fade'`. Disable for individual items by adding `mo-visible` manually. Control speed via `--mo-animate-duration`. |
 | `renderCard` | function \| null | `null` | `(item, cardEl) => void`. When set, called for every item instead of the built-in HTML renderer. `cardEl` is the `.mo-card` div already placed inside the `<li>`. Populate it via `innerHTML` or DOM methods. The library still owns the `<li>`, column placement, spine, badge, arrow, `addItems()`, and scroll pagination. |
@@ -183,14 +199,15 @@ The library injects classes and elements into your markup. Here is what a fully 
 |---|---|---|
 | `mo-timeline` | container `<ul>` | Core layout class. Added automatically on init; safe to add in HTML before init. |
 | `mo-twocol` | container | Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning. |
-| `mo-theme` | container | Activates the built-in card theme. Added by `theme: true` or set manually. |
+| `mo-theme` | container | Activates the built-in card theme, including the card gap. Added by `theme: 'default'` (or `true`) or set manually. |
+| `mo-gap` | container | Gives every `.mo-card` and filled ad slot the gap to edge and center line, nothing else. Added by `theme: 'gap'` or set manually. |
 | `mo-item` | `<li>` | Applied to every timeline item. Controls 50 % width and float direction. |
 | `mo-inverted` | `<li>` | Added to right-column items. Flips float, badge, arrow, and avatar positions. |
 | `mo-offset` | `<li>` | Added when a badge would overlap the previous badge — nudges badge and arrow down to avoid collision. |
 | `mo-badge` | `<span>` | Badge circle on the center line. Style via CSS custom properties. |
 | `mo-badge-icon` | `<img>` inside badge | Image inside the badge when `showCounterStyle: 'image'`. |
 | `mo-arrow` | `<span>` | Triangle arrow pointing from the card toward the center line. |
-| `mo-card` | `<div>` | Card wrapper. Shadow, border-radius, and margins when `mo-theme` is active. |
+| `mo-card` | `<div>` | Card wrapper. Margins under `mo-theme` or `mo-gap`; shadow and border-radius under `mo-theme`. Add it to your own card element (e.g. `<div class="my-card mo-card">`) to give it the gap. The card needs its own padding or border — otherwise the browser's default margins of `h3`/`p` add to the gap. |
 | `mo-card-image` | `<div>` | Optional image container inside a card. Required for the avatar-over-banner overlap. |
 | `mo-banner` | `<img>` | Full-width banner image at the top of a themed card. |
 | `mo-avatar` | `<img>` | Circular avatar overlapping the bottom of the banner. Always positioned on the right side of the card. |
@@ -481,7 +498,7 @@ new MoTimeline('#my-timeline', {
 - The link **always** opens in a new tab with `target="_blank" rel="noopener sponsored"`; these are set by moTimeline, not taken from the entry.
 - Entries are data, not HTML: everything is created with DOM APIs and `textContent`, so markup in any field is shown as text.
 - A filled slot gets the class `mo-ad-filled`. The label colour follows `--mo-ad-label-color`.
-- With `theme: true` a filled slot keeps the same gap to the edge and the spine as a card (it follows `cardMargin`, `cardMarginInverted`, `cardMarginFullWidth`). Override it with `--mo-ad-margin`, `--mo-ad-margin-inverted` and `--mo-ad-margin-fullwidth`; without a theme the gap is `--mo-ad-margin` (default `0`). Empty slots for `onEnterViewport` stay untouched — style your own content there.
+- With `theme: 'default'` / `true` or `theme: 'gap'` a filled slot keeps the same gap to the edge and the spine as a card (it follows `cardMargin`, `cardMarginInverted`, `cardMarginFullWidth`). Override it with `--mo-ad-margin`, `--mo-ad-margin-inverted` and `--mo-ad-margin-fullwidth`; without a theme the gap is `--mo-ad-margin` (default `0`). Empty slots for `onEnterViewport` stay untouched — style your own content there.
 - Slots are filled when they are injected, so the layout knows their height; when an image loads and the slot grows, the layout re-runs.
 - Scheduling, language, targeting and counting views or clicks stay with you — pass only the ads that should run, and count in the callbacks.
 - `onEnterViewport` keeps working alongside `ads`, e.g. for an ad network in the same slots.
@@ -580,6 +597,8 @@ async function fetchPage(page) {
 
 ## CSS custom properties
 
+The `--mo-card-*` and `--mo-avatar-size` values below are the stylesheet defaults. `init()` writes one inline on the container only when you pass the matching option, so your own CSS keeps working otherwise.
+
 ```css
 #my-timeline {
   --mo-line-color:      #dde1e7;
@@ -631,6 +650,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.17.0
+- Add: **`theme` takes a name** — `'default'` (or `true`, unchanged) is the built-in theme with card gap; `'gap'` gives `.mo-card` and filled ad slots only the gap, without any look (class `mo-gap`). Own cards opt in by also carrying the class `mo-card`. `false` stays the default: cards sit flush.
+- Fix: `init()` writes `--mo-card-border-radius`, `--mo-avatar-size` and `--mo-card-margin*` inline only when the option is passed, so a page's own CSS for these variables is no longer overridden.
+- Demo: the **Bootstrap** tab uses own panels with `mo-card` and `theme: 'gap'`, with a toggle and an ad slot; the guide shows the theme names and the markup for own cards.
 
 ### v2.16.0
 - Add: **width per ad** — an entry in `adSlots.ads` can carry `style: 'card' | 'fullwidth'`; the slot that shows it takes that width, so card and full-width ads run in the same list. Without `style` on the entry, `adSlots.style` applies as before.

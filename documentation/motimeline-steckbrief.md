@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-01 · **Type:** library (npm `motimeline`) · **Version:** 2.16.0
+**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.17.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -9,7 +9,8 @@
 
 Responsive two-column timeline as a dependency-free vanilla JS library: cards, badges, arrows, categories, fill and
 stacked layout, animations, infinite scroll and ad slots (`adSlots`). Since 2.15.0 it can render an ads list into the
-ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`).
+ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`); since 2.17.0 `theme` takes a
+name (`'default'` or `'gap'`).
 
 ## Where things are
 
@@ -35,8 +36,13 @@ ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`styl
   before the slot enters the DOM, so `_layout()` needs no special case. The library sets no aspect ratio: the image
   fills the slot width at its own proportions (`.mo-ad-image`); format and `style` are the caller's choice per ad.
 - A filled slot (`mo-ad-filled`) keeps the card gap to edge and spine via padding (`--mo-ad-margin`, `-inverted`,
-  `-fullwidth`, defaulting to the card margins under `.mo-theme`); empty slots stay unstyled (`src/moTimeline.css`,
-  section "AD SLOTS").
+  `-fullwidth`, defaulting to the card margins under `.mo-theme` or `.mo-gap`); empty slots stay unstyled
+  (`src/moTimeline.css`, section "AD SLOTS").
+- `theme` is resolved by `themeClass()`: `'default'`/`true` → `mo-theme` (look plus gap), `'gap'` → `mo-gap` (gap only),
+  anything else → no class, cards flush. The gap is a `margin` on `.mo-card` (section "CARD GAP"), never padding on the
+  `li` (padding does not collapse in one column). Own cards opt in by also carrying `mo-card`.
+- `init()` writes `--mo-card-*` and `--mo-avatar-size` inline only for options the caller passed (`this._options`,
+  `CSS_VAR_OPTIONS`), never from `DEFAULTS`; the stylesheet carries the defaults as fallbacks.
 - Ad slots take part in column placement like cards: in `fill` a slot goes to the shorter column, so it can end up on
   either side.
 

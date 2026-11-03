@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.16.0
+ * moTimeline v2.17.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -16,7 +16,7 @@ const DEFAULTS = {
   mirrorText: false,  // right-hand cards align their text toward the centre line
   showBadge: false,
   showArrow: false,
-  theme: false,
+  theme: false,       // false | 'default' (or true) = look + card gap | 'gap' = card gap only
   showCounterStyle: 'counter', // 'counter' | 'image' | 'none'
   cardBorderRadius: '8px',
   avatarSize: '50px',
@@ -28,6 +28,23 @@ const DEFAULTS = {
   renderCard: null,   // (item, cardEl) => void — custom card renderer; skips built-in HTML
   adSlots: null,      // { mode, interval, style, onEnterViewport, ads, onAdView, onAdClick } — see docs
 };
+
+// Options mirrored into CSS variables. Written inline only when passed, so the
+// stylesheet's defaults stay overridable from the page's own CSS.
+const CSS_VAR_OPTIONS = {
+  cardBorderRadius: '--mo-card-border-radius',
+  avatarSize: '--mo-avatar-size',
+  cardMargin: '--mo-card-margin',
+  cardMarginInverted: '--mo-card-margin-inverted',
+  cardMarginFullWidth: '--mo-card-margin-fullwidth',
+};
+
+// Container class for a theme name; true is the original boolean form of 'default'.
+function themeClass(theme) {
+  if (theme === true || theme === 'default') return 'mo-theme';
+  if (theme === 'gap') return 'mo-gap';
+  return null;
+}
 
 // Ad object shown in each slot filled from `adSlots.ads`, read by onAdView/onAdClick.
 const slotAds = new WeakMap();
@@ -96,6 +113,7 @@ export class MoTimeline {
     if (!element) throw new Error('moTimeline: element not found');
 
     this.element = element;
+    this._options = options;
     this.settings = Object.assign({}, DEFAULTS, options);
     this.settings.columnCount = Object.assign({}, DEFAULTS.columnCount, options.columnCount);
     this._resizeHandler = debounce(() => this.refresh(), 100);
@@ -118,12 +136,11 @@ export class MoTimeline {
     MoTimeline.instances.add(this);
 
     el.classList.add('mo-timeline');
-    if (data.theme) el.classList.add('mo-theme');
-    el.style.setProperty('--mo-card-border-radius', data.cardBorderRadius);
-    el.style.setProperty('--mo-avatar-size', data.avatarSize);
-    el.style.setProperty('--mo-card-margin', data.cardMargin);
-    el.style.setProperty('--mo-card-margin-inverted', data.cardMarginInverted);
-    el.style.setProperty('--mo-card-margin-fullwidth', data.cardMarginFullWidth);
+    const theme = themeClass(data.theme);
+    if (theme) el.classList.add(theme);
+    Object.entries(CSS_VAR_OPTIONS).forEach(([option, prop]) => {
+      if (this._options[option] != null) el.style.setProperty(prop, this._options[option]);
+    });
 
     if (data.animate) {
       const type = data.animate === true ? 'fade' : data.animate;
@@ -304,12 +321,10 @@ export class MoTimeline {
     Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach((s) => s.remove());
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
-    this.element.style.removeProperty('--mo-card-border-radius');
-    this.element.style.removeProperty('--mo-avatar-size');
-    this.element.style.removeProperty('--mo-card-margin');
-    this.element.style.removeProperty('--mo-card-margin-inverted');
-    this.element.style.removeProperty('--mo-card-margin-fullwidth');
-    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
+    Object.entries(CSS_VAR_OPTIONS).forEach(([option, prop]) => {
+      if (this._options[option] != null) this.element.style.removeProperty(prop);
+    });
+    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-gap', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out');
       child.style.removeProperty('grid-row');
