@@ -111,7 +111,7 @@
     .mo-timeline > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, 0); }
     .mo-theme > .mo-item.mo-ad-filled, .mo-gap > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin, var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem)); }
     .mo-theme > .mo-item.mo-ad-filled.mo-inverted, .mo-gap > .mo-item.mo-ad-filled.mo-inverted { padding: var(--mo-ad-margin-inverted, var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem)); }
-    .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth, .mo-gap > .mo-item.mo-ad-filled.mo-fullwidth { padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem)); }
+    .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth, .mo-gap > .mo-item.mo-ad-filled.mo-fullwidth, .mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item.mo-ad-filled { padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem)); }
     .mo-ad-slot .mo-ad-label { color: var(--mo-ad-label-color, #94a3b8); display: block; font-size: .7rem; font-weight: 600; letter-spacing: .04em; padding: 0 0 .25rem; text-transform: uppercase; }
     .mo-ad-slot .mo-ad-link { display: block; }
     .mo-ad-slot .mo-ad-image { border-radius: var(--mo-card-border-radius, 8px); display: block; height: auto; max-width: 100%; width: 100%; }
@@ -154,6 +154,9 @@
     .mo-theme { --mo-arrow-color: #fff; }
     .mo-theme > .mo-item .mo-card, .mo-gap > .mo-item .mo-card { margin: var(--mo-card-margin, 0.5rem 1.25rem 0.5rem 0.5rem); }
     .mo-theme > .mo-item.mo-inverted .mo-card, .mo-gap > .mo-item.mo-inverted .mo-card { margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem); }
+    /* one column under mo-gap: full-width gap, margins contained so they add up */
+    .mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item:not(.mo-filtered-out) { display: flow-root; }
+    .mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item .mo-card { margin: var(--mo-card-margin-fullwidth, 0.5rem); }
     .mo-theme > .mo-item .mo-card { background: #fff; border-radius: var(--mo-card-border-radius, 8px); box-shadow: 0 2px 14px rgba(0,0,0,.09); position: relative; }
     .mo-theme > .mo-item .mo-banner  { border-radius: var(--mo-card-border-radius, 8px) var(--mo-card-border-radius, 8px) 0 0; display: block; max-height: 240px; object-fit: cover; width: 100%; }
     .mo-theme > .mo-item .mo-card-image { overflow: visible; position: relative; }
@@ -264,7 +267,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.17.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.17.1</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>

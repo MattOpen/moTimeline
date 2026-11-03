@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.17.0 — CSS
+ * moTimeline v2.17.1 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -301,6 +301,18 @@
   margin: var(--mo-card-margin-inverted, 0.5rem 0.5rem 0.5rem 1.25rem);
 }
 
+/* One column (fill and stacked; rows is a grid and needs neither): there is no
+   center line, so the card takes the full-width gap on both sides, and each
+   item contains its card's margins (flow-root) so the gaps of neighbouring
+   cards add up instead of collapsing. Only .mo-gap — .mo-theme keeps 2.16.0. */
+.mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item:not(.mo-filtered-out) {
+  display: flow-root;
+}
+
+.mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item .mo-card {
+  margin: var(--mo-card-margin-fullwidth, 0.5rem);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    THEME  —  enabled via new MoTimeline(el, { theme: 'default' }) (or true)
              or by adding .mo-theme manually to the container
@@ -453,7 +465,8 @@
 }
 
 .mo-theme > .mo-item.mo-ad-filled.mo-fullwidth,
-.mo-gap > .mo-item.mo-ad-filled.mo-fullwidth {
+.mo-gap > .mo-item.mo-ad-filled.mo-fullwidth,
+.mo-gap:not(.mo-twocol):not(.mo-rows) > .mo-item.mo-ad-filled {
   padding: var(--mo-ad-margin-fullwidth, var(--mo-card-margin-fullwidth, 0.5rem));
 }
 

@@ -200,7 +200,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `mo-timeline` | container `<ul>` | Core layout class. Added automatically on init; safe to add in HTML before init. |
 | `mo-twocol` | container | Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning. |
 | `mo-theme` | container | Activates the built-in card theme, including the card gap. Added by `theme: 'default'` (or `true`) or set manually. |
-| `mo-gap` | container | Gives every `.mo-card` and filled ad slot the gap to edge and center line, nothing else. Added by `theme: 'gap'` or set manually. |
+| `mo-gap` | container | Gives every `.mo-card` and filled ad slot the gap to edge and center line, nothing else; in one column (fill on small screens, stacked) the full-width gap on both sides, adding up between items. Added by `theme: 'gap'` or set manually. |
 | `mo-item` | `<li>` | Applied to every timeline item. Controls 50 % width and float direction. |
 | `mo-inverted` | `<li>` | Added to right-column items. Flips float, badge, arrow, and avatar positions. |
 | `mo-offset` | `<li>` | Added when a badge would overlap the previous badge — nudges badge and arrow down to avoid collision. |
@@ -650,6 +650,9 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.17.1
+- Fix: **`theme: 'gap'` in one column** (fill below the breakpoint, and stacked) — cards now keep 16 px between each other like at ad slots (their margins no longer collapse) and the same gap on both sides (`cardMarginFullWidth`), since there is no center line. Filled ad slots use `--mo-ad-margin-fullwidth` there. `theme: 'default'` / `true` are unchanged.
 
 ### v2.17.0
 - Add: **`theme` takes a name** — `'default'` (or `true`, unchanged) is the built-in theme with card gap; `'gap'` gives `.mo-card` and filled ad slots only the gap, without any look (class `mo-gap`). Own cards opt in by also carrying the class `mo-card`. `false` stays the default: cards sit flush.

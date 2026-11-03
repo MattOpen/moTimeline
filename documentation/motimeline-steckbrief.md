@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.17.0
+**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.17.1
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -40,7 +40,10 @@ name (`'default'` or `'gap'`).
   (`src/moTimeline.css`, section "AD SLOTS").
 - `theme` is resolved by `themeClass()`: `'default'`/`true` → `mo-theme` (look plus gap), `'gap'` → `mo-gap` (gap only),
   anything else → no class, cards flush. The gap is a `margin` on `.mo-card` (section "CARD GAP"), never padding on the
-  `li` (padding does not collapse in one column). Own cards opt in by also carrying `mo-card`.
+  `li` (padding does not collapse in one column). Own cards opt in by also carrying `mo-card`. In one column
+  (`.mo-gap:not(.mo-twocol):not(.mo-rows)`: fill below the breakpoint, stacked) the card takes the full-width margin and
+  the `li` is `display: flow-root` so neighbouring margins add up (16 px) instead of collapsing; `:not(.mo-filtered-out)`
+  keeps filtered items hidden. `.mo-theme` deliberately keeps the 2.16.0 single-column look (8 px, 8/20).
 - `init()` writes `--mo-card-*` and `--mo-avatar-size` inline only for options the caller passed (`this._options`,
   `CSS_VAR_OPTIONS`), never from `DEFAULTS`; the stylesheet carries the defaults as fallbacks.
 - Ad slots take part in column placement like cards: in `fill` a slot goes to the shorter column, so it can end up on
