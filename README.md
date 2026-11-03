@@ -22,7 +22,7 @@ Works with any framework or a plain `<script>` tag.
 - **Optional theme** — `theme: 'default'` gives a built-in card theme with image banners and overlapping avatars; `theme: 'gap'` gives your own cards only the spacing; without a theme cards sit flush (masonry)
 - **CSS custom properties** — override colors and sizes with one line of CSS
 - **Category filtering** — tag items with `categories` and call `filterByCategory()` to show/hide by category; active filter persists automatically through lazy-loaded batches
-- **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`
+- **Dynamic items** — append, insert, or inject `<li>` elements at any time via `initNewItems()`, `addItems()`, or `insertItem()`; `prependItems()` puts newer items on top while the visible content stays where it is
 - **Custom card renderer** — pass `renderCard(item, cardEl)` to inject any HTML, vanilla JS, or full React components into each card slot; the library handles everything else
 - **Publisher-ready ad slots** — the most publisher-friendly timeline on npm: `adSlots` injects viewport-triggered `<li>` placeholders at configurable cadences (`every_n` or `random`), fires `onEnterViewport` exactly once per slot at ≥ 50% visibility, works seamlessly with infinite scroll, and cleans up on `destroy()`. Drop in AdSense, house ads, or any network with three lines of code.
 - **Bootstrap compatible** — wrap the `<ul>` in a Bootstrap `.container`, no config needed
@@ -229,8 +229,9 @@ The library injects classes and elements into your markup. Here is what a fully 
 const tl = new MoTimeline(elementOrSelector, options);
 
 tl.refresh();                      // re-layout all items (called automatically on resize)
-tl.initNewItems();                 // pick up manually appended <li> elements
+tl.initNewItems();                 // pick up <li> elements you added yourself (above the first item: like prependItems)
 tl.addItems(items);                // create and append <li> from an array of item objects (or JSON string)
+tl.prependItems(items, { keepScroll }); // insert above the first item; the visible content stays put
 tl.insertItem(item, index);        // insert a single item at a specific index (or random if omitted)
 tl.filterByCategory(category);    // show only items matching category; null / 'all' shows everything
 tl.clear();                        // remove all items and ad slots, reset counters — instance stays alive
@@ -251,6 +252,18 @@ tl.insertItem({ title: 'Featured', meta: 'Now', text: '...', fullWidth: true }, 
 ```
 
 Badge numbers are automatically re-sequenced after insertion. Returns the inserted `<li>` element.
+
+### prependItems
+
+```js
+// Newer items on top, in the given order (item objects, a JSON string or <li> elements):
+tl.prependItems([{ title: 'Newest', meta: 'Now', text: '...' }, { title: 'Newer', meta: '1 min ago' }]);
+
+// Without the scroll hold — the content below moves down by the height of the new items:
+tl.prependItems(items, { keepScroll: false });
+```
+
+Returns the inserted `<li>` elements. See [Loading newer items at the top](#loading-newer-items-at-the-top).
 
 ### addItems — item schema
 
@@ -593,6 +606,52 @@ async function fetchPage(page) {
 
 > `IntersectionObserver` is supported in all modern browsers with no polyfill needed. The `loading` flag prevents duplicate requests if the sentinel stays visible while a fetch is in flight. Set `exhausted = true` and disconnect when your API returns an empty page.
 
+## Loading newer items at the top
+
+For feeds that receive newer entries (polling, a "3 new posts" button, a websocket), call `prependItems()`. The items go above the current first item and the page does not jump: whatever the reader looks at stays at the same spot on screen.
+
+```js
+const tl = new MoTimeline('#my-timeline', { theme: true, showBadge: true, adSlots: { mode: 'every_n', interval: 5 } });
+tl.addItems(await fetchPage(1));
+
+async function loadNewer() {
+  const items = await fetchNewer(); // newest first
+  tl.prependItems(items);
+}
+```
+
+- **Scroll position** — before the insert the library notes the first item that reaches into the view, after the insert it scrolls by exactly the distance that item moved. It finds the scrolling element itself: the nearest ancestor with `overflow-y: auto | scroll`, otherwise the window. Images in the new items that load later are compensated too, until the last one has loaded. Scrolling by the reader during that time is respected. While a hold runs, native scroll anchoring (`overflow-anchor`) is switched off on that element and restored afterwards. Give images `width` and `height` anyway — that avoids any reflow.
+- **Layout** — the items that were there keep their side. The block underneath a prepended block starts level below both columns (class `mo-prepend-start`, `clear: both`); in the shorter column a gap can appear at that boundary.
+- **Ad slots** — the cadence continues upward: with `every_n` there are `interval` items between two slots across the boundary as well; with `random` each block of `interval` items gets one slot once it is complete. Existing slots stay where they are. `onEnterViewport` fires once per slot as before; its `position` is the slot's child index when it was injected.
+- **Badges** are numbered 1 … n from the top again. An active category filter applies to the new items.
+- **Your own markup** — `<li>` elements you place above the first item and pick up with `initNewItems()` get the same treatment, scroll hold included.
+
+### Loading newer items when the reader scrolls up
+
+The library never loads by itself — your page decides when. Put a marker above the list and watch it with an `IntersectionObserver`; it also fires when the reader hits the very top, where no `scroll` event comes (so do not rely on `scrollTop === 0`). Arm it only after the marker has left the view once, so the first page view does not load anything.
+
+```html
+<div id="newer-sentinel"></div>
+<ul id="my-timeline"></ul>
+```
+
+```js
+const sentinel = document.getElementById('newer-sentinel');
+let armed = false, loading = false;
+
+new IntersectionObserver(async (entries) => {
+  if (!entries[0].isIntersecting) { armed = true; return; }
+  if (!armed || loading) return;
+  loading = true;
+  armed = false;                       // the hold scrolls the marker out of view; it re-arms then
+  const items = await fetchNewer();    // your own call, newest first
+  if (items.length) tl.prependItems(items);
+  loading = false;
+}, { rootMargin: '200px 0px 0px 0px' }).observe(sentinel);   // start 200 px before the top
+```
+
+The view stays where it is after each load, also at the very top: the new items sit above, and the reader scrolls up to them.
+
 ---
 
 ## CSS custom properties
@@ -650,6 +709,11 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 ---
 
 ## Changelog
+
+### v2.18.0
+- Add: **`prependItems(items, { keepScroll })`** — inserts items above the first one while the visible content stays where it is, also while images in the new items are still loading. Items already there keep their side in `fill` and `rows`; the ad slot cadence continues upward; badges are renumbered. `<li>` elements placed above the first item and picked up with `initNewItems()` get the same treatment. See **Loading newer items at the top**.
+- Fix: **`addItems()` with ad slots set up an item a second time.** From the second batch on, `_initItems()` took the last N children, which after an injected slot included an item already set up — it got a second badge and arrow and was counted twice for the ad cadence (slots after items 5, 10, 14, 19 instead of 5, 10, 15, 20 with `interval: 5`; badges skipped numbers). The library now marks the children it has set up and picks up exactly the others.
+- Demo: the **moTimeline** tab gained a **Prepend 3 at top** button and a marker above the list that loads newer items when you scroll back up to it.
 
 ### v2.17.1
 - Fix: **`theme: 'gap'` in one column** (fill below the breakpoint, and stacked) — cards now keep 16 px between each other like at ad slots (their margins no longer collapse) and the same gap on both sides (`cardMarginFullWidth`), since there is no center line. Filled ad slots use `--mo-ad-margin-fullwidth` there. `theme: 'default'` / `true` are unchanged.

@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.17.1 — CSS
+ * moTimeline v2.18.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -105,6 +105,12 @@
   clear: both;
   float: none;
   width: 100%;
+}
+
+/* First item below a prepended block: starts below both columns, so the
+   block underneath keeps its layout (set by prependItems()). */
+.mo-timeline.mo-twocol > .mo-item.mo-prepend-start {
+  clear: both;
 }
 
 /* ── layout: 'rows' — 'stacked' mirrored per item ──

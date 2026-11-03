@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.17.1
+ * moTimeline v2.18.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -84,6 +84,10 @@ function safeAdHref(url) {
   }
 }
 
+// prependItems(): how long the scroll hold stays after the last image of the
+// new items settled; covers the 100 ms debounced re-layout.
+const SCROLL_HOLD_SETTLE_MS = 300;
+
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
 function getBreakpoint() {
@@ -118,6 +122,10 @@ export class MoTimeline {
     this.settings.columnCount = Object.assign({}, DEFAULTS.columnCount, options.columnCount);
     this._resizeHandler = debounce(() => this.refresh(), 100);
     this._initialized = false;
+    // Children the library has set up; _initItems() picks up every other child.
+    this._setUp = new WeakSet();
+    // First child of each block below a prepend; _layout() starts it level.
+    this._prependStarts = new WeakSet();
 
     this.init();
   }
@@ -157,6 +165,8 @@ export class MoTimeline {
 
     if (data.adSlots) {
       data._adRealCount = 0;
+      // Cadence position of the top entry; prepended entries count 0, -1, -2 …
+      data._adTopPos = 1;
       const { onEnterViewport, onAdView } = data.adSlots;
       if (typeof onEnterViewport === 'function' || typeof onAdView === 'function') {
         this._adObserver = new IntersectionObserver((entries) => {
@@ -201,6 +211,10 @@ export class MoTimeline {
     });
   }
 
+  /**
+   * Set up every child not set up yet. Children placed above the first item
+   * are handled like prependItems(), scroll hold included.
+   */
   initNewItems() {
     this._initItems();
   }
@@ -218,6 +232,28 @@ export class MoTimeline {
     if (typeof items === 'string') items = JSON.parse(items);
     items.forEach((item) => this.element.appendChild(this._createItemElement(item)));
     this._initItems();
+  }
+
+  /**
+   * Insert items above the current first item, in the given order, and keep
+   * the visible content where it is (motimeline-465).
+   *
+   * @param {Array|string} items — item objects (same shape as addItems()), a JSON string, or <li> elements
+   * @param {Object} [options]
+   * @param {boolean} [options.keepScroll=true] — keep the first visible item at the same viewport position
+   * @returns {HTMLElement[]} the inserted <li> elements
+   */
+  prependItems(items, { keepScroll = true } = {}) {
+    if (!this._getData()) return [];
+    if (typeof items === 'string') items = JSON.parse(items);
+    const els = Array.from(items, (item) =>
+      (item instanceof HTMLElement ? item : this._createItemElement(item)));
+    if (!els.length) return els;
+
+    const first = this.element.firstElementChild;
+    els.forEach((li) => this.element.insertBefore(li, first));
+    this._initItems({ keepScroll });
+    return els;
   }
 
   /**
@@ -250,6 +286,7 @@ export class MoTimeline {
     // Initialise the new element
     if (!newEl.id) newEl.id = 'moT' + crypto.randomUUID() + '_' + pos;
     newEl.classList.add('mo-item', 'js-mo-item');
+    this._setUp.add(newEl);
 
     // Explicit fullWidth on item data takes priority, then fall back to randomFullWidth
     if (item.fullWidth) {
@@ -262,12 +299,7 @@ export class MoTimeline {
     if (data.showArrow) this._createArrow(newEl);
 
     // Re-number all counter badges so sequence stays correct after insertion
-    if (data.showBadge && data.showCounterStyle === 'counter') {
-      Array.from(el.querySelectorAll('.js-mo-item')).forEach((it, i) => {
-        const badge = it.querySelector('.js-mo-badge');
-        if (badge) badge.textContent = i + 1;
-      });
-    }
+    this._renumberBadges();
 
     data.lastItemIdx = Array.from(el.children).length;
     instanceData.set(el, data);
@@ -301,11 +333,17 @@ export class MoTimeline {
 
     // Reset counters — ready for a fresh addItems() call
     data.lastItemIdx = 0;
-    if (data.adSlots) data._adRealCount = 0;
+    if (data.adSlots) {
+      data._adRealCount = 0;
+      data._adTopPos = 1;
+      data._adTopPending = [];
+    }
+    this._releaseScroll();
   }
 
   destroy() {
     window.removeEventListener('resize', this._resizeHandler);
+    this._releaseScroll();
     if (this._observer) {
       this._observer.disconnect();
       this._observer = null;
@@ -326,10 +364,12 @@ export class MoTimeline {
     });
     this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-gap', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
     Array.from(this.element.children).forEach((child) => {
-      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out');
+      child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out', 'mo-prepend-start');
       child.style.removeProperty('grid-row');
       child.querySelectorAll('.js-mo-badge, .js-mo-arrow').forEach((b) => b.remove());
     });
+    this._setUp = new WeakSet();
+    this._prependStarts = new WeakSet();
   }
 
   /**
@@ -391,26 +431,36 @@ export class MoTimeline {
     }
   }
 
-  _initItems() {
+  _initItems({ keepScroll = true } = {}) {
     const el = this.element;
     const data = this._getData();
     if (!data) return;
 
-    const lastItemIdx = data.lastItemIdx;
     const allChildren = Array.from(el.children);
-    // Ad slots live among the children but are not entries: counting them here
-    // would make them real items and stretch the configured interval.
-    const newItems = allChildren.slice(lastItemIdx)
-      .filter((c) => !c.classList.contains('mo-ad-slot'));
+    // Every child not set up yet, wherever it sits. Ad slots live among the
+    // children but are not entries: counting them here would make them real
+    // items and stretch the configured interval.
+    const isKnown = (c) => this._setUp.has(c) || c.classList.contains('mo-ad-slot');
+    const newItems = allChildren.filter((c) => !isKnown(c));
 
     if (newItems.length === 0) return;
 
+    // New children above the first known one are a prepend: the block below
+    // starts level, so its items keep their sides, and ad slots count upward.
+    const firstKnownIdx = allChildren.findIndex(isKnown);
+    const topItems = firstKnownIdx > 0 ? newItems.slice(0, firstKnownIdx) : [];
+    const restItems = newItems.slice(topItems.length);
+    if (topItems.length) this._prependStarts.add(allChildren[firstKnownIdx]);
+    const knownCount = allChildren.filter((c) => this._setUp.has(c)).length;
+    const anchor = topItems.length && keepScroll ? this._anchorBefore(topItems) : null;
+
     // Assign IDs and base class
-    newItems.forEach((item, i) => {
+    newItems.forEach((item) => {
       if (!item.id) {
-        item.id = 'moT' + crypto.randomUUID() + '_' + (i + lastItemIdx);
+        item.id = 'moT' + crypto.randomUUID() + '_' + allChildren.indexOf(item);
       }
       item.classList.add('mo-item', 'js-mo-item');
+      this._setUp.add(item);
     });
 
     this._setDivider();
@@ -425,15 +475,21 @@ export class MoTimeline {
       });
     }
 
-    // Badges / arrows
-    newItems.forEach((item, i) => {
+    // Badges / arrows — numbered after the entries already set up; a prepend
+    // re-numbers the whole list.
+    restItems.forEach((item, i) => {
       if (data.showBadge) {
-        this._createBadge(item, i + lastItemIdx + 1);
+        this._createBadge(item, knownCount + i + 1);
       }
       if (data.showArrow) {
         this._createArrow(item);
       }
     });
+    topItems.forEach((item) => {
+      if (data.showBadge) this._createBadge(item, 0);
+      if (data.showArrow) this._createArrow(item);
+    });
+    if (topItems.length) this._renumberBadges();
 
     data.lastItemIdx = allChildren.length;
     instanceData.set(el, data);
@@ -442,7 +498,9 @@ export class MoTimeline {
     this.refresh();
 
     this._observeItems(newItems);
-    this._injectAdSlots(newItems);
+    this._injectAdSlotsTop(topItems);
+    this._injectAdSlots(restItems);
+    if (anchor) this._holdScroll(anchor, topItems);
 
     // Re-layout after any unloaded images finish, because offsetHeight is
     // based on text-only height until images are ready.
@@ -462,7 +520,7 @@ export class MoTimeline {
 
     if (data.col <= 1) {
       Array.from(el.children).forEach((child) => {
-        child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
+        child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-prepend-start');
         child.style.removeProperty('grid-row');
       });
       return;
@@ -480,6 +538,9 @@ export class MoTimeline {
       let i = 0;
       let row = 0;
       Array.from(el.children).forEach((child) => {
+        child.classList.remove('mo-prepend-start');
+        // A block below a prepend alternates from the left again, as before.
+        if (this._prependStarts.has(child)) i = 0;
         if (child.classList.contains('mo-filtered-out')) return;
         // One grid row per item, so each starts below the previous one.
         child.style.gridRow = String(++row);
@@ -497,9 +558,20 @@ export class MoTimeline {
       return;
     }
 
-    let leftH = 0, rightH = 0, prevStart = -Infinity;
+    let leftH = 0, rightH = 0, prevStart = -Infinity, segment = false;
     Array.from(el.children).forEach((child) => {
+      // A block below a prepend starts level (CSS clears it), so it is laid out
+      // exactly as before the prepend and its items keep their sides. The class
+      // goes to the first visible child, since a filtered one has no box.
+      if (this._prependStarts.has(child)) segment = true;
+      child.classList.remove('mo-prepend-start');
       if (child.classList.contains('mo-filtered-out')) return;
+      if (segment) {
+        child.classList.add('mo-prepend-start');
+        leftH = rightH = Math.max(leftH, rightH);
+        prevStart = -Infinity;
+        segment = false;
+      }
 
       if (child.classList.contains('mo-fullwidth')) {
         child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
@@ -537,6 +609,16 @@ export class MoTimeline {
     }
 
     el.prepend(span);
+  }
+
+  // Counter badges follow document order, 1 … n (insertItem, prependItems).
+  _renumberBadges() {
+    const data = this._getData();
+    if (!data || !data.showBadge || data.showCounterStyle !== 'counter') return;
+    Array.from(this.element.querySelectorAll('.js-mo-item')).forEach((it, i) => {
+      const badge = it.querySelector('.js-mo-badge');
+      if (badge) badge.textContent = i + 1;
+    });
   }
 
   _createItemElement(item) {
@@ -626,8 +708,6 @@ export class MoTimeline {
         if ((data._adRealCount + i + 1) % interval === 0) {
           const slot = this._createAdSlot(fullWidth);
           item.after(slot);
-          slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
-          if (this._adObserver) this._adObserver.observe(slot);
           newSlots.push(slot);
         }
       });
@@ -641,8 +721,6 @@ export class MoTimeline {
           const anchor = chunk[Math.floor(Math.random() * chunk.length)];
           const slot = this._createAdSlot(fullWidth);
           anchor.after(slot);
-          slot.dataset.moAdPosition = String(Array.from(el.children).indexOf(slot));
-          if (this._adObserver) this._adObserver.observe(slot);
           newSlots.push(slot);
           pageOffset = 0;
         } else {
@@ -653,11 +731,65 @@ export class MoTimeline {
     }
 
     data._adRealCount += newItems.length;
-    if (newSlots.length) {
-      this._observeItems(newSlots);
-      if (this._adResizeObserver) newSlots.forEach((s) => this._adResizeObserver.observe(s));
-      this.refresh();
+    this._registerAdSlots(newSlots);
+  }
+
+  /**
+   * Ad slots for a prepended block (motimeline-465). Entries count upward from
+   * the old top entry (position 1): the last prepended one is 0, then -1, -2 …
+   * every_n: a slot after each entry whose position is a multiple of interval.
+   * random:  one slot per block of positions k·interval+1 … (k+1)·interval, placed
+   *          once the block is complete; an incomplete top block waits in
+   *          data._adTopPending for the next prepend.
+   * The downward count (_adRealCount) is untouched.
+   */
+  _injectAdSlotsTop(topItems) {
+    const data = this._getData();
+    if (!data || !data.adSlots || !topItems.length) return;
+
+    const { mode, interval, style } = data.adSlots;
+    const fullWidth = style === 'fullwidth';
+    const mod = (n) => ((n % interval) + interval) % interval;
+    const newSlots = [];
+    const placeAfter = (item) => {
+      const slot = this._createAdSlot(fullWidth);
+      item.after(slot);
+      newSlots.push(slot);
+    };
+
+    let pos = data._adTopPos;
+    let pending = data._adTopPending || [];
+    for (let i = topItems.length - 1; i >= 0; i--) {
+      const item = topItems[i];
+      pos--;
+      if (mode === 'every_n') {
+        if (mod(pos) === 0) placeAfter(item);
+      } else if (mode === 'random') {
+        pending.unshift(item);
+        // The block's first entry completes it.
+        if (mod(pos - 1) === 0) {
+          placeAfter(pending[Math.floor(Math.random() * pending.length)]);
+          pending = [];
+        }
+      }
     }
+    data._adTopPos = pos;
+    data._adTopPending = pending;
+    this._registerAdSlots(newSlots);
+  }
+
+  // Hands new ad slots to the observers and re-runs the layout. `position` for
+  // onEnterViewport is the slot's child index at this moment.
+  _registerAdSlots(slots) {
+    if (!slots.length) return;
+    const children = Array.from(this.element.children);
+    slots.forEach((slot) => {
+      slot.dataset.moAdPosition = String(children.indexOf(slot));
+      if (this._adObserver) this._adObserver.observe(slot);
+      if (this._adResizeObserver) this._adResizeObserver.observe(slot);
+    });
+    this._observeItems(slots);
+    this.refresh();
   }
 
   _createAdSlot(fullWidth) {
@@ -714,6 +846,145 @@ export class MoTimeline {
       link.addEventListener('click', () => onAdClick(ad, slot));
     }
     slot.appendChild(link);
+  }
+
+  // ─── Scroll hold for prependItems() (motimeline-465) ────────────────────────
+  // An anchor is an element plus its distance to the top of the view. While a
+  // hold runs, every size change of the list scrolls by the anchor's drift, so
+  // the visible content stays put while new items and their images grow above.
+
+  // Nearest scrolling ancestor, or null for the window.
+  _scroller() {
+    const root = document.documentElement;
+    for (let n = this.element.parentElement; n && n !== document.body && n !== root; n = n.parentElement) {
+      const overflowY = getComputedStyle(n).overflowY;
+      if (/^(auto|scroll|overlay)$/.test(overflowY) && n.scrollHeight > n.clientHeight) return n;
+    }
+    return null;
+  }
+
+  _viewTop(scroller) {
+    return scroller ? scroller.getBoundingClientRect().top + scroller.clientTop : 0;
+  }
+
+  _scrollTop(scroller) {
+    return scroller ? scroller.scrollTop : window.scrollY;
+  }
+
+  // The first item reaching into the view; null while the list lies below the
+  // view, since then nothing visible moves.
+  _scrollAnchor() {
+    const scroller = this._scroller();
+    const viewTop = this._viewTop(scroller);
+    const viewHeight = scroller ? scroller.clientHeight : window.innerHeight;
+    const list = this.element.getBoundingClientRect();
+    if (list.top >= viewTop + viewHeight) return null;
+    if (list.bottom <= viewTop) {
+      return { scroller, el: this.element, edge: 'bottom', offset: list.bottom - viewTop };
+    }
+    const el = Array.from(this.element.children).find((c) => {
+      const r = c.getBoundingClientRect();
+      return r.height > 0 && r.bottom > viewTop;
+    });
+    if (!el) return null;
+    return { scroller, el, edge: 'top', offset: el.getBoundingClientRect().top - viewTop };
+  }
+
+  // The anchor as the view was before `topItems` went in: they leave the layout
+  // for the measurement, so the call also works after the DOM insert
+  // (initNewItems()). A hold still running keeps its anchor.
+  _anchorBefore(topItems) {
+    const display = topItems.map((li) => li.style.display);
+    topItems.forEach((li) => { li.style.display = 'none'; });
+    this._correctScroll();
+    const anchor = this._hold ? this._hold.anchor : this._scrollAnchor();
+    topItems.forEach((li, i) => { li.style.display = display[i]; });
+    return anchor;
+  }
+
+  _anchorOffset(anchor) {
+    const r = anchor.el.getBoundingClientRect();
+    return (anchor.edge === 'bottom' ? r.bottom : r.top) - this._viewTop(anchor.scroller);
+  }
+
+  // Holds the anchor until every image in `els` has loaded or failed, plus
+  // SCROLL_HOLD_SETTLE_MS for the debounced re-layout. Native scroll anchoring
+  // is off meanwhile, so only the user and this hold move the scroll position.
+  _holdScroll(anchor, els) {
+    let hold = this._hold;
+    if (hold && hold.scroller !== anchor.scroller) {
+      this._releaseScroll();
+      hold = null;
+    }
+    if (!hold) {
+      const scroller = anchor.scroller;
+      const styled = scroller ? [scroller] : [document.documentElement, document.body];
+      hold = this._hold = {
+        scroller,
+        pending: 0,
+        timer: null,
+        styled: styled.map((n) => [n, n.style.overflowAnchor]),
+        ro: typeof ResizeObserver === 'function'
+          ? new ResizeObserver(() => this._correctScroll())
+          : null,
+        // A scroll the hold did not cause is the user's: the anchor moves with it.
+        onScroll: () => {
+          const top = this._scrollTop(hold.scroller);
+          hold.anchor.offset -= top - hold.top;
+          hold.top = top;
+        },
+      };
+      styled.forEach((n) => { n.style.overflowAnchor = 'none'; });
+      (scroller || window).addEventListener('scroll', hold.onScroll, { passive: true });
+      if (hold.ro) hold.ro.observe(this.element);
+    }
+    hold.anchor = anchor;
+
+    const arm = () => {
+      clearTimeout(hold.timer);
+      hold.timer = setTimeout(() => {
+        if (this._hold === hold) this._releaseScroll();
+      }, SCROLL_HOLD_SETTLE_MS);
+    };
+    const done = () => {
+      if (this._hold !== hold) return;
+      if (--hold.pending === 0) arm();
+    };
+    els.forEach((li) => li.querySelectorAll('img').forEach((img) => {
+      if (img.complete) return;
+      hold.pending++;
+      img.addEventListener('load', done, { once: true });
+      img.addEventListener('error', done, { once: true });
+    }));
+    if (hold.pending === 0) arm();
+    else clearTimeout(hold.timer);
+
+    this._correctScroll();
+  }
+
+  _correctScroll() {
+    const hold = this._hold;
+    if (!hold) return;
+    const { anchor } = hold;
+    if (!anchor.el.isConnected) {
+      this._releaseScroll();
+      return;
+    }
+    const delta = this._anchorOffset(anchor) - anchor.offset;
+    if (Math.abs(delta) >= 0.5) {
+      (hold.scroller || window).scrollBy({ top: delta, behavior: 'instant' });
+    }
+    hold.top = this._scrollTop(hold.scroller);
+  }
+
+  _releaseScroll() {
+    const hold = this._hold;
+    if (!hold) return;
+    this._hold = null;
+    clearTimeout(hold.timer);
+    if (hold.ro) hold.ro.disconnect();
+    (hold.scroller || window).removeEventListener('scroll', hold.onScroll);
+    hold.styled.forEach(([n, value]) => { n.style.overflowAnchor = value; });
   }
 
   _observeItems(items) {

@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.17.1
+**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.18.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -10,7 +10,7 @@
 Responsive two-column timeline as a dependency-free vanilla JS library: cards, badges, arrows, categories, fill and
 stacked layout, animations, infinite scroll and ad slots (`adSlots`). Since 2.15.0 it can render an ads list into the
 ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`); since 2.17.0 `theme` takes a
-name (`'default'` or `'gap'`).
+name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on top without the page jumping.
 
 ## Where things are
 
@@ -24,7 +24,9 @@ name (`'default'` or `'gap'`).
 ## Rules
 
 - Every change in `src/` is mirrored into the inlined copy in `docs/index.html` (short names there: `_d` getData,
-  `_cas` createAdSlot, `_rad` renderAd, `_obs` observeItems, `_rh` resize handler, `_aro` ad ResizeObserver).
+  `_cas` createAdSlot, `_rad` renderAd, `_obs` observeItems, `_rh` resize handler, `_aro` ad ResizeObserver,
+  `_su` setUp, `_ps` prependStarts, `_rnb` renumberBadges, `_iast` injectAdSlotsTop, `_reg` registerAdSlots,
+  `_anb` anchorBefore, `_hs`/`_cs`/`_rs` hold/correct/release scroll, `_h` the running hold).
 - The version lives in five places: `package.json`, `package-lock.json` (2×), the JS and CSS banners, the version span
   in `docs/index.html`.
 - `refresh()` always runs last, after ad slots are injected; if a slot grows later, its ResizeObserver re-runs the
@@ -48,6 +50,16 @@ name (`'default'` or `'gap'`).
   `CSS_VAR_OPTIONS`), never from `DEFAULTS`; the stylesheet carries the defaults as fallbacks.
 - Ad slots take part in column placement like cards: in `fill` a slot goes to the shorter column, so it can end up on
   either side.
+- `_initItems()` sets up exactly the children not in the WeakSet `_setUp` (ad slots excluded), never "the last N
+  children". New children above the first known one are a prepend: that known child goes into `_prependStarts`,
+  `_layout()` starts it level (fill: both column heights to the maximum; rows: side counter to 0) and marks the first
+  visible child of the block with `mo-prepend-start` (`clear: both`), so a block once laid out never changes sides.
+- Ad cadence upward: `_adTopPos` is the position of the top entry (starts at 1, prepended entries count 0, -1, …);
+  `_adTopPending` holds an incomplete `random` block. `_adRealCount` (downward) stays untouched.
+- Scroll hold (`_anchorBefore`, `_holdScroll`): the anchor is measured with the new items `display: none`, so it also
+  works after the DOM insert (`initNewItems()`). While the hold runs, `overflow-anchor` is `none` on the scroller and a
+  ResizeObserver on the list scrolls by the anchor's drift; a scroll the hold did not cause moves the anchor's target.
+  The hold ends `SCROLL_HOLD_SETTLE_MS` (300) after the last image of the new items loaded or failed.
 
 ## Picture
 
