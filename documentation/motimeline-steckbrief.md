@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-03 · **Type:** library (npm `motimeline`) · **Version:** 2.18.0
+**As of:** 2026-11-05 · **Type:** library (npm `motimeline`) · **Version:** 2.18.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
