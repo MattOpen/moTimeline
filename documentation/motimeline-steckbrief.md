@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-05 · **Type:** library (npm `motimeline`) · **Version:** 2.18.0
+**As of:** 2026-11-21 · **Type:** library (npm `motimeline`) · **Version:** 2.18.1
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -18,7 +18,7 @@ name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on
 |---|---|
 | Code | `src/moTimeline.js`, `src/moTimeline.css` (ES module, imports its CSS) |
 | Build | `npm run build` (vite) → `dist/` (not tracked); the npm package ships only `dist` and `src` (`package.json` → `files`) |
-| Demo | `docs/index.html` = GitHub Pages, contains an **inlined minified copy** of the library |
+| Demo | `docs/index.html` = GitHub Pages, contains an **inlined minified copy** of the library; section "Used by" with plain links (no `rel`) and logos from `docs/used-by/`, mirrored in the README |
 | Release | [`MAINTENANCE.md`](../MAINTENANCE.md); a `v*` tag starts the "Publish to npm" workflow |
 
 ## Rules
@@ -48,6 +48,9 @@ name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on
   keeps filtered items hidden. `.mo-theme` deliberately keeps the 2.16.0 single-column look (8 px, 8/20).
 - `init()` writes `--mo-card-*` and `--mo-avatar-size` inline only for options the caller passed (`this._options`,
   `CSS_VAR_OPTIONS`), never from `DEFAULTS`; the stylesheet carries the defaults as fallbacks.
+- `fill` column heights are the real bottom edges (`getBoundingClientRect().bottom` relative to the list), read after
+  each item got its side, never summed `offsetHeight`: rounded heights drift from the float layout and put items in the
+  wrong column (2.18.1, `example/column-rounding/`).
 - Ad slots take part in column placement like cards: in `fill` a slot goes to the shorter column, so it can end up on
   either side.
 - `_initItems()` sets up exactly the children not in the WeakSet `_setUp` (ad slots excluded), never "the last N

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <g fill="none" stroke-linecap="round" transform="translate(100,100)">
+
+    <!-- OUTER RING: rotated 45° clockwise -->
+    <g transform="rotate(45)" stroke="#1b6080" stroke-width="13">
+      <!-- Arc (right): 47.5° to 132.5° -->
+      <path d="M 58.53 -54.01 A 80 80 0 0 1 58.53 54.01"/>
+      <!-- Arc (left): 227.5° to 312.5° -->
+      <path d="M -58.53 54.01 A 80 80 0 0 1 -58.53 -54.01"/>
+    </g>
+
+    <!-- INNER RING: unchanged -->
+    <g stroke="#d4eaf5" stroke-width="13">
+      <!-- Arc (top-right): 2.5° to 87.5° -->
+      <path d="M 2.71 -61.94 A 62 62 0 0 1 61.94 -2.71"/>
+      <!-- Arc (bottom-left): 182.5° to 267.5° -->
+      <path d="M -2.71 61.94 A 62 62 0 0 1 -61.94 2.71"/>
+    </g>
+
+  </g>
+</svg>

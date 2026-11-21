@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.18.0
+ * moTimeline v2.18.1
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -558,6 +558,12 @@ export class MoTimeline {
       return;
     }
 
+    // Column heights are the real bottom edges, read after each item got its side.
+    // Summing offsetHeight would round every item to whole pixels; the error adds
+    // up, while the browser places the floats by the fractional heights, so an
+    // item could get the class of one column and land in the other (motimeline-931).
+    const listTop = el.getBoundingClientRect().top;
+    const bottomOf = (child) => child.getBoundingClientRect().bottom - listTop;
     let leftH = 0, rightH = 0, prevStart = -Infinity, segment = false;
     Array.from(el.children).forEach((child) => {
       // A block below a prepend starts level (CSS clears it), so it is laid out
@@ -575,7 +581,7 @@ export class MoTimeline {
 
       if (child.classList.contains('mo-fullwidth')) {
         child.classList.remove('mo-inverted', 'js-mo-inverted', 'mo-offset');
-        leftH = rightH = Math.max(leftH, rightH) + child.offsetHeight;
+        leftH = rightH = bottomOf(child);
         prevStart = -Infinity;
         return;
       }
@@ -585,8 +591,8 @@ export class MoTimeline {
       child.classList.toggle('mo-inverted', !goLeft);
       child.classList.toggle('js-mo-inverted', !goLeft);
       child.classList.toggle('mo-offset', Math.abs(rowStart - prevStart) < 40);
-      if (goLeft) leftH += child.offsetHeight;
-      else rightH += child.offsetHeight;
+      if (goLeft) leftH = bottomOf(child);
+      else rightH = bottomOf(child);
       prevStart = rowStart;
     });
   }

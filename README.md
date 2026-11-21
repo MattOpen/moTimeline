@@ -30,6 +30,13 @@ Works with any framework or a plain `<script>` tag.
 
 ---
 
+## Used by
+
+| | |
+|---|---|
+| <img src="https://mattopen.github.io/moTimeline/used-by/exponde.svg" alt="exponde logo" width="32" height="32"> | [exponde.com](https://www.exponde.com/companies) — company and product directory |
+| <img src="https://mattopen.github.io/moTimeline/used-by/mattopen.svg" alt="mattopen logo" width="32" height="32"> | [mattopen.com](https://www.mattopen.com) |
+
 ## Installation
 
 ```bash
@@ -703,12 +710,17 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 | [`example/`](example/) | Main example — run with `npm run dev` |
 | [`example/mattopen/`](example/mattopen/) | Bootstrap 5 integration |
 | [`example/livestamp/`](example/livestamp/) | Livestamp.js + Moment.js relative timestamps |
+| [`example/column-rounding/`](example/column-rounding/) | Column choice with fractional heights (v2.18.1 fix) |
 
 </div>
 
 ---
 
 ## Changelog
+
+### v2.18.1
+- Fix: **`fill` could put an item in the wrong column.** Column heights were the sum of `offsetHeight`, rounded to whole pixels per item, while the browser places the floats by the fractional heights. When both columns differed by less than the accumulated rounding, an item got the class of the taller column; as a right float it then dropped into the free left column with the mirrored card margins (shifted by 12 px with `theme: 'gap'`) and left a gap beside it. `_layout()` now reads each column's real bottom edge. Example: [`example/column-rounding/`](example/column-rounding/).
+- Docs: **Used by** section in the README and on the demo page (exponde.com, mattopen.com).
 
 ### v2.18.0
 - Add: **`prependItems(items, { keepScroll })`** — inserts items above the first one while the visible content stays where it is, also while images in the new items are still loading. Items already there keep their side in `fill` and `rows`; the ad slot cadence continues upward; badges are renumbered. `<li>` elements placed above the first item and picked up with `initNewItems()` get the same treatment. See **Loading newer items at the top**.

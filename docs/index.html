@@ -260,6 +260,12 @@
     tr:last-child td { border-bottom: none; }
     td code { background: #f1f5f9; border-radius: 4px; color: var(--accent); font-size: 0.82rem; padding: 0.1em 0.4em; }
 
+    /* ── USED BY ── */
+    .used-by { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .used-by a { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; text-decoration: none; color: inherit; }
+    .used-by a:hover { text-decoration: underline; }
+    .used-by img { width: 40px; height: 40px; }
+
     /* ── FOOTER ── */
     footer { background: var(--text); color: rgba(255,255,255,.45); font-size: 0.85rem; padding: 2rem; text-align: center; }
     footer a { color: rgba(255,255,255,.65); }
@@ -268,7 +274,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.18.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.18.1</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -1247,6 +1253,16 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   </div>
 </section>
 
+<section id="used-by">
+  <div class="container">
+    <h2>Used by</h2>
+    <div class="used-by">
+      <a href="https://www.exponde.com/companies"><img src="used-by/exponde.svg" alt="exponde logo">exponde.com</a>
+      <a href="https://www.mattopen.com"><img src="used-by/mattopen.svg" alt="mattopen logo">mattopen.com</a>
+    </div>
+  </div>
+</section>
+
 <footer>
   moTimeline · MIT License ·
   <a href="https://github.com/MattOpen/moTimeline" target="_blank">GitHub</a> ·
@@ -1315,16 +1331,17 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           i++;
         });
         return; }
+      const lT=el.getBoundingClientRect().top, bO=c=>c.getBoundingClientRect().bottom-lT;
       let lH=0, rH=0, pS=-Infinity, seg=false;
       Array.from(el.children).forEach(c=>{
         if(this._ps.has(c)) seg=true;
         c.classList.remove('mo-prepend-start');
         if(c.classList.contains('mo-filtered-out')) return;
         if(seg){ c.classList.add('mo-prepend-start'); lH=rH=Math.max(lH,rH); pS=-Infinity; seg=false; }
-        if(c.classList.contains('mo-fullwidth')){ c.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); lH=rH=Math.max(lH,rH)+c.offsetHeight; pS=-Infinity; return; }
+        if(c.classList.contains('mo-fullwidth')){ c.classList.remove('mo-inverted','js-mo-inverted','mo-offset'); lH=rH=bO(c); pS=-Infinity; return; }
         const rs=Math.min(lH,rH), goL=lH<=rH;
         c.classList.toggle('mo-inverted',!goL); c.classList.toggle('js-mo-inverted',!goL); c.classList.toggle('mo-offset',Math.abs(rs-pS)<40);
-        if(goL) lH+=c.offsetHeight; else rH+=c.offsetHeight;
+        if(goL) lH=bO(c); else rH=bO(c);
         pS=rs;
       });
     }

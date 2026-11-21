@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>moTimeline — Column rounding</title>
+  <link rel="stylesheet" href="../../src/moTimeline.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; }
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    #result { padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; margin: 1rem 0 1.5rem; }
+    #result.ok { background: #dcfce7; color: #166534; }
+    #result.fail { background: #fee2e2; color: #991b1b; }
+    #timeline { list-style: none; margin: 0; padding: 0; }
+    .mo-card { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 0.5rem 0.75rem; overflow: hidden; }
+    .mo-card.wrong { border: 3px solid #dc2626; }
+    .mo-card p { margin: 0; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Column choice with fractional heights</h1>
+  <p>
+    Two columns whose real heights differ by 0.20 px, less than the rounding of <code>offsetHeight</code>. The left
+    column ends at 201.0 px (2 × 100.5), the right one at 201.2 px, so card 4 belongs on the left. Summing rounded
+    heights (2 × 101 = 202 against 201) picks the right column; the right float then drops into the free left column,
+    shifted by the mirrored card margins, and leaves a gap beside it (motimeline-931).
+  </p>
+  <div id="result">checking…</div>
+  <ul id="timeline"></ul>
+</main>
+
+<script type="module">
+  import MoTimeline from '../../src/moTimeline.js';
+
+  // Height of each li in px; the card fills it minus the 2 × 8 px vertical card margin of theme 'gap'.
+  const HEIGHTS = [100.5, 201.2, 100.5, 120, 120, 120, 120];
+  const tlEl = document.getElementById('timeline');
+  HEIGHTS.forEach((h, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="mo-card" style="height:${h - 16}px"><p>Card ${i + 1} · li ${h} px</p></div>`;
+    tlEl.appendChild(li);
+  });
+
+  window.tl = new MoTimeline(tlEl, { theme: 'gap', showBadge: false, showArrow: false });
+
+  // Every card must sit in the column its class names, at the width and position of the other cards there.
+  requestAnimationFrame(() => {
+    const list = tlEl.getBoundingClientRect();
+    const wrong = [...tlEl.children].filter((li) => {
+      const atRight = li.getBoundingClientRect().left - list.left > list.width / 4;
+      const bad = li.classList.contains('mo-inverted') !== atRight;
+      li.querySelector('.mo-card').classList.toggle('wrong', bad);
+      return bad;
+    });
+    const out = document.getElementById('result');
+    out.className = wrong.length ? 'fail' : 'ok';
+    out.textContent = wrong.length
+      ? `Wrong column: ${wrong.map((li) => li.textContent.trim()).join(', ')}`
+      : 'All cards sit in the column their class names.';
+  });
+</script>
+</body>
+</html>
