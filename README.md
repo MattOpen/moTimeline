@@ -205,6 +205,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | Class | Applied to | Description |
 |---|---|---|
 | `mo-timeline` | container `<ul>` | Core layout class. Added automatically on init; safe to add in HTML before init. |
+| `mo-early` · `mo-ready` | container | `mo-early` (set in HTML) shows the columns before the script from `--mo-twocol-min`; `init()` adds `mo-ready`, which ends that rule. See [Columns before the script](#columns-before-the-script). |
 | `mo-twocol` | container | Present when two-column mode is active. Triggers the center vertical line and badge/arrow positioning. |
 | `mo-theme` | container | Activates the built-in card theme, including the card gap. Added by `theme: 'default'` (or `true`) or set manually. |
 | `mo-gap` | container | Gives every `.mo-card` and filled ad slot the gap to edge and center line, nothing else; in one column (fill on small screens, stacked) the full-width gap on both sides, adding up between items. Added by `theme: 'gap'` or set manually. |
@@ -679,6 +680,8 @@ The `--mo-card-*` and `--mo-avatar-size` values below are the stylesheet default
   --mo-card-margin-inverted:   0.5rem 0.5rem 0.5rem 1.25rem;
   --mo-card-margin-fullwidth:  0.5rem;
   --mo-animate-duration:       0.5s;
+  /* two columns from this width of the list, before and after the script — not set by default */
+  --mo-twocol-min:             600px;
   /* ads list — default: the card margins above */
   --mo-ad-margin:              0.5rem 1.25rem 0.5rem 0.5rem;
   --mo-ad-margin-inverted:     0.5rem 0.5rem 0.5rem 1.25rem;
@@ -686,6 +689,37 @@ The `--mo-card-*` and `--mo-avatar-size` values below are the stylesheet default
   --mo-ad-label-color:         #94a3b8;
 }
 ```
+
+---
+
+## Columns before the script
+
+Without the script the `<li>` items are plain full-width list items; once the script runs they snap into two columns. When
+the script loads late (end of the page, deferred, a slow network) the page visibly jumps. Write the classes and a threshold
+into the HTML and the items stand in their columns from the first paint:
+
+```html
+<ul id="my-timeline" class="mo-timeline mo-early mo-gap">
+  <li><div class="my-card mo-card">…</div></li>
+  …
+</ul>
+```
+
+```css
+#my-timeline { --mo-twocol-min: 600px; }
+```
+
+- `mo-early` turns the rule on; it ends as soon as `init()` adds `mo-ready`. Without `mo-early` nothing changes.
+- `--mo-twocol-min` (px) is the width of the **list** from which it shows two columns — not the window. The same variable
+  switches the script: with it set, the column count follows the list's width (`clientWidth >= --mo-twocol-min`) and
+  `columnCount` is not used. A width change of the list alone (a side panel opening) switches the columns, too.
+- `mo-gap` only when you use `theme: 'gap'`; before the script the gap is padding of the `<li>`, so cards have the width
+  they get afterwards.
+- Before the script, items alternate between the columns in document order; `fill` then moves an item into the shorter
+  column. The width does not change, but a card can change sides.
+- Layouts `rows` and `stacked` and full-width items are not covered.
+
+Example: [`example/no-jump/`](example/no-jump/) loads the script after 2 s (`?delay=<ms>`).
 
 ---
 
@@ -711,12 +745,16 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 | [`example/mattopen/`](example/mattopen/) | Bootstrap 5 integration |
 | [`example/livestamp/`](example/livestamp/) | Livestamp.js + Moment.js relative timestamps |
 | [`example/column-rounding/`](example/column-rounding/) | Column choice with fractional heights (v2.18.1 fix) |
+| [`example/no-jump/`](example/no-jump/) | Columns before the script, script loaded late (v2.19.0) |
 
 </div>
 
 ---
 
 ## Changelog
+
+### v2.19.0
+- Add: **columns before the script** — `mo-early` on the list plus `--mo-twocol-min` in CSS put the items into one or two columns from the first paint, so a late script no longer makes the page jump. With `--mo-twocol-min` set, the script counts columns by the list's own width and watches it with a `ResizeObserver`. Without both, nothing changes. See **Columns before the script**; example [`example/no-jump/`](example/no-jump/).
 
 ### v2.18.1
 - Fix: **`fill` could put an item in the wrong column.** Column heights were the sum of `offsetHeight`, rounded to whole pixels per item, while the browser places the floats by the fractional heights. When both columns differed by less than the accumulated rounding, an item got the class of the taller column; as a right float it then dropped into the free left column with the mirrored card margins (shifted by 12 px with `theme: 'gap'`) and left a gap beside it. `_layout()` now reads each column's real bottom edge. Example: [`example/column-rounding/`](example/column-rounding/).

@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-21 · **Type:** library (npm `motimeline`) · **Version:** 2.18.1
+**As of:** 2026-11-23 · **Type:** library (npm `motimeline`) · **Version:** 2.19.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -10,7 +10,8 @@
 Responsive two-column timeline as a dependency-free vanilla JS library: cards, badges, arrows, categories, fill and
 stacked layout, animations, infinite scroll and ad slots (`adSlots`). Since 2.15.0 it can render an ads list into the
 ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`); since 2.17.0 `theme` takes a
-name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on top without the page jumping.
+name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on top without the page jumping; since 2.19.0 `mo-early` with
+`--mo-twocol-min` shows the columns before the script runs.
 
 ## Where things are
 
@@ -26,7 +27,8 @@ name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on
 - Every change in `src/` is mirrored into the inlined copy in `docs/index.html` (short names there: `_d` getData,
   `_cas` createAdSlot, `_rad` renderAd, `_obs` observeItems, `_rh` resize handler, `_aro` ad ResizeObserver,
   `_su` setUp, `_ps` prependStarts, `_rnb` renumberBadges, `_iast` injectAdSlotsTop, `_reg` registerAdSlots,
-  `_anb` anchorBefore, `_hs`/`_cs`/`_rs` hold/correct/release scroll, `_h` the running hold).
+  `_anb` anchorBefore, `_hs`/`_cs`/`_rs` hold/correct/release scroll, `_h` the running hold, `tcm` twoColMin, `_cols`
+  columns, `_sro` the list's size observer).
 - The version lives in five places: `package.json`, `package-lock.json` (2×), the JS and CSS banners, the version span
   in `docs/index.html`.
 - `refresh()` always runs last, after ad slots are injected; if a slot grows later, its ResizeObserver re-runs the
@@ -63,6 +65,12 @@ name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on
   works after the DOM insert (`initNewItems()`). While the hold runs, `overflow-anchor` is `none` on the scroller and a
   ResizeObserver on the list scrolls by the anchor's drift; a scroll the hold did not cause moves the anchor's target.
   The hold ends `SCROLL_HOLD_SETTLE_MS` (300) after the last image of the new items loaded or failed.
+- Columns before the script (2.19.0, motimeline-947): `.mo-timeline.mo-early:not(.mo-ready) > *` floats every child
+  with `width: clamp(50%, (var(--mo-twocol-min) - 100%) * 9999, 100%)`, so CSS takes the same decision as the script
+  without a container query (a query cannot read a variable). `init()` adds `mo-ready`, which ends the rule. With
+  `--mo-twocol-min` set (`twoColMin()`), `_columns()` counts by the list's `clientWidth` instead of window breakpoint and
+  `columnCount`, and `_sizeObserver` re-runs the layout when only the list's width changes. Without `mo-early` and the
+  variable everything stays as in 2.18.1 (all demo layouts compared, `example/no-jump/`).
 
 ## Picture
 

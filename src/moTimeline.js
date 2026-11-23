@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.18.1
+ * moTimeline v2.19.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -98,6 +98,12 @@ function getBreakpoint() {
   return 'lg';
 }
 
+// Two-column threshold in px from the CSS variable --mo-twocol-min on the list;
+// 0 when it is not set. Set, the column count follows the list's own width.
+function twoColMin(el) {
+  return parseFloat(getComputedStyle(el).getPropertyValue('--mo-twocol-min')) || 0;
+}
+
 function debounce(fn, delay = 100) {
   let timer;
   return (...args) => {
@@ -143,7 +149,8 @@ export class MoTimeline {
     instanceData.set(el, data);
     MoTimeline.instances.add(this);
 
-    el.classList.add('mo-timeline');
+    // mo-ready ends the pre-script rules of mo-early (moTimeline.css).
+    el.classList.add('mo-timeline', 'mo-ready');
     const theme = themeClass(data.theme);
     if (theme) el.classList.add(theme);
     Object.entries(CSS_VAR_OPTIONS).forEach(([option, prop]) => {
@@ -191,6 +198,18 @@ export class MoTimeline {
       }
     }
 
+    // --mo-twocol-min: the list's width decides, so a width change of the list
+    // alone (side panel, filter column) switches the columns as well.
+    if (twoColMin(el) > 0 && typeof ResizeObserver === 'function') {
+      let width = el.clientWidth;
+      this._sizeObserver = new ResizeObserver(() => {
+        if (el.clientWidth === width) return;
+        width = el.clientWidth;
+        this._resizeHandler();
+      });
+      this._sizeObserver.observe(el);
+    }
+
     this._initialized = true;
     window.addEventListener('resize', this._resizeHandler);
 
@@ -205,7 +224,7 @@ export class MoTimeline {
       const data = instanceData.get(el);
       if (!data) return;
 
-      data.col = data.columnCount[getBreakpoint()];
+      data.col = instance._columns(data);
       instance._setDivider();
       instance._layout();
     });
@@ -356,13 +375,17 @@ export class MoTimeline {
       this._adResizeObserver.disconnect();
       this._adResizeObserver = null;
     }
+    if (this._sizeObserver) {
+      this._sizeObserver.disconnect();
+      this._sizeObserver = null;
+    }
     Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach((s) => s.remove());
     instanceData.delete(this.element);
     MoTimeline.instances.delete(this);
     Object.entries(CSS_VAR_OPTIONS).forEach(([option, prop]) => {
       if (this._options[option] != null) this.element.style.removeProperty(prop);
     });
-    this.element.classList.remove('mo-timeline', 'mo-theme', 'mo-gap', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
+    this.element.classList.remove('mo-timeline', 'mo-ready', 'mo-theme', 'mo-gap', 'mo-twocol', 'mo-animate', 'mo-animate-fade', 'mo-animate-slide', 'mo-rows', 'mo-stacked');
     Array.from(this.element.children).forEach((child) => {
       child.classList.remove('mo-item', 'js-mo-item', 'mo-inverted', 'js-mo-inverted', 'mo-offset', 'mo-fullwidth', 'js-mo-fullwidth', 'mo-visible', 'mo-filtered-out', 'mo-prepend-start');
       child.style.removeProperty('grid-row');
@@ -412,10 +435,18 @@ export class MoTimeline {
     return instanceData.get(this.element);
   }
 
+  // Column count: by the list's width when --mo-twocol-min is set, otherwise by
+  // window breakpoint and columnCount.
+  _columns(data) {
+    const min = twoColMin(this.element);
+    if (min > 0) return this.element.clientWidth >= min ? 2 : 1;
+    return data.columnCount[getBreakpoint()];
+  }
+
   _setDivider() {
     const data = this._getData();
     if (!data) return;
-    data.col = data.columnCount[getBreakpoint()];
+    data.col = this._columns(data);
     this.element.classList.toggle('mo-twocol', data.col > 1);
     this.element.classList.toggle('mo-mirror-text', !!data.mirrorText);
     // 'rows' and 'stacked' both place one item per row, so neither uses the

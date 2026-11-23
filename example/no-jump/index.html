@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>moTimeline — Columns before the script</title>
+  <link rel="stylesheet" href="../../src/moTimeline.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; }
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    #result { padding: 0.75rem 1rem; border-radius: 6px; font-weight: 600; margin: 1rem 0 1.5rem; background: #e5e7eb; }
+    #result.ok { background: #dcfce7; color: #166534; }
+    #result.fail { background: #fee2e2; color: #991b1b; }
+    /* The threshold lives here only; the script reads the same variable. */
+    #timeline { --mo-twocol-min: 600px; }
+    .mo-card { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 0.75rem 1rem; }
+    .mo-card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+    .mo-card p { margin: 0; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Columns before the script</h1>
+  <p>
+    The list carries <code>mo-timeline mo-early mo-gap</code> and <code>--mo-twocol-min: 600px</code> in the HTML. The
+    script loads only after <span id="delay"></span> ms, yet the cards stand in their columns from the first paint: one
+    column while the list is narrower than 600 px, two from 600 px on. After the start the script only moves cards into
+    the shorter column; their width stays (motimeline-947).
+  </p>
+  <div id="result">before the script…</div>
+  <ul id="timeline" class="mo-timeline mo-early mo-gap">
+    <li><div class="mo-card"><h3>Kick-off</h3><p>Scope agreed, first sketches on the table.</p></div></li>
+    <li><div class="mo-card"><h3>Research</h3><p>Twelve interviews with users of the old tool. Most of them asked for the
+      same three things: speed, a cleaner list and fewer clicks to the detail view.</p></div></li>
+    <li><div class="mo-card"><h3>Prototype</h3><p>Clickable prototype in two days.</p></div></li>
+    <li><div class="mo-card"><h3>Review</h3><p>Feedback round with the team, a second with two customers.</p></div></li>
+    <li><div class="mo-card"><h3>Build</h3><p>Library mode, ESM, CJS and UMD bundles. Tests for the layout in four
+      widths, then the first public release with a demo page and a changelog.</p></div></li>
+    <li><div class="mo-card"><h3>Launch</h3><p>Release notes out.</p></div></li>
+  </ul>
+</main>
+
+<script type="module">
+  // ?delay=<ms> holds the script back (default 2000), like a library loaded at the end of the page.
+  const delay = Number(new URLSearchParams(location.search).get('delay') ?? 2000);
+  document.getElementById('delay').textContent = delay;
+  const list = document.getElementById('timeline');
+  const columns = () => {
+    const w = list.clientWidth;
+    return [...list.children].map((li) => Math.round(li.getBoundingClientRect().width / w * 2) === 1 ? 2 : 1);
+  };
+  const before = columns();
+  window.moEarly = { before };
+
+  setTimeout(async () => {
+    const { default: MoTimeline } = await import('../../src/moTimeline.js');
+    new MoTimeline(list, { theme: 'gap' });
+    const after = columns();
+    window.moEarly.after = after;
+    const ok = before.every((c, i) => c === after[i]);
+    const result = document.getElementById('result');
+    result.className = ok ? 'ok' : 'fail';
+    result.textContent = (ok ? 'OK: ' : 'Changed: ') + `${before[0]} column(s) before the script, ${after[0]} after`;
+  }, delay);
+</script>
+</body>
+</html>

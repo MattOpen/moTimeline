@@ -102,6 +102,8 @@
     .mo-timeline.mo-twocol::before { background: var(--mo-line-color); bottom: 0; content: ''; left: 50%; margin-left: -1.5px; position: absolute; top: 0; width: 3px; z-index: 0; }
     .mo-timeline > .mo-item { box-sizing: border-box; display: block; float: left; position: relative; width: 50%; }
     .mo-timeline:not(.mo-twocol) > .mo-item { float: none; width: 100%; }
+    .mo-timeline.mo-early:not(.mo-ready) > * { box-sizing: border-box; float: left; position: relative; width: clamp(50%, (var(--mo-twocol-min, 100000px) - 100%) * 9999, 100%); }
+    .mo-timeline.mo-early.mo-gap:not(.mo-ready) > * { padding: 0.5rem clamp(0.5rem, (100% - var(--mo-twocol-min, 100000px)) * 9999 + 0.875rem, 0.875rem); }
     .mo-timeline > .mo-item.mo-inverted { float: right; }
     .mo-timeline.mo-twocol > .mo-item.mo-fullwidth { clear: both; float: none; width: 100%; }
     .mo-timeline.mo-twocol > .mo-item.mo-prepend-start { clear: both; }
@@ -274,7 +276,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.18.1</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.19.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -1279,6 +1281,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
   const CSS_VARS = { cardBorderRadius:'--mo-card-border-radius', avatarSize:'--mo-avatar-size', cardMargin:'--mo-card-margin', cardMarginInverted:'--mo-card-margin-inverted', cardMarginFullWidth:'--mo-card-margin-fullwidth' };
   function themeClass(t){ return t===true||t==='default'?'mo-theme':t==='gap'?'mo-gap':null; }
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
+  function tcm(el){ return parseFloat(getComputedStyle(el).getPropertyValue('--mo-twocol-min'))||0; }
   function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
   const slotAds=new WeakMap();
   function adWeight(a){ if(!a||typeof a!=='object') return 0; const w=a.weight==null?1:Number(a.weight); return Number.isFinite(w)&&w>0?w:0; }
@@ -1302,18 +1305,19 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       const data=Object.assign({},this.settings,{lastItemIdx:0});
       instanceData.set(el,data);
       MoTimeline.instances.add(this);
-      el.classList.add('mo-timeline');
+      el.classList.add('mo-timeline','mo-ready');
       const tc=themeClass(data.theme); if(tc) el.classList.add(tc);
       Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) el.style.setProperty(p,this._o[o]); });
       if(data.animate){ const type=data.animate===true?'fade':data.animate; el.classList.add('mo-animate','mo-animate-'+type); this._observer=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('mo-visible'); this._observer.unobserve(e.target); } }); },{threshold:0.1}); }
       if(data.adSlots){ data._adRealCount=0; data._adTopPos=1; const {onEnterViewport:oev,onAdView:oav}=data.adSlots; if(typeof oev==='function'||typeof oav==='function'){ this._adObserver=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ const s=e.target; this._adObserver.unobserve(s); if(typeof oev==='function') oev(s,Number(s.dataset.moAdPosition)); if(typeof oav==='function'&&slotAds.has(s)) oav(slotAds.get(s),s); } }); },{threshold:0.5}); } if(typeof ResizeObserver==='function') this._aro=new ResizeObserver(this._rh); }
+      if(tcm(el)>0&&typeof ResizeObserver==='function'){ let w=el.clientWidth; this._sro=new ResizeObserver(()=>{ if(el.clientWidth===w) return; w=el.clientWidth; this._rh(); }); this._sro.observe(el); }
       this._initItems();
       window.addEventListener('resize',this._rh);
     }
     refresh(){
       MoTimeline.instances.forEach(inst=>{
         const el=inst.element, d=instanceData.get(el); if(!d) return;
-        d.col=d.columnCount[bp()]; inst._div(); inst._layout();
+        d.col=inst._cols(d); inst._div(); inst._layout();
       });
     }
     _layout(){
@@ -1425,9 +1429,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); this._rs(); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) this.element.style.removeProperty(p); }); this.element.classList.remove('mo-timeline','mo-theme','mo-gap','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible','mo-prepend-start'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); this._su=new WeakSet(); this._ps=new WeakSet(); }
+    destroy(){ window.removeEventListener('resize',this._rh); this._rs(); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} if(this._sro){this._sro.disconnect();this._sro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) this.element.style.removeProperty(p); }); this.element.classList.remove('mo-timeline','mo-ready','mo-theme','mo-gap','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible','mo-prepend-start'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); this._su=new WeakSet(); this._ps=new WeakSet(); }
     _d(){ return instanceData.get(this.element); }
-    _div(){ const d=this._d(); if(!d) return; d.col=d.columnCount[bp()];
+    _cols(d){ const m=tcm(this.element); return m>0?(this.element.clientWidth>=m?2:1):d.columnCount[bp()]; }
+    _div(){ const d=this._d(); if(!d) return; d.col=this._cols(d);
       this.element.classList.toggle('mo-twocol',d.col>1);
       this.element.classList.toggle('mo-mirror-text',!!d.mirrorText);
       this.element.classList.toggle('mo-rows',d.layout==='rows'&&d.col>1);

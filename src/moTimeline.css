@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.18.1 — CSS
+ * moTimeline v2.19.0 — CSS
  */
 
 /* ── CSS custom properties (easy override) ─────────────────── */
@@ -93,6 +93,24 @@
 .mo-timeline:not(.mo-twocol) > .mo-item {
   float: none;
   width: 100%;
+}
+
+/* ── mo-early: columns from the first paint, before the script ──
+   Opt-in: the list carries mo-timeline mo-early in the HTML and sets
+   --mo-twocol-min (px). Until init adds mo-ready, every child takes half the
+   list's width from the threshold on, the full width below it — the same
+   decision the script makes from the list's clientWidth. 100% here is the
+   list's width; the factor turns the difference into 50% or 100%. */
+.mo-timeline.mo-early:not(.mo-ready) > * {
+  box-sizing: border-box;
+  float: left;
+  position: relative;
+  width: clamp(50%, (var(--mo-twocol-min, 100000px) - 100%) * 9999, 100%);
+}
+/* With mo-gap: the card gap as padding, so the card has the width it gets
+   after init (two columns: 0.875rem a side = 1.25rem + 0.5rem in total). */
+.mo-timeline.mo-early.mo-gap:not(.mo-ready) > * {
+  padding: 0.5rem clamp(0.5rem, (100% - var(--mo-twocol-min, 100000px)) * 9999 + 0.875rem, 0.875rem);
 }
 
 /* Right-column item */
