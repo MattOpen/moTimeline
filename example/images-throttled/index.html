@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>moTimeline — Re-layout while images load</title>
+  <link rel="stylesheet" href="../../src/moTimeline.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; }
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    #log { position: sticky; top: 0; z-index: 2; padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0 1.5rem;
+      background: #1e1b4b; color: #fff; font: 600 0.85rem/1.5 ui-monospace, monospace; }
+    .mo-card { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; }
+    .mo-card img { display: block; width: 100%; height: auto; }
+    .mo-card h3 { margin: 0; padding: 0.5rem 0.75rem; font-size: 0.95rem; }
+    a { color: #4f46e5; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Re-layout while images load</h1>
+  <p>
+    Forty cards with images of four heights and no <code>width</code>/<code>height</code> attributes, so every card grows
+    when its image arrives. Open DevTools, set the network to <em>Slow 4G</em> and reload: the list re-lays out in the
+    next frame after an image arrives, at most once per frame, and once more after the last one (motimeline-951).
+    <a href="?watchImages=false">?watchImages=false</a> turns image watching off: images then never trigger a re-layout,
+    which is right only for lists whose images have a fixed height.
+  </p>
+  <div id="log">…</div>
+  <ul id="timeline"></ul>
+</main>
+
+<script type="module">
+  import MoTimeline from '../../src/moTimeline.js';
+
+  const params = new URLSearchParams(location.search);
+  const watchImages = params.get('watchImages') !== 'false';
+  const shapes = ['wide', 'square', 'tall', 'pano'];
+  const list = document.getElementById('timeline');
+  list.innerHTML = Array.from({ length: 40 }, (_, i) =>
+    `<li><div class="mo-card"><img src="img/${shapes[(i * 7) % 4]}.svg?n=${i}" alt=""><h3>Card ${i + 1}</h3></div></li>`
+  ).join('');
+
+  // Demo log: counts every layout pass (refresh) and every image that arrives.
+  const t0 = performance.now();
+  const stats = window.moStats = { watchImages, passes: 0, images: 0, firstImage: null, lastImage: null,
+    passTimes: [], longestPass: 0 };
+  const refresh = MoTimeline.prototype.refresh;
+  MoTimeline.prototype.refresh = function () {
+    const s = performance.now();
+    refresh.call(this);
+    const d = performance.now() - s;
+    stats.passes++;
+    stats.passTimes.push(Math.round(s - t0));
+    stats.longestPass = Math.max(stats.longestPass, Math.round(d * 10) / 10);
+    show();
+  };
+  list.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => {
+    const t = Math.round(performance.now() - t0);
+    stats.images++;
+    if (stats.firstImage === null) stats.firstImage = t;
+    stats.lastImage = t;
+    show();
+  }));
+  const log = document.getElementById('log');
+  function show() {
+    const last = stats.passTimes[stats.passTimes.length - 1];
+    log.textContent = `watchImages ${watchImages} · images ${stats.images}/40 (first ${stats.firstImage ?? '–'} ms, `
+      + `last ${stats.lastImage ?? '–'} ms) · layout passes ${stats.passes} (last at ${last ?? '–'} ms, `
+      + `longest ${stats.longestPass} ms)`;
+  }
+
+  new MoTimeline(list, { theme: 'gap', watchImages });
+  show();
+</script>
+</body>
+</html>

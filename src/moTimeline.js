@@ -1,5 +1,5 @@
 /*!
- * moTimeline v2.19.0
+ * moTimeline v2.20.0
  * Responsive two-column timeline layout library
  * https://github.com/MattOpen/moTimeline
  * MIT License
@@ -27,6 +27,7 @@ const DEFAULTS = {
   animate: false,     // false | 'fade' | 'slide'
   renderCard: null,   // (item, cardEl) => void — custom card renderer; skips built-in HTML
   adSlots: null,      // { mode, interval, style, onEnterViewport, ads, onAdView, onAdClick } — see docs
+  watchImages: true,  // false = a late image never re-runs the layout (lists whose images have a fixed height)
 };
 
 // Options mirrored into CSS variables. Written inline only when passed, so the
@@ -85,7 +86,7 @@ function safeAdHref(url) {
 }
 
 // prependItems(): how long the scroll hold stays after the last image of the
-// new items settled; covers the 100 ms debounced re-layout.
+// new items settled; covers the re-layout in the next frame.
 const SCROLL_HOLD_SETTLE_MS = 300;
 
 const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
@@ -104,12 +105,25 @@ function twoColMin(el) {
   return parseFloat(getComputedStyle(el).getPropertyValue('--mo-twocol-min')) || 0;
 }
 
-function debounce(fn, delay = 100) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
+// Re-layout throttled to one pass per frame: the first call books a pass for
+// the next frame, calls while one is booked add nothing (the booked pass runs
+// after them and sees their heights), a call after the pass books a new one.
+// So the first event lays out at once and the last event is always followed
+// by exactly one pass. cancel() drops a booked pass (destroy()).
+function frameThrottle(fn) {
+  const raf = typeof requestAnimationFrame === 'function';
+  let booked = null;
+  const run = () => { booked = null; fn(); };
+  const call = () => {
+    if (booked !== null) return;
+    booked = raf ? requestAnimationFrame(run) : setTimeout(run, 16);
   };
+  call.cancel = () => {
+    if (booked === null) return;
+    if (raf) cancelAnimationFrame(booked); else clearTimeout(booked);
+    booked = null;
+  };
+  return call;
 }
 
 
@@ -126,7 +140,7 @@ export class MoTimeline {
     this._options = options;
     this.settings = Object.assign({}, DEFAULTS, options);
     this.settings.columnCount = Object.assign({}, DEFAULTS.columnCount, options.columnCount);
-    this._resizeHandler = debounce(() => this.refresh(), 100);
+    this._resizeHandler = frameThrottle(() => this.refresh());
     this._initialized = false;
     // Children the library has set up; _initItems() picks up every other child.
     this._setUp = new WeakSet();
@@ -327,9 +341,11 @@ export class MoTimeline {
 
     this._observeItems([newEl]);
 
-    newEl.querySelectorAll('img').forEach((img) => {
-      if (!img.complete) img.addEventListener('load', this._resizeHandler, { once: true });
-    });
+    if (this.settings.watchImages) {
+      newEl.querySelectorAll('img').forEach((img) => {
+        if (!img.complete) img.addEventListener('load', this._resizeHandler, { once: true });
+      });
+    }
 
     return newEl;
   }
@@ -362,6 +378,7 @@ export class MoTimeline {
 
   destroy() {
     window.removeEventListener('resize', this._resizeHandler);
+    this._resizeHandler.cancel();
     this._releaseScroll();
     if (this._observer) {
       this._observer.disconnect();
@@ -534,14 +551,17 @@ export class MoTimeline {
     if (anchor) this._holdScroll(anchor, topItems);
 
     // Re-layout after any unloaded images finish, because offsetHeight is
-    // based on text-only height until images are ready.
-    newItems.forEach((item) => {
-      item.querySelectorAll('img').forEach((img) => {
-        if (!img.complete) {
-          img.addEventListener('load', this._resizeHandler, { once: true });
-        }
+    // based on text-only height until images are ready. watchImages: false
+    // skips this for images with a fixed height.
+    if (this.settings.watchImages) {
+      newItems.forEach((item) => {
+        item.querySelectorAll('img').forEach((img) => {
+          if (!img.complete) {
+            img.addEventListener('load', this._resizeHandler, { once: true });
+          }
+        });
       });
-    });
+    }
   }
 
   _layout() {
@@ -945,7 +965,7 @@ export class MoTimeline {
   }
 
   // Holds the anchor until every image in `els` has loaded or failed, plus
-  // SCROLL_HOLD_SETTLE_MS for the debounced re-layout. Native scroll anchoring
+  // SCROLL_HOLD_SETTLE_MS for the re-layout that follows. Native scroll anchoring
   // is off meanwhile, so only the user and this hold move the scroll position.
   _holdScroll(anchor, els) {
     let hold = this._hold;

@@ -179,6 +179,7 @@ The library injects classes and elements into your markup. Here is what a fully 
 | `animate` | string \| boolean | `false` | Animate items as they scroll into view using `IntersectionObserver`. `'fade'` — items fade in. `'slide'` — left-column items slide in from the left, right-column items from the right. `true` = `'fade'`. Disable for individual items by adding `mo-visible` manually. Control speed via `--mo-animate-duration`. |
 | `renderCard` | function \| null | `null` | `(item, cardEl) => void`. When set, called for every item instead of the built-in HTML renderer. `cardEl` is the `.mo-card` div already placed inside the `<li>`. Populate it via `innerHTML` or DOM methods. The library still owns the `<li>`, column placement, spine, badge, arrow, `addItems()`, and scroll pagination. |
 | `adSlots` | object \| null | `null` | Inject ad slot placeholders into the timeline and observe them. See **Ad slots** below. |
+| `watchImages` | boolean | `true` | Re-run the layout when an image inside an item finishes loading. `false` for lists whose images have a fixed height: images then never trigger a re-layout. See **Re-layout while images load**. |
 
 </div>
 
@@ -723,6 +724,24 @@ Example: [`example/no-jump/`](example/no-jump/) loads the script after 2 s (`?de
 
 ---
 
+## Re-layout while images load
+
+An item reaches its full height only once its images have loaded, so the library listens for `load` on every image that is not complete yet and lays the list out again. The passes are throttled to one per frame (`requestAnimationFrame`):
+
+- the first image that arrives is laid out in the next frame,
+- images arriving while a pass is booked add nothing, the booked pass sees their heights,
+- the last image is always followed by exactly one more pass.
+
+Window resizes, ad slots that change their height and a change of the list's width (`--mo-twocol-min`) take the same path. A tab in the background runs no frames; its list is laid out as soon as it is shown.
+
+**`watchImages: false`** turns the image listener off. Use it when every image has a fixed height — CSS `height` or `aspect-ratio`, or `width`/`height` attributes on the `<img>` — so a loading image cannot change the height of its item. The list is then laid out once at start (text heights included) and again only on resize, ad slots or `addItems()`. With images of unknown height it would leave items in the wrong column.
+
+```js
+new MoTimeline('#my-timeline', { theme: 'gap', watchImages: false });
+```
+
+Example: [`example/images-throttled/`](example/images-throttled/) — forty cards with images of four heights and a log of the layout passes; throttle the network in DevTools to watch them, `?watchImages=false` to compare.
+
 ## Bootstrap integration
 
 No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
@@ -746,12 +765,17 @@ No framework option needed. Wrap the `<ul>` inside a Bootstrap `.container`:
 | [`example/livestamp/`](example/livestamp/) | Livestamp.js + Moment.js relative timestamps |
 | [`example/column-rounding/`](example/column-rounding/) | Column choice with fractional heights (v2.18.1 fix) |
 | [`example/no-jump/`](example/no-jump/) | Columns before the script, script loaded late (v2.19.0) |
+| [`example/images-throttled/`](example/images-throttled/) | Re-layout while images load, pass counter, `watchImages` (v2.20.0) |
 
 </div>
 
 ---
 
 ## Changelog
+
+### v2.20.0
+- Change: **re-layout throttled per frame instead of debounced.** A late image, a window resize, an ad slot or a width change of the list now lays out in the next frame (`requestAnimationFrame`), at most once per frame, and the last event is always followed by one pass. Before, every event pushed the pass back by 100 ms, so images arriving in quick succession left gaps until the last one had loaded. Final layouts are unchanged.
+- Add: **`watchImages`** option (default `true`). `false` stops images from triggering a re-layout, for lists whose images have a fixed height. See **Re-layout while images load**; example [`example/images-throttled/`](example/images-throttled/).
 
 ### v2.19.0
 - Add: **columns before the script** — `mo-early` on the list plus `--mo-twocol-min` in CSS put the items into one or two columns from the first paint, so a late script no longer makes the page jump. With `--mo-twocol-min` set, the script counts columns by the list's own width and watches it with a `ResizeObserver`. Without both, nothing changes. See **Columns before the script**; example [`example/no-jump/`](example/no-jump/).

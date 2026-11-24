@@ -276,7 +276,7 @@
 <body>
 
 <nav>
-  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.19.0</span></span>
+  <span class="logo"><img src="favicon.svg" alt="moTimeline logo">moTimeline<span class="version">v2.20.0</span></span>
   <button class="nav-hamburger" id="navToggle" aria-label="Menu">&#9776;</button>
   <div class="nav-links" id="navLinks">
     <a href="#demo">Demo</a>
@@ -1192,6 +1192,10 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
           <td><code>(item, cardEl) =&gt; void</code>. When set, called for every item instead of the built-in HTML renderer. <code>cardEl</code> is the <code>.mo-card</code> div already placed inside the <code>&lt;li&gt;</code>. Populate it via <code>innerHTML</code> or DOM methods. The library still owns column placement, spine, badge, arrow, <code>addItems()</code>, and scroll pagination.</td>
         </tr>
         <tr>
+          <td><code>watchImages</code></td><td>boolean</td><td><code>true</code></td>
+          <td>Re-run the layout when an image inside an item finishes loading, because the item only reaches its full height then. Passes are throttled to one per frame: the first image lays out in the next frame, the last one is always followed by one more pass. Set <code>false</code> for lists whose images have a fixed height (CSS <code>height</code> or <code>aspect-ratio</code>, or <code>width</code>/<code>height</code> attributes): images then never trigger a pass. Text heights are still laid out at start.</td>
+        </tr>
+        <tr>
           <td><code>adSlots</code></td><td>object&nbsp;|&nbsp;null</td><td><code>null</code></td>
           <td>
             Inject ad slots between items. Fields: <code>mode</code>, <code>interval</code>, <code>style</code>,
@@ -1275,14 +1279,14 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
 <script>
 (function () {
   const instanceData = new WeakMap();
-  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null, adSlots:null };
+  const DEFAULTS = { columnCount:{xs:1,sm:2,md:2,lg:2}, showBadge:false, showArrow:false, theme:false, showCounterStyle:'counter', cardBorderRadius:'8px', avatarSize:'50px', cardMargin:'0.5rem 1.25rem 0.5rem 0.5rem', cardMarginInverted:'0.5rem 0.5rem 0.5rem 1.25rem', cardMarginFullWidth:'0.5rem', randomFullWidth:0, animate:false, renderCard:null, adSlots:null, watchImages:true };
   const DEFAULT_BADGE_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%234f46e5'/><circle cx='12' cy='12' r='4.5' fill='white'/></svg>";
 
   const CSS_VARS = { cardBorderRadius:'--mo-card-border-radius', avatarSize:'--mo-avatar-size', cardMargin:'--mo-card-margin', cardMarginInverted:'--mo-card-margin-inverted', cardMarginFullWidth:'--mo-card-margin-fullwidth' };
   function themeClass(t){ return t===true||t==='default'?'mo-theme':t==='gap'?'mo-gap':null; }
   function bp() { const w=window.innerWidth; return w<600?'xs':w<992?'sm':w<1200?'md':'lg'; }
   function tcm(el){ return parseFloat(getComputedStyle(el).getPropertyValue('--mo-twocol-min'))||0; }
-  function debounce(fn,d=100){ let t; return(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; }
+  function frameThrottle(fn){ const raf=typeof requestAnimationFrame==='function'; let b=null; const run=()=>{ b=null; fn(); }; const c=()=>{ if(b!==null) return; b=raf?requestAnimationFrame(run):setTimeout(run,16); }; c.cancel=()=>{ if(b===null) return; if(raf) cancelAnimationFrame(b); else clearTimeout(b); b=null; }; return c; }
   const slotAds=new WeakMap();
   function adWeight(a){ if(!a||typeof a!=='object') return 0; const w=a.weight==null?1:Number(a.weight); return Number.isFinite(w)&&w>0?w:0; }
   function pickAd(ads){ if(!Array.isArray(ads)) return null; const tot=ads.reduce((s,a)=>s+adWeight(a),0); if(tot<=0) return null; let r=Math.random()*tot, last=null; for(const a of ads){ const w=adWeight(a); if(w<=0) continue; last=a; r-=w; if(r<0) return a; } return last; }
@@ -1295,7 +1299,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       this.element=el;
       this._o=opts;
       this.settings=Object.assign({},DEFAULTS,opts,{columnCount:Object.assign({},DEFAULTS.columnCount,opts.columnCount)});
-      this._rh=debounce(()=>this.refresh(),100);
+      this._rh=frameThrottle(()=>this.refresh());
       this._su=new WeakSet(); this._ps=new WeakSet();
       this.init();
     }
@@ -1388,7 +1392,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       d.lastItemIdx=Array.from(el.children).length; instanceData.set(el,d);
       this.refresh();
       this._obs([newEl]);
-      newEl.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); });
+      if(this.settings.watchImages) newEl.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); });
       return newEl;
     }
     filterByCategory(category){
@@ -1429,7 +1433,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       }
       li.appendChild(card); return li;
     }
-    destroy(){ window.removeEventListener('resize',this._rh); this._rs(); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} if(this._sro){this._sro.disconnect();this._sro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) this.element.style.removeProperty(p); }); this.element.classList.remove('mo-timeline','mo-ready','mo-theme','mo-gap','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible','mo-prepend-start'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); this._su=new WeakSet(); this._ps=new WeakSet(); }
+    destroy(){ window.removeEventListener('resize',this._rh); this._rh.cancel(); this._rs(); if(this._observer){this._observer.disconnect();this._observer=null;} if(this._adObserver){this._adObserver.disconnect();this._adObserver=null;} if(this._aro){this._aro.disconnect();this._aro=null;} if(this._sro){this._sro.disconnect();this._sro=null;} Array.from(this.element.querySelectorAll('.mo-ad-slot')).forEach(s=>s.remove()); instanceData.delete(this.element); MoTimeline.instances.delete(this); Object.entries(CSS_VARS).forEach(([o,p])=>{ if(this._o[o]!=null) this.element.style.removeProperty(p); }); this.element.classList.remove('mo-timeline','mo-ready','mo-theme','mo-gap','mo-twocol','mo-animate','mo-animate-fade','mo-animate-slide','mo-rows','mo-stacked','mo-mirror-text'); Array.from(this.element.children).forEach(c=>{ c.classList.remove('mo-item','js-mo-item','mo-inverted','js-mo-inverted','mo-offset','mo-fullwidth','js-mo-fullwidth','mo-visible','mo-prepend-start'); c.style.removeProperty('grid-row'); c.querySelectorAll('.js-mo-badge,.js-mo-arrow').forEach(b=>b.remove()); }); this._su=new WeakSet(); this._ps=new WeakSet(); }
     _d(){ return instanceData.get(this.element); }
     _cols(d){ const m=tcm(this.element); return m>0?(this.element.clientWidth>=m?2:1):d.columnCount[bp()]; }
     _div(){ const d=this._d(); if(!d) return; d.col=this._cols(d);
@@ -1462,7 +1466,7 @@ tl.<span class="fn">addItems</span>(moreItemsFromServer); <span class="cm">// ne
       this._iast(top);
       this._injectAdSlots(rest);
       if(anchor) this._hs(anchor,top);
-      items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
+      if(this.settings.watchImages) items.forEach(item=>item.querySelectorAll('img').forEach(img=>{ if(!img.complete) img.addEventListener('load',this._rh,{once:true}); }));
     }
     _rnb(){ const d=this._d(); if(!d||!d.showBadge||d.showCounterStyle!=='counter') return; Array.from(this.element.querySelectorAll('.js-mo-item')).forEach((it,i)=>{ const b=it.querySelector('.js-mo-badge'); if(b) b.textContent=i+1; }); }
     _obs(items){ if(!this._observer) return; items.forEach(item=>{ if(!item.classList.contains('mo-visible')) this._observer.observe(item); }); }

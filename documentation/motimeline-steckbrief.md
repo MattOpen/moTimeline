@@ -1,6 +1,6 @@
 # moTimeline — Steckbrief
 
-**As of:** 2026-11-23 · **Type:** library (npm `motimeline`) · **Version:** 2.19.0
+**As of:** 2026-11-24 · **Type:** library (npm `motimeline`) · **Version:** 2.20.0
 
 > One-page summary of the repository's current state. History lives in the changelog of the [README](../README.md).
 > Whoever changes the repository updates this file in the same commit.
@@ -11,7 +11,8 @@ Responsive two-column timeline as a dependency-free vanilla JS library: cards, b
 stacked layout, animations, infinite scroll and ad slots (`adSlots`). Since 2.15.0 it can render an ads list into the
 ad slots (`adSlots.ads`); since 2.16.0 each ad can set its own slot width (`style`); since 2.17.0 `theme` takes a
 name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on top without the page jumping; since 2.19.0 `mo-early` with
-`--mo-twocol-min` shows the columns before the script runs.
+`--mo-twocol-min` shows the columns before the script runs; since 2.20.0 re-layouts run once per frame and
+`watchImages: false` stops images from triggering them.
 
 ## Where things are
 
@@ -71,6 +72,11 @@ name (`'default'` or `'gap'`); since 2.18.0 `prependItems()` puts newer items on
   `--mo-twocol-min` set (`twoColMin()`), `_columns()` counts by the list's `clientWidth` instead of window breakpoint and
   `columnCount`, and `_sizeObserver` re-runs the layout when only the list's width changes. Without `mo-early` and the
   variable everything stays as in 2.18.1 (all demo layouts compared, `example/no-jump/`).
+- Re-layout (2.20.0, motimeline-951): every trigger (window `resize`, `_adResizeObserver`, `_sizeObserver`, image
+  `load`) calls `_resizeHandler = frameThrottle(refresh)`: a flag books one `requestAnimationFrame`, calls while booked
+  add nothing, a call after the pass books the next (fallback `setTimeout` 16 ms). `destroy()` cancels a booked frame.
+  Image `load` listeners in `_initItems()` and `addItem()` only with `watchImages` (default `true`); `_holdScroll`
+  waits for images regardless. Demo with pass counter: `example/images-throttled/`.
 
 ## Picture
 
